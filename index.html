@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="assets/images/fave-icon.png" type="image/x-icon">
+    <title>Agenda Online - Dermaclínica</title>
+    <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container-fluid d-flex flex-column flex-md-row full-height">
+    <!-- Login -->
+    <div class="col-12 col-md-4 d-flex align-items-center justify-content-center p-4">
+        <form style="width: 100%;">
+            <!-- Logo -->
+            <div class="text-center mb-4 d-flex flex-column justify-content-center align-items-center">
+                <img src="assets/images/logo-dermaclinica.png" alt="Logo Dermaclínica" class="img-fluid" style="max-width: 250px;">
+            </div>
+
+            <!-- Campos de E-mail / CPF e Senha -->
+            <div class="mb-3">
+                <label for="emailOrCpf" class="form-label">E-mail / CPF</label>
+                <input type="text" class="form-control" id="emailOrCpf" placeholder="Digite seu E-mail ou CPF" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="password" placeholder="Digite sua Senha" required>
+            </div>
+            <button type="submit" class="btn btn-custom w-100 mb-3">Entrar</button>
+            <button type="button" class="btn btn-custom w-100">Primeiro Acesso</button>
+        </form>
+    </div>
+
+    <!-- Carrossel -->
+    <div class="col-12 col-md-8 p-0 full-height d-flex flex-column d-none d-md-block carousel-container">
+        <div id="carouselExample" class="carousel slide flex-grow-1" data-bs-ride="carousel" data-bs-interval="3000">
+            <div class="carousel-inner h-100">
+                <div class="carousel-item active h-100">
+                    <img src="assets/images/slide-01.jpg" class="d-block w-100" alt="Imagem 1">
+                </div>
+                <div class="carousel-item h-100">
+                    <img src="assets/images/slide-02.png" class="d-block w-100" alt="Imagem 2">
+                </div>
+                <div class="carousel-item h-100">
+                    <img src="assets/images/slide-03.jpg" class="d-block w-100" alt="Imagem 3">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Próximo</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
