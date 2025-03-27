@@ -2,61 +2,70 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="assets/images/fave-icon.png" type="image/x-icon">
     <title>Agenda Online - Dermaclínica</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/fonts/font-lato.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="container-fluid d-flex flex-column flex-md-row full-height">
     <!-- Login -->
-    <div class="col-12 col-md-4 d-flex align-items-center justify-content-center p-4">
+    <div class="col-12 col-md-4 d-flex align-items-center justify-content-center p-2">
         <form style="width: 100%;">
             <!-- Logo -->
             <div class="text-center mb-4 d-flex flex-column justify-content-center align-items-center">
                 <img src="assets/images/logo-dermaclinica.png" alt="Logo Dermaclínica" class="img-fluid" style="max-width: 250px;">
             </div>
 
-            <!-- Campos de E-mail / CPF e Senha -->
-            <div class="mb-3">
-                <label for="emailOrCpf" class="form-label">E-mail / CPF</label>
-                <input type="text" class="form-control" id="emailOrCpf" placeholder="Digite seu E-mail ou CPF" required>
+            <!-- Campo E-mail / CPF -->
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1" style="color:#d47d48;">@</span>
+              <input type="text" class="form-control" placeholder="Digite seu E-mail ou CPF" aria-label="Username" aria-describedby="basic-addon1" required>
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="password" placeholder="Digite sua Senha" required>
+
+            <!-- Campo Senha -->
+            <div class="input-group mb-3">
+              <span class="input-group-text"><i class="fas fa-lock" style="color:#d47d48;"></i></span>
+              <input type="password" class="form-control" placeholder="Digite sua Senha" aria-label="Senha" required>
             </div>
+
+            <!--Botões-->
             <button type="submit" class="btn btn-custom w-100 mb-3">Entrar</button>
-            <button type="button" class="btn btn-custom w-100">Primeiro Acesso</button>
+            <a href="primeiro-acesso.html" class="btn btn-custom w-100">Primeiro Acesso</a>
         </form>
     </div>
 
     <!-- Carrossel -->
-    <div class="col-12 col-md-8 p-0 full-height d-flex flex-column d-none d-md-block carousel-container">
-        <div id="carouselExample" class="carousel slide flex-grow-1" data-bs-ride="carousel" data-bs-interval="3000">
-            <div class="carousel-inner h-100">
-                <div class="carousel-item active h-100">
-                    <img src="assets/images/slide-01.jpg" class="d-block w-100" alt="Imagem 1">
-                </div>
-                <div class="carousel-item h-100">
-                    <img src="assets/images/slide-02.png" class="d-block w-100" alt="Imagem 2">
-                </div>
-                <div class="carousel-item h-100">
-                    <img src="assets/images/slide-03.jpg" class="d-block w-100" alt="Imagem 3">
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Anterior</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Próximo</span>
-            </button>
+    <div id="carouselExampleIndicators" class="carousel slide d-none d-md-block" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
         </div>
-    </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="assets/images/slide-01.jpg" class="d-block w-100" alt="slide-01.jpg">
+          </div>
+          <div class="carousel-item">
+            <img src="assets/images/slide-02.png" class="d-block w-100" alt="slide-02.jpg">
+          </div>
+          <div class="carousel-item">
+            <img src="assets/images/slide-03.jpg" class="d-block w-100" alt="slide-03.jpg">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
 </div>
 
 <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
