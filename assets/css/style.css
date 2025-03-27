@@ -35,6 +35,21 @@ body {
     /* Efeito de sombra com a mesma cor clara */
 }
 
+ /* Adiciona a altura total da página para o carrossel */
+ #carouselExampleIndicators {
+    height: 100vh; /* 100% da altura da janela */
+    object-fit: cover; /* Faz as imagens se ajustarem à altura sem distorcer */
+}
+
+.carousel-inner {
+    height: 100%; /* Assegura que o carrossel preenche a altura */
+}
+
+.carousel-item img {
+    height: 100%; /* Faz as imagens se ajustarem à altura do carrossel */
+    object-fit: cover; /* Ajusta a imagem para cobrir a área sem distorção */
+}
+
 @media (max-width: 768px) {
 
     /* Ajustes para telas menores */
