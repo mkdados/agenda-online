@@ -38,12 +38,12 @@
 
                 <!-- Nascimento -->
                 <div class="col-12">
-                    <input type="date" id="dataNascimento" name="dataNascimento" class="form-control" placeholder="Data de Nascimento" required>
+                    <input type="text" id="dataNascimento" name="dataNascimento" class="form-control" placeholder="Data de Nascimento" required>
                 </div>
 
-                <!-- Nascimento -->
+                <!-- Celular -->
                 <div class="col-12">
-                    <input type="text" id="celular" name="celular" class="form-control" placeholder="(99) 99999-9999" required>
+                    <input type="text" id="celular" name="celular" class="form-control" placeholder="Celular" required>
                 </div>
 
                  <!-- E-mail -->
@@ -76,6 +76,7 @@
 <script>
     $(document).ready(function() {
         $('#cpf').inputmask('999.999.999-99'); // Aplica a máscara de CPF
+        $('#dataNascimento').inputmask('99/99/9999'); // Aplica a máscara de data de nascimento
         $('#celular').inputmask('(99) 99999-9999'); // Aplica a máscara de celular
     });
 </script>
