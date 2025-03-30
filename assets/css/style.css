@@ -35,10 +35,11 @@ body {
     /* Efeito de sombra com a mesma cor clara */
 }
 
- /* Adiciona a altura total da página para o carrossel */
- #carouselExampleIndicators {
+ /* Carrossel */
+
+ #carouselLogin { 
+    flex: auto;
     height: 100vh; /* 100% da altura da janela */
-    object-fit: cover; /* Faz as imagens se ajustarem à altura sem distorcer */
 }
 
 .carousel-inner {
