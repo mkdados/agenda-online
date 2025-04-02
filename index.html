@@ -13,7 +13,7 @@
 <body>
 
 <div class="container-fluid d-flex flex-column flex-md-row full-height">
-  
+
     <!-- Login -->
     <div class="col-12 col-md-4 d-flex align-items-center justify-content-center p-2">
         <form style="width: 100%;">
@@ -73,5 +73,26 @@ fetch('http://localhost:3000/users')
   });
 
 </script> -->
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let scripts = document.querySelectorAll('script[src], link[rel="stylesheet"]');
+
+    scripts.forEach(el => {
+        let url = new URL(el.href || el.src, window.location.href);
+        url.searchParams.set('v', Date.now()); // Adiciona um timestamp para forçar atualização
+        
+        if (el.tagName === 'SCRIPT') {
+            let newScript = document.createElement("script");
+            newScript.src = url.href;
+            newScript.defer = true;
+            el.parentNode.replaceChild(newScript, el);
+        } else if (el.tagName === 'LINK') {
+            el.href = url.href;
+        }
+    });
+});
+
+</script>
 </body>
 </html>
