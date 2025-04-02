@@ -8,49 +8,53 @@ body {
 
 .full-height {
     height: 100vh;
-    /* Garante que a div ocupe toda a tela */
 }
 
-/* Estilo personalizado para os botões */
-.btn-custom {
+/* Estilo Texto */
+.text-color-padrao{
+    color:#d47d48;
+}
+
+/* Titulo Hr */
+.titulo-hr{
+    background-color:#c25b1c;
+    height: 3px !important;
+}
+
+/* Botão Padrão */
+.btn-padrao {
     background-color: #d47d48;
-    /* Cor de fundo personalizada */
     color: white;
-    /* Texto branco */
     border: none;
-    /* Remove a borda padrão */
+
+    &:hover {
+        background-color: #b8683d;
+        color: #d47d48;
+    }
 }
 
-.btn-custom:hover {
-    background-color: #b8683d;
-    /* Cor do botão ao passar o mouse */
-    color: #d47d48;
-}
-
-/* Estilo para o campo com foco (focus) */
+/* Formulário */
 .form-control:focus {
     border-color: #f1b49c;
-    /* Cor mais clara de #d47d48 */
     box-shadow: 0 0 0 0.25rem rgba(244, 180, 156, 0.5);
-    /* Efeito de sombra com a mesma cor clara */
 }
 
  /* Carrossel */
-
- #carouselLogin { 
+ .carousel { 
     flex: auto;
-    height: 100vh; /* 100% da altura da janela */
+    height: 100vh;
+
+    & .carousel-inner {
+        height: 100%;
+    }
+
+    & .carousel-item img {
+        height: 100%;
+        object-fit: cover;
+    }
 }
 
-.carousel-inner {
-    height: 100%; /* Assegura que o carrossel preenche a altura */
-}
-
-.carousel-item img {
-    height: 100%; /* Faz as imagens se ajustarem à altura do carrossel */
-    object-fit: cover; /* Ajusta a imagem para cobrir a área sem distorção */
-}
-
+/* Media query */
 @media (max-width: 768px) {
 
     /* Ajustes para telas menores */

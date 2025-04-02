@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/images/fave-icon.png" type="image/x-icon">
+    <title>Esqueci a Senha</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/fonts/font-lato.css" rel="stylesheet">    
+</head>
+<body>
+
+    <div class="container-fluid d-flex flex-column flex-md-row full-height">
+        <div class="col-12 col-md-4 d-flex align-items-center justify-content-center p-2">
+            <form class="row g-3 mb-3">
+
+                <!-- Logo -->
+                <div class="text-center d-flex flex-column justify-content-center align-items-center">
+                    <img src="assets/images/logo-dermaclinica.png" alt="Logo Dermaclínica" class="img-fluid" style="max-width: 150px;">
+                </div>
+
+                <!-- Campo E-mail / CPF -->
+                <div class="input-group mb-3">
+                    <span class="input-group-text text-color-padrao" id="basic-addon1">@</span>
+                    <input type="text" class="form-control" placeholder="Digite seu E-mail ou CPF" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off" required>
+                </div>
+
+                
+                <!--Botões-->
+                <div class="col-12">
+                    <button type="submit" class="btn btn-padrao w-100 mb-3">Confirmar</button>
+                    <a href="index.html" class="btn btn-padrao w-100">Cancelar</a>
+                </div>
+            </form>    
+        </div> 
+        
+        <!-- Carrossel -->
+        <div id="carousel-login"></div>
+        
+    </div>
+   
+<script src="assets/jquery/jquery-3.7.1.js"></script>   
+<script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+<script src="assets/jquery/jquery.inputmask.min.js"></script>
+<script src="assets/js/funcoes.js"></script>
+</body>
+</html>

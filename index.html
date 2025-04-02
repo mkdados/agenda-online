@@ -13,6 +13,7 @@
 <body>
 
 <div class="container-fluid d-flex flex-column flex-md-row full-height">
+  
     <!-- Login -->
     <div class="col-12 col-md-4 d-flex align-items-center justify-content-center p-2">
         <form style="width: 100%;">
@@ -23,51 +24,54 @@
 
             <!-- Campo E-mail / CPF -->
             <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1" style="color:#d47d48;">@</span>
-              <input type="text" class="form-control" placeholder="Digite seu E-mail ou CPF" aria-label="Username" aria-describedby="basic-addon1" required>
+              <span class="input-group-text text-color-padrao" id="basic-addon1">@</span>
+              <input type="text" class="form-control" placeholder="Digite seu E-mail ou CPF" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off" required>
             </div>
 
             <!-- Campo Senha -->
             <div class="input-group mb-3">
-              <span class="input-group-text"><i class="fas fa-lock" style="color:#d47d48;"></i></span>
-              <input type="password" class="form-control" placeholder="Digite sua Senha" aria-label="Senha" required>
+              <span class="input-group-text text-color-padrao"><i class="fas fa-lock"></i></span>
+              <input type="password" class="form-control" placeholder="Digite sua Senha" aria-label="Senha" autocomplete="off" required>
             </div>
 
+            <!-- Campo Esqueci a senha -->
+            <a href="esquecia-a-senha.html" class="d-block w-100 mb-4 text-decoration-none text-color-padrao">Esquecia a senha</a>
+
             <!--Botões-->
-            <button type="submit" class="btn btn-custom w-100 mb-3">Entrar</button>
-            <a href="primeiro-acesso.html" class="btn btn-custom w-100">Primeiro Acesso</a>
+            <button type="submit" class="btn btn-padrao w-100 mb-3">Entrar</button>
+            <a href="primeiro-acesso.html" class="btn btn-padrao w-100">Primeiro Acesso</a>
         </form>
     </div>
 
     <!-- Carrossel -->
-    <div id="carouselLogin" class="carousel slide d-none d-md-block" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-          <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-          <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="1" aria-label="Slide 2"></button>
-          <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="2" aria-label="Slide 3"></button>
-        </div>
-        <div class="carousel-inner">
-          <div class="carousel-item h-100 active">
-            <img src="assets/images/slide-01.jpg" class="d-block w-100" alt="slide-01.jpg">
-          </div>
-          <div class="carousel-item h-100">
-            <img src="assets/images/slide-02.png" class="d-block w-100" alt="slide-02.jpg">
-          </div>
-          <div class="carousel-item h-100">
-            <img src="assets/images/slide-03.jpg" class="d-block w-100" alt="slide-03.jpg">
-          </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselLogin" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselLogin" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
+    <div id="carousel-login"></div>
+
 </div>
 
+<script src="assets/jquery/jquery-3.7.1.js"></script>   
 <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+<script src="assets/jquery/jquery.inputmask.min.js"></script>
+<script src="assets/js/funcoes.js"></script>
+<!-- <script>
+
+fetch('http://localhost:3000/users')
+  .then(response => {
+      if (response.status === 404) {
+          console.log("Usuário não encontrado.");
+          return null; // Retorna null e evita chamar .json()
+      }
+      if (!response.ok) {
+          throw new Error(`Erro HTTP! Status: ${response.status}`);
+      }
+      return response.json();
+  })
+  .then(data => {
+      if (data) console.log(data);
+  })
+  .catch(error => {
+      console.log("Erro ao buscar os dados:", error.message);
+  });
+
+</script> -->
 </body>
 </html>

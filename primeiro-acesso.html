@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
-    <link href="assets/fonts/font-lato.css" rel="stylesheet">    
+    <link href="assets/fonts/font-lato.css" rel="stylesheet">      
 </head>
 <body>
 
@@ -23,90 +23,62 @@
 
                 <!-- Título -->
                 <div class="col-12">
-                    <h4 style="color:#d47d48">Primeiro Acesso</h4><hr style="background-color:#c25b1c;height: 3px;">    
+                    <h4 class="text-color-padrao">Primeiro Acesso</h4><hr class="titulo-hr">    
                 </div>                
 
                 <!-- CPF -->
                 <div class="col-12">
-                    <input type="text" id="cpf" name="cpf" class="form-control" placeholder="Digite seu CPF" required>
+                    <input type="text" id="cpf" name="cpf" class="form-control" placeholder="Digite seu CPF" autocomplete="off" required>
                 </div>    
 
                 <!-- Nome Completo -->
                 <div class="col-12">
-                    <input type="text" id="nomeCompleto" name="nomeCompleto" class="form-control" placeholder="Nome Completo" required>
+                    <input type="text" id="nomeCompleto" name="nomeCompleto" class="form-control" placeholder="Nome Completo" autocomplete="off" required>
                 </div>
 
                 <!-- Nascimento -->
                 <div class="col-12">
-                    <input type="text" id="dataNascimento" name="dataNascimento" class="form-control" placeholder="Data de Nascimento" required>
+                    <input type="text" id="dataNascimento" name="dataNascimento" class="form-control" placeholder="Data de Nascimento" autocomplete="off" required>
                 </div>
 
                 <!-- Celular -->
                 <div class="col-12">
-                    <input type="text" id="celular" name="celular" class="form-control" placeholder="Celular" required>
+                    <input type="text" id="celular" name="celular" class="form-control" placeholder="Celular" autocomplete="off" required>
                 </div>
 
                  <!-- E-mail -->
                  <div class="col-12">
-                    <input type="email" id="email" name="email" class="form-control" placeholder="E-mail" required>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="E-mail" autocomplete="off" required>
                 </div>
 
                 <!-- Senha -->
                 <div class="col-12">
-                    <input type="password" id="senha" name="senha" class="form-control" placeholder="Senha" required>
+                    <input type="password" id="senha" name="senha" class="form-control" placeholder="Senha" autocomplete="off" required>
                 </div>
 
                 <!-- Confirmar Senha -->
                 <div class="col-12">
-                    <input type="password" id="confirmarSenha" name="confirmarSenha" class="form-control" placeholder="Confirmar Senha" required>
+                    <input type="password" id="confirmarSenha" name="confirmarSenha" class="form-control" placeholder="Confirmar Senha" autocomplete="off" required>
                 </div>
 
                 <!--Botões-->
                 <div class="col-12">
-                    <button type="submit" class="btn btn-custom w-100 mb-3">Confirmar Cadastro</button>
-                    <a href="index.html" class="btn btn-custom w-100">Cancelar</a>
+                    <button type="submit" class="btn btn-padrao w-100 mb-3">Confirmar Cadastro</button>
+                    <a href="index.html" class="btn btn-padrao w-100">Cancelar</a>
                 </div>
             </form>    
         </div> 
         
         <!-- Carrossel -->
-        <div id="carouselLogin" class="carousel slide d-none d-md-block" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="1" aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="2" aria-label="Slide 3"></button>
-            </div>
-            <div class="carousel-inner">
-            <div class="carousel-item h-100 active">
-                <img src="assets/images/slide-01.jpg" class="d-block w-100" alt="slide-01.jpg">
-            </div>
-            <div class="carousel-item h-100">
-                <img src="assets/images/slide-02.png" class="d-block w-100" alt="slide-02.jpg">
-            </div>
-            <div class="carousel-item h-100">
-                <img src="assets/images/slide-03.jpg" class="d-block w-100" alt="slide-03.jpg">
-            </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselLogin" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselLogin" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-            </button>
-        </div>
+        <div id="carousel-login"></div>
+        
     </div>
    
 <script src="assets/jquery/jquery-3.7.1.js"></script>   
 <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#cpf').inputmask('999.999.999-99'); // Aplica a máscara de CPF
-        $('#dataNascimento').inputmask('99/99/9999'); // Aplica a máscara de data de nascimento
-        $('#celular').inputmask('(99) 99999-9999'); // Aplica a máscara de celular
-    });
-</script>
+<script src="assets/jquery/jquery.inputmask.min.js"></script>
+<script src="assets/js/funcoes.js"></script>
+<script src="assets/js/primeiro-acesso.js"></script>
+
 </body>
 </html>
