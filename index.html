@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <link rel="shortcut icon" href="assets/images/fave-icon.png" type="image/x-icon">
     <title>Agenda Online - Dermaclínica</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -74,25 +77,5 @@ fetch('http://localhost:3000/users')
 
 </script> -->
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    let scripts = document.querySelectorAll('script[src], link[rel="stylesheet"]');
-
-    scripts.forEach(el => {
-        let url = new URL(el.href || el.src, window.location.href);
-        url.searchParams.set('v', Date.now()); // Adiciona um timestamp para forçar atualização
-        
-        if (el.tagName === 'SCRIPT') {
-            let newScript = document.createElement("script");
-            newScript.src = url.href;
-            newScript.defer = true;
-            el.parentNode.replaceChild(newScript, el);
-        } else if (el.tagName === 'LINK') {
-            el.href = url.href;
-        }
-    });
-});
-
-</script>
 </body>
 </html>
