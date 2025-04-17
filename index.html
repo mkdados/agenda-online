@@ -49,6 +49,7 @@
       }
     }
 
+    /* Ajustes responsivos */
     .container-fluid {
       max-width: 100%;
       padding-left: 0;
@@ -56,49 +57,50 @@
     }
 
     .login-box {
-      max-width: 400px; /* Definindo um limite de largura para o formulário de login */
+      max-width: 400px; /* Limite de largura do formulário de login */
       width: 100%;
       margin: 0 auto;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     /* Ajustes para telas pequenas */
-@media (max-width: 767px) {
-  .login-box {
-    padding: 20px;
-    box-sizing: border-box;
-  }
+    @media (max-width: 767px) {
+      .login-box {
+        padding: 15px;
+        box-sizing: border-box;
+      }
 
-  .carousel-inner img {
-    width: 100%;
-    height: auto;
-  }
+      .carousel-inner img {
+        width: 100%;
+        height: auto;
+      }
 
-  .container-fluid {
-    padding-left: 0;
-    padding-right: 0;
-  }
-}
+      .container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+      }
 
-/* Ajuste para telas ainda menores (celulares em modo retrato) */
-@media (max-width: 576px) {
-  .login-box {
-    padding: 15px;
-    box-sizing: border-box;
-  }
+      #carouselLogin {
+        display: none; /* Ocultar carrossel em telas pequenas */
+      }
+    }
 
-  .input-group-text {
-    font-size: 14px; /* Ajuste do tamanho da fonte do ícone */
-  }
+    /* Ajuste para telas ainda menores (celulares em modo retrato) */
+    @media (max-width: 576px) {
+      .input-group-text {
+        font-size: 14px; /* Ajuste do tamanho da fonte do ícone */
+      }
 
-  .form-control {
-    font-size: 14px; /* Ajuste do tamanho da fonte dos inputs */
-  }
+      .form-control {
+        font-size: 14px; /* Ajuste do tamanho da fonte dos inputs */
+      }
 
-  .btn-padrao {
-    padding: 10px;
-    font-size: 16px; /* Ajuste do botão */
-  }
-}
+      .btn-padrao {
+        padding: 10px;
+        font-size: 16px; /* Ajuste do botão */
+      }
+    }
   </style>
 </head>
 <body>
