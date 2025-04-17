@@ -54,7 +54,7 @@ body {
     padding: 30px;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0,0,0,0.05); /* pode suavizar também o shadow */
-    max-width: 500px;
+    /* max-width: 500px; */
     width: 100%;
     margin: 0 auto;
   }
