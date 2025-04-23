@@ -1,3 +1,10 @@
+$(document).ready(function() {
+  $('#cpf').inputmask('999.999.999-99'); // Aplica a máscara de CPF
+  $('#dataNascimento').inputmask('99/99/9999'); // Aplica a máscara de data de nascimento
+  $('#celular').inputmask('(99) 99999-9999'); // Aplica a máscara de celular
+});
+
+
 // Função para fazer o login usando uma API
   document.getElementById('loginForm').addEventListener('submit', function (event) {
     event.preventDefault(); // Impede o envio padrão do formulário
