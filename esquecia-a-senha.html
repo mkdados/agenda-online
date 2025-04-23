@@ -1,79 +1,98 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="assets/images/fave-icon.png" type="image/x-icon">
-    <title>Esqueci a Senha</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
-    <link href="assets/fonts/font-lato.css" rel="stylesheet">    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="shortcut icon" href="assets/images/fave-icon.png" type="image/x-icon">
+  <title>Esqueci a Senha</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/fonts/font-lato.css" rel="stylesheet">
+  <link href="assets/fonts/montserrat.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert2 CDN -->
 </head>
 <body>
 
-    <div class="container-fluid d-flex flex-column flex-md-row full-height">
-        <div class="col-12 col-md-4 d-flex align-items-center justify-content-center p-2">
-            <form class="row g-3 mb-3">
+<div id="loader">
+  <div class="spinner"></div>
+</div>
 
-                <!-- Logo -->
-                <div class="text-center d-flex flex-column justify-content-center align-items-center">
-                    <img src="assets/images/logo-dermaclinica.png" alt="Logo Dermaclínica" class="img-fluid" style="max-width: 150px;">
-                </div>
-
-                <!-- Título -->
-                <div class="col-12">
-                    <h4 class="text-color-padrao">Esqueci a Senha</h4><hr class="titulo-hr">    
-                </div>  
-
-                <!-- Campo E-mail / CPF -->
-                <div class="input-group mb-3">
-                    <span class="input-group-text text-color-padrao" id="basic-addon1">@</span>
-                    <input type="text" class="form-control" placeholder="Digite seu E-mail ou CPF" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off" required>
-                </div>
-
-                
-                <!--Botões-->
-                <div class="col-12">
-                    <button type="submit" class="btn btn-padrao w-100 mb-3">Confirmar</button>
-                    <a href="index.html" class="btn btn-padrao w-100">Cancelar</a>
-                </div>
-            </form>    
-        </div> 
-        
-        <!-- Carrossel -->
-        <div id="carouselLogin" class="carousel slide d-none d-md-block" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-              <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-              <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="1" aria-label="Slide 2"></button>
-              <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="2" aria-label="Slide 3"></button>
-            </div>
-            <div class="carousel-inner">
-              <div class="carousel-item h-100 active">
-                <img src="assets/images/slide-01.jpg" class="d-block w-100" alt="slide-02.jpg">
-              </div>
-              <div class="carousel-item h-100">
-                <img src="assets/images/slide-02.png" class="d-block w-100" alt="slide-02.jpg">
-              </div>
-              <div class="carousel-item h-100">
-                <img src="assets/images/slide-03.jpg" class="d-block w-100" alt="slide-03.jpg">
-              </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselLogin" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselLogin" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
+<div class="container-fluid d-flex flex-column flex-md-row h-100">
+  <!-- Login -->
+  <div class="col-12 col-md-6 d-flex align-items-center justify-content-center">
+    <div class="login-box w-100">
+      <form id="loginForm" class="w-100">
+        <!-- Logo -->
+        <div class="text-center mb-4 d-flex flex-column justify-content-center align-items-center">
+          <img src="assets/images/logo-dermaclinica.png" alt="Logo Dermaclínica" class="img-fluid" style="max-width: 150px;">
         </div>
 
+        <!-- Boas Vindas -->
+        <div class="flex flex-col space-y-1.5 p-6">
+          <h1 class="bem-vindo">Recuperar senha</h1>
+          <div class="text-sm text-muted-foreground mb-4">Informe seu e-mail para receber instruções de recuperação de senha</div>
+        </div>
+
+        <!-- Campo E-mail / CPF -->
+        <div class="mb-3">
+          <label for="emailCpf" class="form-label text-sm" style="font-weight: 800;">E-mail / CPF</label>
+          <div class="input-group">
+            <span class="input-group-text text-color-padrao" id="basic-addon1">@</span>
+            <input type="text" id="emailCpf" class="form-control" placeholder="seu@email.com" aria-label="E-mail ou CPF" aria-describedby="basic-addon1" autocomplete="off" required>
+          </div>
+        </div>
+
+        <!-- Botões -->
+        <button type="submit" class="btn btn-padrao w-100 mb-3">Enviar instruções</button>
+        
+        <!-- Cadastre-se -->
+        <p class="text-sm text-muted-foreground text-center">
+          Lembrou sua senha?
+          <a class="text-decoration-none text-color-padrao" href="index.html">Voltar para o login</a>
+        </p>
+        
+      </form>
     </div>
-   
+  </div>
+
+  <!-- Carrossel -->
+  <div id="carouselLogin" class="carousel slide d-none d-md-block" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item h-100 active">
+        <img src="assets/images/slide-01.jpg" class="d-block w-100" alt="slide-01.jpg">
+      </div>
+      <div class="carousel-item h-100">
+        <img src="assets/images/slide-02.png" class="d-block w-100" alt="slide-02.jpg">
+      </div>
+      <div class="carousel-item h-100">
+        <img src="assets/images/slide-03.jpg" class="d-block w-100" alt="slide-03.jpg">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselLogin" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselLogin" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+
+</div>
+
 <script src="assets/jquery/jquery-3.7.1.js"></script>   
 <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
 <script src="assets/jquery/jquery.inputmask.min.js"></script>
 <script src="assets/js/funcoes.js"></script>
+
 </body>
 </html>

@@ -8,11 +8,10 @@ body {
     overflow-y: auto; /* Permite o scroll */
 }
 
-a[href="primeiro-acesso.html"] {
+a{
     position: relative;
     z-index: 9999;
-    background: yellow; /* só para testar se ele está visível */
-  }
+}
   
 
 /* Estilo Texto */
@@ -38,6 +37,8 @@ a[href="primeiro-acesso.html"] {
     border: none;
     padding: 0.6rem;
     border-radius: 1rem;
+    position: relative;
+    z-index: 9999;
 
     &:hover {
         background-color: #b8683d;
