@@ -7,10 +7,6 @@ body {
     font-size: .875rem;
     overflow-y: auto; /* Permite o scroll */
 }
-/* 
-.full-height {
-    height: 100%;
-}  */
 
 /* Estilo Texto */
 .text-color-padrao{
@@ -67,7 +63,7 @@ body {
     max-width: 450px; /* Limite de largura do formulário de login */
     width: 100%;
     margin: 20px;
-    padding: 30px;
+    padding: 20px;
     box-sizing: border-box;
   }
 
@@ -134,14 +130,9 @@ body {
     }
 
     .login-box {
-        margin: 20px 20px;
         padding: 15px;
         box-sizing: border-box;
     }
-
-    /* .full-height {
-        height: 50vh;
-    } */
 
     .carousel-inner img {
         width: 100%;
