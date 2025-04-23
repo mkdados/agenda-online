@@ -14,108 +14,6 @@
   <link href="assets/fonts/font-lato.css" rel="stylesheet">
   <link href="assets/fonts/montserrat.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert2 CDN -->
-  <style>
-    /* Estilo do loader */
-    #loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    /* Estilo do spinner (carregando) */
-    .spinner {
-      border: 4px solid rgba(255, 255, 255, 0.3); /* Cor de fundo */
-      border-top: 4px solid #ffffff; /* Cor da parte visível do spinner */
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-    }
-
-    /* Animação do spinner */
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Ajustes responsivos */
-    .container-fluid {
-      max-width: 100%;
-      padding-left: 0;
-      padding-right: 0;
-    }
-
-    .login-box {
-      max-width: 400px; /* Limite de largura do formulário de login */
-      width: 100%;
-      margin: 0 auto;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .form-control{
-      padding: 0.6rem;
-      border-radius: 1rem;
-    }
-
-    .input-group-text{
-      border-radius: 1rem;
-    }
-
-    /* Ajustes para telas pequenas */
-    @media (max-width: 767px) {
-      .login-box {
-        padding: 15px;
-        box-sizing: border-box;
-      }
-
-      .carousel-inner img {
-        width: 100%;
-        height: auto;
-      }
-
-      .container-fluid {
-        padding-left: 0;
-        padding-right: 0;
-      }
-
-      #carouselLogin {
-        display: none; /* Ocultar carrossel em telas pequenas */
-      }
-    }
-
-    /* Ajuste para telas ainda menores (celulares em modo retrato) */
-    @media (max-width: 576px) {
-
-      .login-box {
-        margin: 20px 20px; /* Reduz ainda mais em celulares menores */
-      }
-      
-      .input-group-text {
-        font-size: 14px; /* Ajuste do tamanho da fonte do ícone */
-      }
-
-      .form-control {
-        font-size: 14px; /* Ajuste do tamanho da fonte dos inputs */
-      }
-
-      .btn-padrao {
-        padding: 10px;
-        font-size: 16px; /* Ajuste do botão */
-      }
-    }
-  </style>
 </head>
 <body>
 
@@ -123,7 +21,7 @@
   <div class="spinner"></div>
 </div>
 
-<div class="container-fluid d-flex flex-column flex-md-row full-height">
+<div class="container-fluid d-flex flex-column flex-md-row h-100">
   <!-- Login -->
   <div class="col-12 col-md-6 d-flex align-items-center justify-content-center">
     <div class="login-box w-100">
@@ -135,7 +33,7 @@
 
         <!-- Boas Vindas -->
         <div class="flex flex-col space-y-1.5 p-6">
-          <h1 class="bem-vindo">Bem-vindo(a)</h1>
+          <h1 class="bem-vindo">Agenda Online</h1>
           <div class="text-sm text-muted-foreground mb-4">Faça login para acessar sua conta e gerenciar seus agendamentos</div>
         </div>
 
@@ -207,71 +105,6 @@
 <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
 <script src="assets/jquery/jquery.inputmask.min.js"></script>
 <script src="assets/js/funcoes.js"></script>
-
-<script>
-  // Função para fazer o login usando uma API
-  document.getElementById('loginForm').addEventListener('submit', function (event) {
-    event.preventDefault(); // Impede o envio padrão do formulário
-    
-    // Exibe o loader
-    document.getElementById('loader').style.display = 'flex';
-
-    // Obtendo os valores dos campos
-    const emailCpf = document.getElementById('emailCpf').value;
-    const password = document.getElementById('password').value;
-    
-    // Validação simples de entrada
-    if (!emailCpf || !password) {
-      // Usando SweetAlert2 para exibir uma mensagem de erro
-      Swal.fire({
-        icon: 'error',
-        title: 'Campos inválidos',
-        text: 'Por favor, preencha todos os campos.',
-      });
-      document.getElementById('loader').style.display = 'none'; // Esconde o loader se os campos não estiverem preenchidos
-      return;
-    }
-
-    // Fazendo a requisição para a API
-    fetch('http://localhost:3000/users/1', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      // Esconde o loader após a resposta
-      document.getElementById('loader').style.display = 'none';
-
-      if (data.email == emailCpf) {
-        // Exibe um alerta de sucesso usando SweetAlert2
-        Swal.fire({
-          icon: 'success',
-          title: 'Login bem-sucedido',
-          text: 'Você foi logado com sucesso.',
-        });
-      } else {
-        // Exibe um alerta de erro usando SweetAlert2
-        Swal.fire({
-          icon: 'error',
-          title: 'Credenciais inválidas',
-          text: 'Tente novamente.',
-        });
-      }
-    })
-    .catch(error => {
-      // Esconde o loader após erro
-      document.getElementById('loader').style.display = 'none';
-      // Exibe um alerta de erro usando SweetAlert2
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro',
-        text: 'Ocorreu um erro. Tente novamente.',
-      });
-    });
-  });
-</script>
 
 </body>
 </html>
