@@ -28,42 +28,45 @@ $(document).ready(function() {
       return;
     }
 
-    // Fazendo a requisição para a API
-    fetch('http://localhost:3000/users/1', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      // Esconde o loader após a resposta
-      document.getElementById('loader').style.display = 'none';
+    window.location.href = "home.html";
 
-      if (data.email == emailCpf) {
-        // Exibe um alerta de sucesso usando SweetAlert2
-        Swal.fire({
-          icon: 'success',
-          title: 'Login bem-sucedido',
-          text: 'Você foi logado com sucesso.',
-        });
-      } else {
-        // Exibe um alerta de erro usando SweetAlert2
-        Swal.fire({
-          icon: 'error',
-          title: 'Credenciais inválidas',
-          text: 'Tente novamente.',
-        });
-      }
-    })
-    .catch(error => {
-      // Esconde o loader após erro
-      document.getElementById('loader').style.display = 'none';
-      // Exibe um alerta de erro usando SweetAlert2
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro',
-        text: 'Ocorreu um erro. Tente novamente.',
-      });
-    });
+    // // Fazendo a requisição para a API
+    // fetch('http://localhost:3000/users/1', {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //   // Esconde o loader após a resposta
+    //   document.getElementById('loader').style.display = 'none';
+
+    //   if (data.email == emailCpf) {
+    //     // Exibe um alerta de sucesso usando SweetAlert2
+    //     Swal.fire({
+    //       icon: 'success',
+    //       title: 'Login bem-sucedido',
+    //       text: 'Você foi logado com sucesso.',
+    //     });
+    //   } else {
+    //     // Exibe um alerta de erro usando SweetAlert2
+    //     Swal.fire({
+    //       icon: 'error',
+    //       title: 'Credenciais inválidas',
+    //       text: 'Tente novamente.',
+    //     });
+    //   }
+    // })
+    // .catch(error => {
+    //   // Esconde o loader após erro
+    //   document.getElementById('loader').style.display = 'none';
+    //   // Exibe um alerta de erro usando SweetAlert2
+    //   Swal.fire({
+    //     icon: 'error',
+    //     title: 'Erro',
+    //     text: 'Ocorreu um erro. Tente novamente.',
+    //   });
+    // });
+
   });

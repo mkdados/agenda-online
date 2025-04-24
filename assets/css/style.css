@@ -7,11 +7,6 @@ body {
     font-size: .875rem;
     overflow-y: auto; /* Permite o scroll */
 }
-
-a{
-    position: relative;
-    z-index: 9999;
-}
   
 
 /* Estilo Texto */
@@ -37,8 +32,6 @@ a{
     border: none;
     padding: 0.6rem;
     border-radius: 1rem;
-    position: relative;
-    z-index: 9999;
 
     &:hover {
         background-color: #b8683d;
