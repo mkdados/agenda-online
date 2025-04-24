@@ -17,25 +17,26 @@
     }
 
     #sidebar {
-      width: 250px;
-      min-height: 100vh;
-      background-color: #f8f9fa;
-      transition: all 0.3s;
-      position: fixed;
-      top: 122px; /* altura da navbar + barra de data */
-      left: 0;
-      border-right: 1px solid #dee2e6;
-      padding-top: 1rem;
+        width: 250px;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+        border-right: 1px solid #dee2e6;
+        padding-top: 1rem;
+        position: sticky;
+        top: 122px; /* altura da navbar + barra de data */
+        align-self: flex-start;
     }
 
     #sidebar.collapsed {
       width: 60px;
     }
 
-    #sidebar .nav-link {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    #sidebar .nav-link span {
+      transition: 0.3s;
+    }
+
+    #sidebar.collapsed .nav-link span {
+      display: none;
     }
 
     #sidebar .nav-item {
@@ -49,35 +50,16 @@
     }
 
     #content {
-      margin-left: 250px;
-      transition: all 0.3s;
-      padding: 2rem;
-      flex-grow: 1;
+        margin-left: 250px;
+        transition: all 0.3s;
+        padding: 2rem;
+        flex-grow: 1;
     }
 
     #sidebar.collapsed + #content {
       margin-left: 60px;
     }
 
-    .toggle-btn {
-      position: absolute;
-      top: 10px;
-      right: -15px;
-      background: #ffffff;
-      border: 1px solid #ced4da;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      text-align: center;
-      line-height: 28px;
-      cursor: pointer;
-    }
-
-    #sidebar.collapsed .nav-link span {
-      display: none;
-    }
-
-    /* Estilo para a seção do usuário no menu lateral */
     #user-section {
       padding: 1rem;
       border-bottom: 1px solid #dee2e6;
@@ -99,10 +81,6 @@
       height: 32px;
       border-radius: 50%;
       margin-right: 10px;
-    }
-
-    #user-section .user-info p {
-      margin: 0;
     }
 
     #user-section .user-info .name {
@@ -132,8 +110,6 @@
       padding: 1rem;
       text-align: left;
       border-top: 1px solid #dee2e6;
-      position: fixed;
-      bottom: 0;
       width: 100%;
     }
 
@@ -153,17 +129,38 @@
     footer a:hover {
       text-decoration: underline;
     }
+
+    /* NOVO: Mobile Sidebar Offcanvas */
+    @media (max-width: 991.98px) {
+      #sidebar {
+        transform: translateX(-100%);
+      }
+
+      #sidebar.mobile-show {
+        transform: translateX(0);
+      }
+
+      #content {
+        margin-left: 0 !important;
+      }
+    }
   </style>
 </head>
 <body>
 
 <!-- Navbar principal -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-white p-0 m-0">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
+<nav class="navbar navbar-expand-lg navbar-light bg-white p-0 m-0">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+    <!-- NOVO: Botão hambúrguer -->
+    <button class="btn d-lg-none" onclick="toggleMobileSidebar()">
+      <i class="bi bi-list fs-3"></i>
+    </button>
+
+    <a class="navbar-brand d-flex align-items-center" href="#">
       <img src="assets/images/logo-dermaclinica-menu.png" alt="Logo" width="180" class="d-inline-block align-text-top">
       MinhaMarca
     </a>
+
     <div class="collapse navbar-collapse justify-content-end">
       <ul class="navbar-nav">
         <li class="nav-item">
@@ -180,16 +177,13 @@
 <!-- Barra de data e conta -->
 <div class="border-top border-bottom py-2" style="background-color: #d47d48">
   <div class="container-fluid d-flex justify-content-between align-items-center">
-    <div class="small text-white">
-      quarta-feira, 23 de abril de 2025 21:26
-    </div>
+    <div class="small text-white">quarta-feira, 23 de abril de 2025 21:26</div>
     <a href="#" class="text-white text-decoration-none small">Minha Conta</a>
   </div>
 </div>
 
 <!-- Menu lateral -->
 <div id="sidebar">
-  <!-- Seção do usuário -->
   <div id="user-section">
     <div class="user-info">
       <span class="flex-shrink-0">
@@ -200,11 +194,11 @@
         <p class="email">joao.silva@example.com</p>
       </div>
     </div>
-    <button class="inline-flex items-center justify-center gap-2" onclick="toggleSidebar()">
+    <button onclick="toggleSidebar()">
       <i class="bi bi-chevron-left h-4 w-4"></i>
     </button>
   </div>
- 
+
   <ul class="nav flex-column px-2">       
     <li class="nav-item mb-2">
       <a class="nav-link" href="#"><i class="bi bi-house-door me-2"></i><span>Início</span></a>
@@ -241,17 +235,21 @@
   </div>
 </footer>
 
-<!-- Bootstrap JS -->
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Script para recolher/expandir sidebar -->
 <script>
   function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
-    const icon = document.querySelector('#user-section button i'); // Seleciona o ícone de seta
+    const icon = document.querySelector('#user-section button i');
     sidebar.classList.toggle('collapsed');
     icon.classList.toggle('bi-chevron-left');
     icon.classList.toggle('bi-chevron-right');
+  }
+
+  // NOVO: Alterna menu lateral no mobile
+  function toggleMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('mobile-show');
   }
 </script>
 
