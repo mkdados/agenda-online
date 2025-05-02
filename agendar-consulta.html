@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="shortcut icon" href="assets/images/fave-icon.png" type="image/x-icon">
+  <title>Agenda Online - Agendar Consulta</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-somehash==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="assets/fonts/font-lato.css" rel="stylesheet">
+  <link href="assets/fonts/montserrat.css" rel="stylesheet">
+  <!-- Flatpickr CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" rel="stylesheet">
+
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/pt.js"></script>
+
+  <style>
+
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+        overflow-x: hidden;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    main {
+        flex-grow: 1;
+        display: flex;
+        min-height: calc(100vh - 122px - 50px); /* altura da navbar + barra laranja */
+        height: 100%;
+    }
+
+    /* Botão Padrão */
+    .btn-padrao {
+        background-color: #d47d48;
+        color: white;
+        border: none;
+        padding: 0.6rem;
+        border-radius: 1rem;
+
+        &:hover {
+            background-color: #b8683d;
+            color: #d47d48;
+        }
+    }
+
+    /* Borda e texto padrão */
+    .horario-btn {
+      border: 2px solid #d47d48;
+      color: #d47d48;
+      background-color: white;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .horario-btn:hover {
+      background-color: #f4e2d7;
+      color: #b8683d;
+    }
+
+    .horario-btn.selected {
+      background-color: #d47d48;
+      color: white;
+    }
+
+
+    /* Menu lateral */
+    #sidebar {
+        width: 250px;
+        height: 100vh;
+        background-color: #e5e5e5;
+        transition: all 0.3s ease;
+        border-right: 1px solid #d3d3d3;
+        align-self: flex-start;
+        flex-direction: column;
+    }
+
+    #sidebar.collapsed {
+      width: 60px;
+    }
+
+    #sidebar.collapsed .nav-link {
+        padding: 2px;
+        border-radius: 0;
+        text-align: center;
+        justify-content: center;
+    }
+
+    #sidebar.collapsed .nav-link span, #sidebar.collapsed p {
+        display: none;
+    }
+
+    #sidebar .nav-link {
+        display: block;
+        width: 100%;
+        padding: 6px 16px;
+        border-radius: 6px;
+        color: #6e6e78;
+    }
+
+    #sidebar .nav-link:hover {
+        color: #252525;
+    }
+
+    #sidebar .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 0px; /* Altura reduzida */
+        border-radius: 0.75rem;
+        text-wrap: nowrap;
+    }
+
+    #sidebar .nav-item span {
+        margin-left: 10px;
+    }
+
+    #sidebar .nav-link.active {
+        background-color: #d47d48;
+        color: white !important;
+        border-radius: 0.75rem;
+    }
+
+    #content {
+        transition: all 0.3s;
+        padding: 0.5rem 2rem 2rem;
+        flex-grow: 1;
+        margin-top: 0.5rem;
+    }
+
+    #sidebar.collapsed + #content {
+      margin-left: 60px;
+    }
+
+    #user-section {
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #d3d3d3;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #user-section .user-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    #user-section .user-info img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+
+    #user-section .user-info .name {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    #user-section .user-info .email {
+      font-size: 12px;
+      color: #6c757d;
+    }
+
+    #user-section button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    #sidebar.collapsed #user-section .user-info .name,
+    #sidebar.collapsed #user-section .user-info .email {
+      display: none;
+    }
+
+    footer {
+      background-color: #232325;
+      padding: 1rem;
+      text-align: left;
+      border-top: 1px solid #dee2e6;
+      width: 100%;
+    }
+
+    footer .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #ffffff;
+    }
+
+    footer a {
+      color: #ffffff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Estilo para mobile */
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Escurecer o fundo */
+      z-index: 998;
+    }
+
+    /* Forms */
+    .form-check-input[type="radio"] {
+      border: 2px solid #d47d48;
+    }
+
+    .form-check-input[type="radio"]:checked {
+      background-color: #d47d48;
+      border-color: #d47d48;
+    }
+
+    .custom-select-unidade{
+      border: 1px solid #cccccc;
+      border-radius: 0.75rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      color: #6e6e78;
+    }
+
+    .custom-select-unidade:focus {
+      border-color: #d47d48;
+      box-shadow: 0 0 0 0.2rem rgba(212, 125, 72, 0.25);
+    }
+
+    /* Calendario */
+    .flatpickr-calendar{
+      background-color: #ffffff !important;
+      border-radius: 0.75rem !important;
+      border: 1px solid #d3d3d3 !important;
+      padding: 1rem !important;  
+      width: auto !important; /* Largura automática */
+      display: inline-block !important; /* Faz o calendário ocupar apenas a largura necessária */
+      box-sizing: border-box !important;
+    }
+
+    .flatpickr-day{
+      border-color: #cccccc !important;
+      width: calc(100% / 7) !important; /* Ajusta a largura de cada célula de dia para 1/7 do calendário */
+      text-align: center !important;
+      box-sizing: border-box !important;
+      margin-bottom: 0.1rem !important;
+    }
+
+    /* Ajuste quando o calendário estiver com muitos dias */
+    .flatpickr-weekday {
+      text-align: center;
+      width: 100%;
+    }
+
+    .flatpickr-day.selected{
+      background-color: #d47d48 !important;
+      color: white !important;
+    }  
+
+    .flatpickr-day.flatpickr-disabled {
+      color: #b4b4b4 !important;     /* texto cinza claro */
+      background: #d3d3d3 !important; /* fundo quase branco */    
+    }
+
+    .flatpickr-day.flatpickr-disabled:hover {
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+      
+    /* Estilo para o campo de data */
+    #calendar {
+      cursor: pointer;
+    }
+
+    /* Estilo para o indicador de etapas */
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      padding: 0 1rem;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .step-indicator .step {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      font-weight: 600;
+      color: #999;
+      border-bottom: 4px solid transparent;
+    }
+
+    .step-indicator .step.active {
+      color: #d47d48;
+      border-bottom: 4px solid #d47d48;
+    }
+
+
+    /* Estilo para dispositivos móveis */
+    @media (max-width: 767.98px) {
+      #sidebar {
+        transform: translateX(-100%);        
+        position: fixed;
+        z-index: 999;        
+        top: 0px;
+      }
+
+      #sidebar.mobile-show {
+        transform: translateX(0);
+      }
+
+      #content {
+        margin-left: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Overlay de fundo escurecido -->
+<div id="overlay"></div>
+
+<!-- Navbar principal -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white p-0 m-0">
+  <div class="container-fluid d-flex align-items-center justify-content-between" style="padding-left: 2rem;">
+    <button class="btn d-lg-none" onclick="toggleMobileSidebar()">
+      <i class="bi bi-list fs-3"></i>
+    </button>
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img src="assets/images/logo-dermaclinica-menu.png" alt="Logo" width="180" class="d-inline-block align-text-top">
+    </a>
+  </div>
+</nav>
+
+<!-- Barra de data e conta -->
+<div class="border-top border-bottom" style="background-color: #d47d48;padding-top:.75rem; padding-bottom:.75rem;">
+  <div class="container-fluid d-flex justify-content-between align-items-center" style="padding-left: 2rem;">
+    <div class="small text-white"><i class="bi bi-calendar me-2"></i> quarta-feira, 23 de abril de 2025 <i class="bi bi-clock mx-2"></i> 21:26</div>
+    <a href="#" class="text-white text-decoration-none small">Minha Conta</a>
+  </div>
+</div>
+
+<!-- Menu lateral -->
+<main class="d-flex flex-grow-1">
+    <div id="sidebar">
+        <div id="user-section">
+            <div class="d-flex justify-content-between align-items-center w-100">
+            <div class="user-info d-flex align-items-center">
+                <div class="avatar-circle me-3">JS</div>
+                <div>
+                <p class="name mb-0">João Silva</p>
+                <p class="email mb-0">joao.silva@example.com</p>
+                </div>
+            </div>
+            <button onclick="toggleSidebar()">
+                <i class="bi bi-chevron-left h-4 w-4"></i>
+            </button>
+            </div>
+        </div>
+
+    <ul class="nav flex-column p-2">  
+        <p class="text-sm text-muted px-2 py-1">Menu Principal</p>     
+        <li class="nav-item mb-2">
+            <a class="nav-link" href="home.html"><i class="bi bi-house-door"></i><span style="font-size:0.9rem">Meus Agendamentos</span></a>
+        </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link active" href="agendar-consulta.html"><i class="bi bi-calendar"></i><span style="font-size:0.9rem">Agendar Consulta</span></a>
+        </li>
+        <li class="nav-item mb-2">
+        <a class="nav-link" href="index.html"><i class="bi bi-box-arrow-right"></i><span style="font-size:0.9rem">Sair</span></a>
+        </li>
+    </ul>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div id="content">
+      <div id="content">
+        <h1>Agendar Consultas</h1>
+      
+        <!-- Indicador de Etapas -->
+        <div class="step-indicator mb-4">
+          <div class="step" id="indicator-step-1">Tipo de Consulta</div>
+          <div class="step" id="indicator-step-2">Detalhes</div>
+          <div class="step" id="indicator-step-3">Confirmação</div>
+        </div>
+
+        <!-- Etapa 1 -->
+        <div id="step1">
+
+          <!-- Tipo de Atendimento -->
+          <div class="mt-3">
+            <label class="form-label fw-bold">Tipo de atendimento</label>
+            <div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="tipoAtendimento" id="particular" value="particular">
+                <label class="form-check-label" for="particular">Particular</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="tipoAtendimento" id="convenio" value="convenio">
+                <label class="form-check-label" for="convenio">Convênio</label>
+              </div>
+            </div>
+          </div>
+      
+          <!-- Unidade -->
+          <div class="mt-3">
+            <label for="unidadeSelect" class="form-label fw-bold">Unidade</label>
+            <select class="form-select custom-select-unidade" id="unidadeSelect">
+              <option value="">Selecione uma unidade</option>
+              <option value="perdizes">Unidade Perdizes</option>
+              <option value="lazer">Unidade Lazer</option>
+              <option value="higienopolis">Unidade Higienópolis</option>
+            </select>
+          </div>
+      
+          <button class="btn btn-padrao mt-4" onclick="goToStep(2)">Próximo</button>
+        </div>
+      
+        <!-- Etapa 2 -->
+        <div id="step2" style="display: none;">
+      
+          
+          <!-- Médicos -->
+          <div class="mt-3">
+            <label for="medicoSelect" class="form-label fw-bold">Médicos</label>
+            <select class="form-select custom-select-unidade" id="medicoSelect">
+              <option value="">Selecione um Médico</option>
+              <option value="perdizes">Dr. Carlos Mendes</option>
+              <option value="lazer">Dra. Ana Lucia</option>
+              <option value="higienopolis">Dr. Alberto Silva</option>
+            </select>
+          </div>
+
+          <!-- Calendário -->
+          <div class="mt-3">
+            <label for="calendar" class="form-label fw-bold">Próximas datas disponíveis</label>
+            <div id="calendar"></div>
+            <hr>
+          </div>
+
+          <!-- Médicos -->
+          <div class="mt-4 d-flex align-items-start gap-4">
+
+            <!-- Foto e dados do médico -->
+            <div class="text-left flex-grow-1">
+              <h5 class="mb-1">Dr. Carlos Mendes</h5>
+              <small class="text-muted d-block mb-2">Dermatologista CRM: 123456</small>
+              <img src="assets/images/foto-medico-1.jpg" class="img-fluid rounded" alt="Foto do médico">
+            </div>            
+          
+            <!-- Horários disponíveis -->
+            <div class="flex-grow-1">
+              <label class="form-label fw-bold">Horários</label>
+              <div class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); margin-left: auto;">
+                <button class="btn horario-btn">08:00</button>
+                <button class="btn horario-btn">08:30</button>
+                <button class="btn horario-btn">09:00</button>
+                <button class="btn horario-btn">09:30</button>
+                <button class="btn horario-btn">10:00</button>
+                <button class="btn horario-btn">10:30</button>
+                <button class="btn horario-btn">11:00</button>
+                <button class="btn horario-btn">11:30</button>
+              </div>
+            </div>
+
+          </div>          
+      
+          <div class="mt-4">
+            <button class="btn btn-secondary" onclick="goToStep(1)">Voltar</button>
+            <button class="btn btn-padrao ms-2" onclick="goToStep(3)">Próximo</button>
+          </div>
+        </div>
+
+        <!-- Etapa 3 -->
+        <div id="step3" style="display: none;">
+
+          <div class="mt-3">
+            xxxxxx
+          </div>
+          
+          <div class="mt-4">
+            <button class="btn btn-secondary" onclick="goToStep(2)">Voltar</button>
+            <button class="btn btn-padrao ms-2">Confirmar Agendamento</button>
+          </div>
+        </div>
+
+      </div>
+      
+</main>
+
+<!-- Rodapé -->
+<footer>
+  <div class="container">
+    <div>
+      © 2025 Dermaclínica. Todos os direitos reservados.
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const icon = document.querySelector('#user-section button i');
+    sidebar.classList.toggle('collapsed');
+    icon.classList.toggle('bi-chevron-left');
+    icon.classList.toggle('bi-chevron-right');
+  }
+
+  function toggleMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const content = document.getElementById('content');
+
+    sidebar.classList.toggle('mobile-show'); // Alterna a visibilidade do menu
+    overlay.style.display = sidebar.classList.contains('mobile-show') ? 'block' : 'none'; // Exibe a sobreposição
+    content.classList.toggle('mobile-shifted', sidebar.classList.contains('mobile-show')); // Move o conteúdo
+  }
+
+  // Fechar o menu ao clicar no overlay
+  document.getElementById('overlay').addEventListener('click', function() {
+    toggleMobileSidebar(); // Fecha o menu e o overlay
+  });
+
+  // Adicionar evento de clique para os links do menu lateral
+  document.querySelectorAll('#sidebar .nav-link').forEach(link => {
+    link.addEventListener('click', function () {
+      document.querySelectorAll('#sidebar .nav-link').forEach(l => l.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+
+<!-- Inicialização do Flatpickr -->
+<script>
+  flatpickr("#calendar", {
+    inline: true,
+    defaultDate: "2025-05-05",
+    locale: "pt",
+    dateFormat: "Y-m-d",
+    enable: [
+      "2025-05-05",
+      "2025-05-07",
+      "2025-05-09"
+    ]
+  });
+</script>
+
+<!-- Script para alternar entre as etapas -->
+<script>
+  function goToStep(step) {
+    // Alterna o conteúdo das etapas
+    document.getElementById('step1').style.display = (step === 1) ? 'block' : 'none';
+    document.getElementById('step2').style.display = (step === 2) ? 'block' : 'none';
+    document.getElementById('step3').style.display = (step === 3) ? 'block' : 'none';
+
+    // Atualiza os estilos do indicador
+    document.getElementById('indicator-step-1').classList.toggle('active', step === 1);
+    document.getElementById('indicator-step-2').classList.toggle('active', step === 2);
+    document.getElementById('indicator-step-3').classList.toggle('active', step === 3);
+  }
+
+  // Inicializa o indicador com a primeira etapa ativa
+  document.addEventListener("DOMContentLoaded", function() {
+    goToStep(1);
+  });
+</script>
+
+<!-- Script para selecionar horário -->
+<script>
+  document.querySelectorAll('.horario-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+</script>
+
+</body>
+</html>
