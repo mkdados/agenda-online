@@ -270,12 +270,11 @@
       padding: 1rem !important;  
       width: auto !important; /* Largura automática */
       display: inline-block !important; /* Faz o calendário ocupar apenas a largura necessária */
-      box-sizing: border-box !important;
     }
 
     .flatpickr-day{
       border-color: #cccccc !important;
-      width: calc(100% / 7) !important; /* Ajusta a largura de cada célula de dia para 1/7 do calendário */
+      /*width: calc(100% / 7) !important; /* Ajusta a largura de cada célula de dia para 1/7 do calendário */
       text-align: center !important;
       box-sizing: border-box !important;
       margin-bottom: 0.1rem !important;
@@ -345,14 +344,14 @@
       }
 
       .flatpickr-calendar{
-        display: grid;
+        width: 100% !important; /* Largura automática */
         padding: 0.5rem !important;
       }
 
-      .flatpickr-day{
-        width: calc(100% / 7.5) !important;
+      .horario-grid {
+        grid-template-columns: repeat(3, 1fr) !important; /* 4 colunas para telas médias */
       }
-      
+
       #horarioDiv {
         flex-direction: column !important;
         align-items: stretch !important;
@@ -530,11 +529,11 @@
           <div id="medicoInfo" style="display: none;">
 
             <!-- Calendário -->
-            <div id="calendarioDiv" class="mt-3">
+            <!-- <div id="calendarioDiv" class="mt-3">
               <label for="calendar" class="form-label fw-bold">Próximas datas disponíveis</label>
               <div id="calendar"></div>              
               <hr>
-            </div>
+            </div> -->                   
 
             <!-- Médicos -->
             <div id="horarioDiv" class="mt-4 d-flex align-items-start gap-4" style="display: none;">
@@ -544,22 +543,57 @@
                 <h5 class="mb-1">Dr. Carlos Mendes</h5>
                 <small class="text-muted d-block mb-2">Dermatologista CRM: 123456</small>
                 <img src="assets/images/foto-medico-1.jpg" class="img-fluid rounded" alt="Foto do médico">
-              </div>            
-            
-              <!-- Horários disponíveis -->
-              <div class="flex-grow-1">
-                <label class="form-label fw-bold">Horários</label>
-                <div class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); margin-left: auto;">
-                  <button class="btn horario-btn">08:00</button>
-                  <button class="btn horario-btn">08:30</button>
-                  <button class="btn horario-btn">09:00</button>
-                  <button class="btn horario-btn">09:30</button>
-                  <button class="btn horario-btn">10:00</button>
-                  <button class="btn horario-btn">10:30</button>
-                  <button class="btn horario-btn">11:00</button>
-                  <button class="btn horario-btn">11:30</button>
-                </div>
-              </div>
+              </div>      
+              
+              <!-- Datas disponíveis -->
+              <div id="calendarioDiv" class="flex-grow-1"> 
+
+                <label for="calendar" class="form-label fw-bold">Próximas datas disponíveis</label>                
+                  <div class="horario-grid d-grid gap-2" style="grid-template-columns: repeat(5, 1fr); margin-left: auto;">
+                    <button class="btn horario-btn">
+                      <span class="small d-block">seg.</span>
+                      <span class="text-lg fw-bold fs-2 d-block">1</span>
+                      <span class="small d-block">Maio</span>
+                    </button>
+                    <button class="btn horario-btn">
+                      <span class="small d-block">ter.</span>
+                      <span class="text-lg fw-bold fs-2 d-block">2</span>
+                      <span class="small d-block">Maio</span>
+                    </button>
+                    <button class="btn horario-btn">
+                      <span class="small d-block">qua.</span>
+                      <span class="text-lg fw-bold fs-2 d-block">3</span>
+                      <span class="small d-block">Maio</span>
+                    </button>
+                    <button class="btn horario-btn">
+                      <span class="small d-block">qui.</span>
+                      <span class="text-lg fw-bold fs-2 d-block">4</span>
+                      <span class="small d-block">Maio</span>
+                    </button>
+                    <button class="btn horario-btn">
+                      <span class="small d-block">sex.</span>
+                      <span class="text-lg fw-bold fs-2 d-block">5</span>
+                      <span class="small d-block">Maio</span>
+                    </button>
+                  </div>
+
+                      <!-- Horários disponíveis -->
+                    <div class="flex-grow-1 mt-3">
+                      <label class="form-label fw-bold">Horários</label>
+                      <div class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); margin-left: auto;">
+                        <button class="btn horario-btn">08:00</button>
+                        <button class="btn horario-btn">08:30</button>
+                        <button class="btn horario-btn">09:00</button>
+                        <button class="btn horario-btn">09:30</button>
+                        <button class="btn horario-btn">10:00</button>
+                        <button class="btn horario-btn">10:30</button>
+                        <button class="btn horario-btn">11:00</button>
+                        <button class="btn horario-btn">11:30</button>
+                      </div>
+                    </div>
+
+              </div>  
+          
 
             </div> 
 
