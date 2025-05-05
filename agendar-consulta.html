@@ -350,21 +350,41 @@
       
 
       .flatpickr-calendar {
-        box-sizing: border-box !important;
-        padding: 0.65rem !important;
-        left: 0 !important;   /* Garante que ele não fique "fora da tela" */
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        padding: 0.5rem !important;
+        left: 0 !important;
         right: 0 !important;
+        border-radius: 0.5rem !important;
+        box-sizing: border-box !important;
+      }
+
+      .flatpickr-innerContainer {
+        width: 100% !important;
+        box-sizing: border-box !important;
       }
 
       .flatpickr-days {
-        display: flex !important;
-        flex-wrap: wrap !important;
+        display: grid !important;
+        grid-template-columns: repeat(7, 1fr) !important;
+        gap: 0.25rem;
+        box-sizing: border-box !important;
       }
 
       .flatpickr-day {
-        flex: 1 0 13.28% !important;
+        width: 100% !important;
+        height: auto !important;
+        line-height: 2rem !important;
+        font-size: 0.875rem;
         box-sizing: border-box !important;
-        font-size: 0.7rem;
+      }
+
+      .flatpickr-weekdays {
+        display: grid !important;
+        grid-template-columns: repeat(7, 1fr) !important;
+        text-align: center !important;
+        font-size: 0.75rem;
       }
 
       
