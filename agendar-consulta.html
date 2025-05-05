@@ -349,17 +349,38 @@
       }
 
       .flatpickr-calendar {
-        padding: 0.5rem !important;
-        border-radius: 0.5rem !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding: 0.75rem !important;
+        left: 0 !important;   /* Garante que ele não fique "fora da tela" */
+        right: 0 !important;
+      }
+
+      .flatpickr-days {
+        display: flex !important;
+        flex-wrap: wrap !important;
       }
 
       .flatpickr-day {
-        width: 14.28% !important; /* 100 / 7 dias */
+        flex: 1 0 14.28% !important;
+        box-sizing: border-box !important;
         font-size: 0.9rem;
       }
 
-      #horarioDiv .d-grid {
-        grid-template-columns: 1fr !important;
+      
+      #horarioDiv {
+        flex-direction: column !important;
+        align-items: stretch !important;
+      }
+
+      #horarioDiv .flex-grow-1 {
+        width: 100%;
+      }
+
+      #horarioDiv img {
+        max-width: 100%;
+        height: auto;
       }
 
       .step-indicator {
