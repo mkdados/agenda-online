@@ -283,6 +283,7 @@
 
     .calendar-wrapper {
       width: 100%;
+      overflow-x: hidden;
     }
 
     /* Ajuste quando o calendário estiver com muitos dias */
@@ -338,6 +339,7 @@
 
     /* Estilo para dispositivos móveis */
     @media (max-width: 767.98px) {
+      
       #sidebar {
         transform: translateX(-100%);        
         position: fixed;
@@ -351,6 +353,13 @@
 
       #content {
         margin-left: 0 !important;
+      }
+
+      
+      .flatpickr-calendar {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: block !important;
       }
 
       
