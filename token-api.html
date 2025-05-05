@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chamar API</title>
+</head>
+<body>
+  <h1>Resultado da API</h1>
+  
+  <!-- Botão para chamar a API -->
+  <button id="apiButton">Chamar API</button>
+  
+  <!-- Div para exibir o resultado da API -->
+  <div id="response" style="margin-top: 20px; border: 1px solid #ddd; padding: 10px;"></div>
+
+  <script>
+    // Função para chamar a API
+    function callApi() {
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      // Corpo da requisição com login e senha
+      const raw = JSON.stringify({
+        "Login": "MARCOS",
+        "Senha": "00aa43446a6ce84d12b21547220ac6634e22f1529da99affd79b34c577053c54"
+      });
+
+      // Definindo as opções da requisição
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+      };
+
+      // Chamando a API
+      fetch("https://api.etternum.com.br/integracao/seguranca", requestOptions)
+        .then((response) => response.text())  // A resposta será em formato de texto
+        .then((result) => {
+          // Exibir o resultado na tela
+          document.getElementById("response").innerText = result;
+        })
+        .catch((error) => {
+          console.error("Erro:", error);
+          document.getElementById("response").innerText = "Ocorreu um erro ao chamar a API.";
+        });
+    }
+
+    // Adiciona o evento de clique ao botão
+    document.getElementById("apiButton").addEventListener("click", callApi);
+  </script>
+</body>
+</html>
