@@ -361,6 +361,23 @@
       #horarioDiv .d-grid {
         grid-template-columns: 1fr !important;
       }
+
+      .step-indicator {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+        border-bottom: none;
+      }
+
+      .step-indicator .step {
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 0.5rem;
+      }
+
+      .step-indicator .step.active {
+        border-bottom: 2px solid #d47d48;
+        color: #d47d48;
+      }
     }
   </style>
 </head>
