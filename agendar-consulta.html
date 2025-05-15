@@ -349,7 +349,7 @@
 
       .step-indicator .step.active {
         border-bottom: 2px solid #d47d48;
-        color: #d47d48;
+        color: #d47d48;        
       }
 
       .gridHorario{
@@ -428,11 +428,11 @@
           <div class="step" id="indicator-step-3">Confirmação</div>
         </div>
 
-        <!-- Etapa 1 -->
+        <!-- Etapa 1 - Tipo de consulta -->
         <div id="step1">
 
           <!-- Tipo de Atendimento -->
-          <div class="mt-3">
+          <div id="tipoAtendimentoDiv" class="mt-3">
             <label class="form-label fw-bold">Tipo de atendimento</label>
             <div>
               <div class="form-check form-check-inline">
@@ -475,11 +475,11 @@
           <button class="btn btn-padrao mt-4" onclick="goToStep(2)">Próximo</button>
         </div>
       
-        <!-- Etapa 2 -->
+        <!-- Etapa 2 - Médico -->
         <div id="step2" style="display: none;">
       
           <!-- Unidade -->
-          <div class="mt-3">
+          <div id="unidadeSelectDiv" class="mt-3">
             <label for="unidadeSelect" class="form-label fw-bold">Unidade</label>
             <select class="form-select custom-select" id="unidadeSelect">
               <option value="">Selecione uma unidade</option>
@@ -490,18 +490,17 @@
           </div>
 
           <!-- Médicos -->
-          <div class="mt-3">
+          <div id="medicoSelectDiv" class="mt-3">
             <label for="medicoSelect" class="form-label fw-bold">Médicos</label>
             <select class="form-select custom-select" id="medicoSelect">
               <option value="">Todos os Médicos</option>
               <option value="1">Dr. Carlos Mendes</option>
               <option value="2">Dra. Ana Lucia</option>
-              <option value="3">Dr. Alberto Silva</option>
             </select>
           </div> 
           
           <!-- Proximas datas disponiveis -->
-            <div id="divProximaDataDisponivel" class="mt-3" style="display: none;"> 
+            <div id="proximaDataDisponivelDiv" class="mt-3" style="display: none;"> 
               <label for="calendar" class="form-label fw-bold">Próximas datas disponíveis</label>           
 
               <!-- Wrapper com setas -->
@@ -642,8 +641,9 @@
 
         </div>
 
-        <!-- Etapa 3 -->
+        <!-- Etapa 3 - Confirmação-->
         <div id="step3" style="display: none;">
+
           <div class="mt-3">
 
             <div class="card shadow-sm mb-4">
@@ -776,8 +776,21 @@
     btn.addEventListener('click', () => {
       document.querySelectorAll('.data-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
-      document.getElementById('horarioDiv1').style.display = "block";
-      document.getElementById('horarioDiv2').style.display = "block";
+
+      let medicoSelecionado = document.getElementById('medicoSelect').value;
+
+      if(medicoSelecionado == "1"){
+        document.getElementById('horarioDiv1').style.display = "block";
+        document.getElementById('horarioDiv2').style.display = "none";
+      }
+      else if(medicoSelecionado == "2"){
+        document.getElementById('horarioDiv1').style.display = "none";
+        document.getElementById('horarioDiv2').style.display = "block";
+      }
+      else{
+        document.getElementById('horarioDiv1').style.display = "block";
+        document.getElementById('horarioDiv2').style.display = "block";
+      }
     });
   });
 </script>
@@ -816,7 +829,7 @@
 <!-- Script para selecionar unidade -->
  <script>
   document.getElementById('unidadeSelect').addEventListener('change', function () {
-    let proximaDataDiv = document.getElementById('divProximaDataDisponivel');
+    let proximaDataDiv = document.getElementById('proximaDataDisponivelDiv');
     if (this.value) {
       proximaDataDiv.style.display = "block";
     } else {
