@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chamar API</title>
+</head>
+<body>
+  <h1>Resultado da API</h1>
+  
+  <!-- Botão para chamar a API -->
+  <button id="apiButton">Chamar API</button>
+  
+  <!-- Div para exibir o resultado da API -->
+  <div id="response" style="margin-top: 20px; border: 1px solid #ddd; padding: 10px;"></div>
+
+  <script>
+    // Função para gerar o token
+    function generateToken() {
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const raw = JSON.stringify({
+        "Login": "MARCOS",
+        "Senha": "00aa43446a6ce84d12b21547220ac6634e22f1529da99affd79b34c577053c54",
+        "plataforma":"ANG"
+      });
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+      };
+
+      // Chama a API de autenticação
+      return fetch("https://api.etternum.com.br/autenticacao/acesso", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+          if (result.token.chave) {
+
+            // Armazenar o token na sessão
+            sessionStorage.setItem("authToken", result.token.chave);
+            sessionStorage.setItem("authTokenDuracao", result.token.duracao);
+
+            // Armazenar o token
+            return result;
+          } else {
+            throw new Error("Token não encontrado");
+          }
+        })
+        .catch(error => {
+          console.error("Erro ao gerar o token:", error);
+          document.getElementById("response").innerText = "Erro ao gerar o token.";
+          throw error;
+        });
+    }
+
+    // Função para chamar a API com o token gerado
+    function callApiWithToken(token) {
+      const myHeaders = new Headers();
+      myHeaders.append("dataInicio", "2025-05-14");
+      myHeaders.append("dataFim", "2025-06-14");
+      myHeaders.append("Authorization", "Bearer " + token);
+
+      const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow"
+      };
+
+      //fetch("https://api.etternum.com.br/integracao/agenda/disponivel?$apply=filter(filialId eq 7 and profissionalId eq 14581 and dataInicio ge 2025-05-14 and dataFim le 2025-06-01)/groupby((profissionalId,dataInicio,horaInicio))", requestOptions)
+      fetch("https://api.etternum.com.br/integracao/agenda/disponivel?$apply=filter(filialId eq 7 and profissionalId eq 14581 and dataInicio ge 2025-05-14 and dataFim le 2025-06-01)/groupby((dataInicio))", requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          
+          
+          //document.getElementById("response").innerText = JSON.stringify(result, null, 2);
+          // Extrai só a parte da data (YYYY-MM-DD) de cada item
+          const datas = result.map(item => item.dataInicio.split("T")[0]);
+
+          // Exibe o array de datas como JSON formatado
+          document.getElementById("response").innerText = JSON.stringify(datas, null, 2);
+
+        })
+        .catch((error) => {
+          console.error("Erro:", error);
+          document.getElementById("response").innerText = "Ocorreu um erro ao chamar a API.";
+        });
+    }
+
+    // Função principal que chama as APIs
+    function callApi() {
+
+      document.getElementById("response").innerText = "";
+      let token       = sessionStorage.getItem("authToken");
+      let dataDuracao = new Date(sessionStorage.getItem("authTokenDuracao"));
+      let dataAtual   = new Date();      
+      
+      if(token && (dataAtual <= dataDuracao)){     
+        alert(dataDuracao);
+        callApiWithToken(token);
+      }else{
+        generateToken()
+        .then(token => {
+          // Agora que temos o token, chama a segunda API
+          callApiWithToken(token.token.chave);
+        })
+        .catch(error => {
+          console.error("Erro na autenticação:", error);
+        });
+      }
+      
+    }
+
+    // Adiciona o evento de clique ao botão
+    document.getElementById("apiButton").addEventListener("click", callApi);
+  </script>
+</body>
+</html>
