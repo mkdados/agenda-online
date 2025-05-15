@@ -16,12 +16,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-somehash==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="assets/fonts/font-lato.css" rel="stylesheet">
   <link href="assets/fonts/montserrat.css" rel="stylesheet">
-  <!-- Flatpickr CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" rel="stylesheet">
-
-  <!-- Flatpickr JS -->
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/pt.js"></script>
 
   <style>
 
@@ -55,7 +49,27 @@
         }
     }
 
-    /* Borda e texto padrão */
+    /* Datas agenda*/
+    .data-btn {
+      border: 2px solid #d47d48;
+      color: #d47d48;
+      background-color: white;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .data-btn:hover {
+      background-color: #f4e2d7;
+      color: #b8683d;
+    }
+
+    .data-btn.selected {
+      background-color: #d47d48;
+      color: white;
+    }
+
+    /* Horarios agenda*/
     .horario-btn {
       border: 2px solid #d47d48;
       color: #d47d48;
@@ -248,7 +262,7 @@
       border-color: #d47d48;
     }
 
-    .custom-select-unidade{
+    .custom-select{
       border: 1px solid #cccccc;
       border-radius: 0.75rem;
       padding: 0.5rem 1rem;
@@ -256,49 +270,9 @@
       color: #6e6e78;
     }
 
-    .custom-select-unidade:focus {
+    .custom-select:focus {
       border-color: #d47d48;
       box-shadow: 0 0 0 0.2rem rgba(212, 125, 72, 0.25);
-    }
-
-    
-    /* Calendario */
-    .flatpickr-calendar{
-      background-color: #ffffff !important;
-      border-radius: 0.75rem !important;
-      border: 1px solid #d3d3d3 !important;
-      padding: 1rem !important;  
-      width: auto !important; /* Largura automática */
-      display: inline-block !important; /* Faz o calendário ocupar apenas a largura necessária */
-    }
-
-    .flatpickr-day{
-      border-color: #cccccc !important;
-      /*width: calc(100% / 7) !important; /* Ajusta a largura de cada célula de dia para 1/7 do calendário */
-      text-align: center !important;
-      box-sizing: border-box !important;
-      margin-bottom: 0.1rem !important;
-    }
-
-    .flatpickr-day.selected{
-      background-color: #d47d48 !important;
-      color: white !important;
-    }  
-
-    .flatpickr-day.flatpickr-disabled {
-      color: #b4b4b4 !important;     /* texto cinza claro */
-      background: #d3d3d3 !important; /* fundo quase branco */    
-    }
-
-    .flatpickr-day.flatpickr-disabled:hover {
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-      
-    /* Estilo para o campo de data */
-    #calendar {
-      cursor: pointer;
     }
 
     /* Estilo para o indicador de etapas */
@@ -341,15 +315,6 @@
 
       #content {
         margin-left: 0 !important;
-      }
-
-      .flatpickr-calendar{
-        width: 100% !important; /* Largura automática */
-        padding: 0.5rem !important;
-      }
-
-      .horario-grid {
-        grid-template-columns: repeat(3, 1fr) !important; /* 4 colunas para telas médias */
       }
 
       #horarioDiv {
@@ -475,7 +440,7 @@
           <!-- Convênio -->
           <div id="convenioDiv" class="mt-3" style="display: none;">
             <label for="convenioSelect" class="form-label fw-bold">Convênio</label>
-            <select class="form-select custom-select-convenio" id="convenioSelect">
+            <select class="form-select custom-select" id="convenioSelect">
               <option value="">Selecione o convênio</option>
               <option value="amil">Amil</option>
               <option value="bradesco">Bradesco</option>
@@ -486,7 +451,7 @@
           <!-- Plano -->
           <div id="planoDiv" class="mt-3" style="display: none;">
             <label for="planoSelect" class="form-label fw-bold">Plano</label>
-            <select class="form-select custom-select-plano" id="planoSelect">
+            <select class="form-select custom-select" id="planoSelect">
               <option value="">Todos os Planos</option>
               <option value="1">Plano Ouro</option>
             </select>
@@ -507,7 +472,7 @@
           <!-- Unidade -->
           <div class="mt-3">
             <label for="unidadeSelect" class="form-label fw-bold">Unidade</label>
-            <select class="form-select custom-select-unidade" id="unidadeSelect">
+            <select class="form-select custom-select" id="unidadeSelect">
               <option value="">Selecione uma unidade</option>
               <option value="perdizes">Unidade Perdizes</option>
               <option value="lazer">Unidade Lazer</option>
@@ -518,86 +483,148 @@
           <!-- Médicos -->
           <div class="mt-3">
             <label for="medicoSelect" class="form-label fw-bold">Médicos</label>
-            <select class="form-select custom-select-unidade" id="medicoSelect">
-              <option value="">Selecione um Médico</option>
-              <option value="perdizes">Dr. Carlos Mendes</option>
-              <option value="lazer">Dra. Ana Lucia</option>
-              <option value="higienopolis">Dr. Alberto Silva</option>
+            <select class="form-select custom-select" id="medicoSelect">
+              <option value="">Todos os Médicos</option>
+              <option value="1">Dr. Carlos Mendes</option>
+              <option value="2">Dra. Ana Lucia</option>
+              <option value="3">Dr. Alberto Silva</option>
             </select>
-          </div>
+          </div> 
+          
+          <!-- Proximas datas disponiveis -->
+            <div id="divProximaDataDisponivel" class="mt-3" style="display: none;"> 
+              <label for="calendar" class="form-label fw-bold">Próximas datas disponíveis</label>           
 
-          <div id="medicoInfo" style="display: none;">
+              <!-- Wrapper com setas -->
+              <div class="p-3 border rounded position-relative">
+                <!-- Seta esquerda -->
+                <button id="scrollLeft" class="btn btn-light position-absolute top-50 start-0 translate-middle-y z-2">
+                  &lt;
+                </button>
 
-            <!-- Calendário -->
-            <!-- <div id="calendarioDiv" class="mt-3">
-              <label for="calendar" class="form-label fw-bold">Próximas datas disponíveis</label>
-              <div id="calendar"></div>              
-              <hr>
-            </div> -->                   
-
-            <!-- Médicos -->
-            <div id="horarioDiv" class="mt-4 d-flex align-items-start gap-4" style="display: none;">
-
-              <!-- Foto e dados do médico -->
-              <div class="text-left flex-grow-1">
-                <h5 class="mb-1">Dr. Carlos Mendes</h5>
-                <small class="text-muted d-block mb-2">Dermatologista CRM: 123456</small>
-                <img src="assets/images/foto-medico-1.jpg" class="img-fluid rounded" alt="Foto do médico">
-              </div>      
-              
-              <!-- Datas disponíveis -->
-              <div id="calendarioDiv" class="flex-grow-1"> 
-
-                <label for="calendar" class="form-label fw-bold">Próximas datas disponíveis</label>                
-                  <div class="horario-grid d-grid gap-2" style="grid-template-columns: repeat(5, 1fr); margin-left: auto;">
-                    <button class="btn horario-btn">
+                <!-- Grade de datas com rolagem horizontal -->
+                <div id="dataScroll" class="overflow-auto px-5" style="scroll-behavior: smooth;">
+                  <div class="data-grid d-grid gap-2" style="grid-template-columns: repeat(10, 1fr); min-width: 600px;">
+                    <button class="btn data-btn text-center">
                       <span class="small d-block">seg.</span>
-                      <span class="text-lg fw-bold fs-2 d-block">1</span>
-                      <span class="small d-block">Maio</span>
-                    </button>
-                    <button class="btn horario-btn">
-                      <span class="small d-block">ter.</span>
-                      <span class="text-lg fw-bold fs-2 d-block">2</span>
-                      <span class="small d-block">Maio</span>
-                    </button>
-                    <button class="btn horario-btn">
-                      <span class="small d-block">qua.</span>
-                      <span class="text-lg fw-bold fs-2 d-block">3</span>
-                      <span class="small d-block">Maio</span>
-                    </button>
-                    <button class="btn horario-btn">
-                      <span class="small d-block">qui.</span>
-                      <span class="text-lg fw-bold fs-2 d-block">4</span>
-                      <span class="small d-block">Maio</span>
-                    </button>
-                    <button class="btn horario-btn">
-                      <span class="small d-block">sex.</span>
                       <span class="text-lg fw-bold fs-2 d-block">5</span>
                       <span class="small d-block">Maio</span>
                     </button>
+                    <button class="btn data-btn text-center">
+                      <span class="small d-block">qui.</span>
+                      <span class="text-lg fw-bold fs-2 d-block">8</span>
+                      <span class="small d-block">Maio</span>
+                    </button>
+                    <button class="btn data-btn text-center">
+                      <span class="small d-block">sab.</span>
+                      <span class="text-lg fw-bold fs-2 d-block">10</span>
+                      <span class="small d-block">Maio</span>
+                    </button>
+                    <button class="btn data-btn text-center">
+                      <span class="small d-block">seg.</span>
+                      <span class="text-lg fw-bold fs-2 d-block">12</span>
+                      <span class="small d-block">Maio</span>
+                    </button>
+                    <button class="btn data-btn text-center">
+                      <span class="small d-block">qui.</span>
+                      <span class="text-lg fw-bold fs-2 d-block">14</span>
+                      <span class="small d-block">Maio</span>
+                    </button>
+                    <button class="btn data-btn text-center">
+                      <span class="small d-block">sab.</span>
+                      <span class="text-lg fw-bold fs-2 d-block">17</span>
+                      <span class="small d-block">Maio</span>
+                    </button>
                   </div>
+                </div>
 
-                      <!-- Horários disponíveis -->
-                    <div class="flex-grow-1 mt-3">
-                      <label class="form-label fw-bold">Horários</label>
-                      <div class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); margin-left: auto;">
-                        <button class="btn horario-btn">08:00</button>
-                        <button class="btn horario-btn">08:30</button>
-                        <button class="btn horario-btn">09:00</button>
-                        <button class="btn horario-btn">09:30</button>
-                        <button class="btn horario-btn">10:00</button>
-                        <button class="btn horario-btn">10:30</button>
-                        <button class="btn horario-btn">11:00</button>
-                        <button class="btn horario-btn">11:30</button>
-                      </div>
-                    </div>
-
-              </div>  
-          
+                <!-- Seta direita -->
+                <button id="scrollRight" class="btn btn-light position-absolute top-50 end-0 translate-middle-y z-2">
+                  &gt;
+                </button>
+              </div> 
 
             </div> 
 
-          </div>          
+
+
+            <!-- Médico 1 -->
+            <div id="horarioDiv1" class="mt-3 align-items-start border rounded" style="display: none;">                   
+              
+              <!-- Datas disponíveis -->
+              <div id="calendarioDiv">               
+
+                <!-- Foto, dados do médico e horários -->
+                <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">
+                  <!-- Foto e dados do médico -->
+                  <div class="text-left">                  
+                    <img src="assets/images/foto-medico-1.jpg" class="img-fluid rounded border" alt="Foto do médico" style="max-width: 120px;">
+                  </div>
+
+                  <!-- Horários disponíveis -->
+                  <div class="flex-grow-1">
+                    <h3 class="mb-1">Dr. Carlos Mendes</h3>
+                    <small class="text-muted d-block">CRM: 123456</small>
+                    <small class="text-muted d-block">Dermatologista</small>
+                  </div>
+                </div>
+
+
+                <!-- Horários disponíveis -->
+                <div class="m-3 flex-grow-1">
+                  <div class="d-grid gap-2" style="grid-template-columns: repeat(4, 1fr);">
+                    <button class="btn horario-btn">08:00</button>
+                    <button class="btn horario-btn">08:30</button>
+                    <button class="btn horario-btn">09:00</button>
+                    <button class="btn horario-btn">09:30</button>
+                    <button class="btn horario-btn">10:00</button>
+                    <button class="btn horario-btn">10:30</button>
+                    <button class="btn horario-btn">11:00</button>
+                    <button class="btn horario-btn">11:30</button>
+                  </div>
+                </div>                     
+
+              </div>              
+            </div>  
+            
+            <!-- Médico 2 -->
+            <div id="horarioDiv2" class="mt-3 align-items-start border rounded" style="display: none;">                   
+              
+              <!-- Datas disponíveis -->
+              <div id="calendarioDiv">               
+
+                <!-- Foto, dados do médico e horários -->
+                <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">
+                  <!-- Foto e dados do médico -->
+                  <div class="text-left">                  
+                    <img src="assets/images/foto-medico-2.jpg" class="img-fluid rounded border" alt="Foto do médico" style="max-width: 120px;">
+                  </div>
+
+                  <!-- Horários disponíveis -->
+                  <div class="flex-grow-1">
+                    <h3 class="mb-1">Dra Ana Lúcia</h3>
+                    <small class="text-muted d-block">CRM: 123456</small>
+                    <small class="text-muted d-block">Dermatologista</small>
+                  </div>
+                </div>
+
+
+                <!-- Horários disponíveis -->
+                <div class="m-3 flex-grow-1">
+                  <div class="d-grid gap-2" style="grid-template-columns: repeat(4, 1fr);">
+                    <button class="btn horario-btn">08:00</button>
+                    <button class="btn horario-btn">08:30</button>
+                    <button class="btn horario-btn">09:00</button>
+                    <button class="btn horario-btn">09:30</button>
+                    <button class="btn horario-btn">10:00</button>
+                    <button class="btn horario-btn">10:30</button>
+                    <button class="btn horario-btn">11:00</button>
+                    <button class="btn horario-btn">11:30</button>
+                  </div>
+                </div>                     
+
+              </div>              
+            </div> 
       
           <div class="mt-4">
             <button class="btn btn-secondary" onclick="goToStep(1)">Voltar</button>
@@ -714,21 +741,6 @@
   });
 </script>
 
-<!-- Inicialização do Flatpickr -->
-<script>
-  flatpickr("#calendar", {
-    inline: true,
-    defaultDate: "2025-05-05",
-    locale: "pt",
-    dateFormat: "Y-m-d",
-    enable: [
-      "2025-05-05",
-      "2025-05-07",
-      "2025-05-09"
-    ]
-  });
-</script>
-
 <!-- Script para alternar entre as etapas -->
 <script>
   function goToStep(step) {
@@ -748,6 +760,19 @@
     goToStep(1);
   });
 </script>
+
+<!-- Script para selecionar data -->
+<script>
+  document.querySelectorAll('.data-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.data-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('horarioDiv1').style.display = "block";
+      document.getElementById('horarioDiv2').style.display = "block";
+    });
+  });
+</script>
+
 
 <!-- Script para selecionar horário -->
 <script>
@@ -779,17 +804,51 @@
   }
 </script>
 
-<!-- Script para selecionar medico -->
-<script>
-  document.getElementById('medicoSelect').addEventListener('change', function () {
-    const medicoInfoDiv = document.getElementById('medicoInfo');
-    if (this.value !== "") {
-      medicoInfoDiv.style.display = "block";
+<!-- Script para selecionar unidade -->
+ <script>
+  document.getElementById('unidadeSelect').addEventListener('change', function () {
+    let proximaDataDiv = document.getElementById('divProximaDataDisponivel');
+    if (this.value) {
+      proximaDataDiv.style.display = "block";
     } else {
-      medicoInfoDiv.style.display = "none";
+      proximaDataDiv.style.display = "none";
     }
   });
 </script>
+
+<!-- Script para selecionar medico -->
+<script>
+  document.getElementById('medicoSelect').addEventListener('change', function () {
+    let horarioDiv1 = document.getElementById('horarioDiv1');
+    let horarioDiv2 = document.getElementById('horarioDiv2');
+
+    if (this.value == "1") {
+      horarioDiv1.style.display = "block";
+      horarioDiv2.style.display = "none";
+    } 
+    else if (this.value == "2") {
+      horarioDiv2.style.display = "block";
+      horarioDiv1.style.display = "none";
+    }
+    else {
+      horarioDiv1.style.display = "block";
+      horarioDiv2.style.display = "block";
+    }
+  });
+</script>
+
+
+<!-- JavaScript para rolagem proxima data -->
+<script>
+  const dataScroll = document.getElementById('dataScroll');
+  document.getElementById('scrollLeft').addEventListener('click', () => {
+    dataScroll.scrollBy({ left: -200, behavior: 'smooth' });
+  });
+  document.getElementById('scrollRight').addEventListener('click', () => {
+    dataScroll.scrollBy({ left: 200, behavior: 'smooth' });
+  });
+</script>  
+
 
 </body>
 </html>
