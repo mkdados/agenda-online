@@ -89,6 +89,10 @@
       color: white;
     }
 
+    .gridHorario{
+      grid-template-columns: repeat(10, 1fr);
+    } 
+
 
     /* Menu lateral */
     #sidebar {
@@ -347,6 +351,11 @@
         border-bottom: 2px solid #d47d48;
         color: #d47d48;
       }
+
+      .gridHorario{
+        grid-template-columns: repeat(3, 1fr);
+      } 
+      
     }
   </style>
 </head>
@@ -572,7 +581,7 @@
 
                 <!-- Horários disponíveis -->
                 <div class="m-3 flex-grow-1">
-                  <div class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr);">
+                  <div class="d-grid gap-2 gridHorario">
                     <button class="btn horario-btn">08:00</button>
                     <button class="btn horario-btn">08:30</button>
                     <button class="btn horario-btn">09:00</button>
@@ -611,7 +620,7 @@
 
                 <!-- Horários disponíveis -->
                 <div class="m-3 flex-grow-1">
-                  <div class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr);">
+                  <div class="d-grid gap-2 gridHorario">
                     <button class="btn horario-btn">08:00</button>
                     <button class="btn horario-btn">08:30</button>
                     <button class="btn horario-btn">09:00</button>
