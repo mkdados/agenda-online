@@ -10,10 +10,25 @@
   <div id="response" style="margin-top: 20px; border: 1px solid #ddd; padding: 10px;"></div>
 
   <!-- Scripts -->
-  <script src="assets/js/config.js"></script>
+  <script src="assets/js/autenticacao.js"></script>
+  <script>
+    document.getElementById("apiButton").addEventListener("click", function() {
+      fn_autenticacao()
+        .then(data => {
+          console.log(data.dados_autenticacao.url);  // JSON ou erro já resolvido aqui
+        })
+        .catch(error => {
+          console.error('Erro ao chamar a autenticação:', error);
+        });
+    });
+  </script>
+
+
+  <!-- <script src="assets/js/config.js"></script>
   <script src="assets/js/tokenService.js"></script>
   <script src="assets/js/apiService.js"></script>
   <script src="assets/js/main.js"></script>
-  <script src="assets/js/consome-php.js"></script>
+  <script src="assets/js/consome-php.js"></script> -->
+
 </body>
 </html>

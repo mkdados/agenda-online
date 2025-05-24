@@ -8,15 +8,48 @@ class TokenService {
       return Promise.resolve(existingToken);
     }
 
-    return fetch(TOKEN_ACESSO.URL, {
+    //Token de Acesso===================================
+    let url_autenticacao = AUTENTICACAO.URL;    
+    let token_url = "";
+    let token_login = "";
+    let token_senha = "";
+    let token_plataforma = "";
+
+    console.log(url_autenticacao);
+    
+
+    fetch(url_autenticacao, {
+      method: 'GET'
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Erro de autenticação');
+      return response.json();
+    })
+    .then(data => {
+      //console.log('Dados protegidos recebidos:', data);
+      // console.log('Dados protegidos recebidos:', data.TOKEN_ACESSO.LOGIN);
+      // console.log('Dados protegidos recebidos:', data.TOKEN_ACESSO.SENHA);
+      token_url = data.AUTENTICACAO.URL;
+      token_login = data.AUTENTICACAO.LOGIN;
+      token_senha = data.AUTENTICACAO.SENHA;
+      token_plataforma = data.TOKEN_ACESSO.PLATAFORMA;
+     
+    })
+    .catch(error => {
+      console.error('Erro ao consumir API:', error);
+    });
+    //===========================================
+
+
+    return fetch(token_url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "Login": TOKEN_ACESSO.LOGIN,
-        "Senha": TOKEN_ACESSO.SENHA,
-        "plataforma": TOKEN_ACESSO.PLATAFORMA
+        "Login": token_login,
+        "Senha": token_senha,
+        "plataforma": token_plataforma
       })
     })
       .then(response => response.json())

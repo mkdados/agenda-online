@@ -1,4 +1,6 @@
-fetch('http://localhost/agendaonline/assets/php/config.php', {
+let url_autenticacao = AUTENTICACAO.URL;
+
+fetch(url_autenticacao, {
   method: 'GET'
 })
 .then(response => {
@@ -7,8 +9,8 @@ fetch('http://localhost/agendaonline/assets/php/config.php', {
 })
 .then(data => {
   console.log('Dados protegidos recebidos:', data);
-  console.log('Dados protegidos recebidos:', data.TOKEN_ACESSO.LOGIN);
-  console.log('Dados protegidos recebidos:', data.TOKEN_ACESSO.SENHA);
+  // console.log('Dados protegidos recebidos:', data.TOKEN_ACESSO.LOGIN);
+  // console.log('Dados protegidos recebidos:', data.TOKEN_ACESSO.SENHA);
 })
 .catch(error => {
   console.error('Erro ao consumir API:', error);
