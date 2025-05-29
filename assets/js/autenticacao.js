@@ -1,5 +1,7 @@
-function fn_autenticacao() {
-  const url = 'http://localhost/agendaonline/assets/api/autenticacao.php';
+
+
+function fn_gera_token() {
+  const url = 'api/autenticacao.php';
   const options = {
     method: 'GET',
     headers: {
@@ -18,4 +20,3 @@ function fn_autenticacao() {
       return error;
     });
 }
-

@@ -13,22 +13,15 @@
   <script src="assets/js/autenticacao.js"></script>
   <script>
     document.getElementById("apiButton").addEventListener("click", function() {
-      fn_autenticacao()
+      fn_gera_token()
         .then(data => {
-          console.log(data.dados_autenticacao.url);  // JSON ou erro já resolvido aqui
+          document.getElementById("response").innerText = "Chave"+data.token.chave;
+          document.getElementById("response").innerText += "Duracao"+data.token.duracao;
         })
         .catch(error => {
-          console.error('Erro ao chamar a autenticação:', error);
+          document.getElementById("response").innerText = 'Erro ao chamar a autenticação:' + error;
         });
     });
   </script>
-
-
-  <!-- <script src="assets/js/config.js"></script>
-  <script src="assets/js/tokenService.js"></script>
-  <script src="assets/js/apiService.js"></script>
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/consome-php.js"></script> -->
-
 </body>
 </html>
