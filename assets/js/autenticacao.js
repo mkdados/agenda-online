@@ -1,12 +1,15 @@
-
-
 function fn_gera_token() {
   const url = 'api/autenticacao.php';
+  const body = {
+    id_paciente: 1
+  };
+
   const options = {
-    method: 'GET',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json'
-    }
+    },
+    body: JSON.stringify(body) // <-- Aqui o JSON é enviado no corpo
   };
 
   return fetch(url, options)
@@ -17,6 +20,6 @@ function fn_gera_token() {
       return response.json(); // retorna o JSON da resposta
     })
     .catch(error => {
-      return error;
+      return { erro: error.message };
     });
 }
