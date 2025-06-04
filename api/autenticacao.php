@@ -1,7 +1,7 @@
 <?php
 
 // Includes
-include_once 'config.php';
+include_once '../../../config/config.php'; 
 include_once 'funcoes.php';
 
 // Cabeçalhos de segurança
@@ -20,8 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Verificação da origem
-$urls_permitidas = ['localhost', 'mkdados.com.br'];
-if (!in_array($_SERVER['HTTP_HOST'], $urls_permitidas)) {
+if ($_SERVER['HTTP_HOST']!=$_ENV['DB_HOST']) {
     http_response_code(403);
     echo json_encode(['erro' => 'Acesso negado: origem não permitida']);
     exit;
