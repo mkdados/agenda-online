@@ -1,8 +1,10 @@
  /*Máscaras de entrada====================================================================*/
-$(document).ready(function() { 
-  $('#cpf').inputmask('999.999.999-99', { autoUnmask: true }); // Aplica a máscara de CPF
-  $('#dataNascimento').inputmask('99/99/9999', { autoUnmask: true }); // Aplica a máscara de data de nascimento
-  $('#celular').inputmask('(99) 99999-9999', { autoUnmask: true }); // Aplica a máscara de celular
+$(document).ready(function () {
+  setTimeout(() => {
+    Inputmask("999.999.999-99").mask("#cpf");
+    Inputmask("99/99/9999").mask("#dataNascimento");
+    Inputmask("(99) 99999-9999").mask("#celular");
+  }, 300);
 });
 
 /*Input text Caixa Alta====================================================================*/

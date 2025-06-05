@@ -5,12 +5,14 @@ document.addEventListener("DOMContentLoaded", function () {
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
+    document.getElementById("loader").style.display = "flex"; // Mostra loader
+
     // Coleta os dados do formulário
     const nome = document.getElementById("nomeCompleto").value.trim();
     const cpf = document.getElementById("cpf").value.trim();
-    const dataNascimento = document.getElementById("dataNascimento").value.trim();
+    const data_nascimento = document.getElementById("dataNascimento").value.trim();
     const celular = document.getElementById("celular").value.trim();
-    const email = document.getElementById("email").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
     const senha = document.getElementById("senha").value;
     const confirmarSenha = document.getElementById("confirmarSenha").value;
 
@@ -20,14 +22,24 @@ document.addEventListener("DOMContentLoaded", function () {
         title: "Atenção",
         text: "As senhas não coincidem!",
       });
+      document.getElementById("loader").style.display = "none";
       return;
     }
+
+    // Converte data para o formato YYYY-MM-DD
+    function formatarDataBrasileiraParaISO(data) {
+      const partes = data.match(/(\d{2})(\d{2})(\d{4})/);
+      if (!partes) return null;
+      return `${partes[3]}-${partes[2]}-${partes[1]}`; // YYYY-MM-DD
+    }
+
+    const data_nascimento_formatada = formatarDataBrasileiraParaISO(data_nascimento);
 
     // Monta os dados a serem enviados
     const payload = {
       nome: nome,
       cpf: cpf,
-      data_nascimento: dataNascimento,
+      data_nascimento: data_nascimento_formatada,
       celular: celular,
       email: email,
       senha: senha,
@@ -60,11 +72,6 @@ document.addEventListener("DOMContentLoaded", function () {
           text: data.erro || "Erro ao cadastrar acesso"
         });
       }
-
-
-      //Fecha loader
-      document.getElementById("loader").style.display = "none";
-
     } catch (error) {
       console.error("Erro:", error);
       Swal.fire({
@@ -72,12 +79,9 @@ document.addEventListener("DOMContentLoaded", function () {
         title: "Erro de conexão",
         text: "Não foi possível conectar ao servidor"
       });
-
-      //Fecha loader
+    } finally {
       document.getElementById("loader").style.display = "none";
     }
   });
+
 });
-
-
-   
