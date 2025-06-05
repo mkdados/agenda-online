@@ -26,20 +26,19 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Converte data para o formato YYYY-MM-DD
-    function formatarDataBrasileiraParaISO(data) {
-      const partes = data.match(/(\d{2})(\d{2})(\d{4})/);
-      if (!partes) return null;
-      return `${partes[3]}-${partes[2]}-${partes[1]}`; // YYYY-MM-DD
+    function formatarDataParaISO(data) {
+      const [dia, mes, ano] = data.split('/');
+      return `${ano}-${mes}-${dia}`;
     }
 
-    const data_nascimento_formatada = formatarDataBrasileiraParaISO(data_nascimento);
+    // Exemplo:
+    const dataISO = formatarDataParaISO(data_nascimento);
 
     // Monta os dados a serem enviados
     const payload = {
       nome: nome,
       cpf: cpf,
-      data_nascimento: data_nascimento_formatada,
+      data_nascimento: dataISO,
       celular: celular,
       email: email,
       senha: senha,
