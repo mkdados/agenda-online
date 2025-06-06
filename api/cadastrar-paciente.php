@@ -19,33 +19,43 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Verificação da origem (se necessário)
-if ($_SERVER['HTTP_HOST'] != $_ENV['DB_HOST']) {
-    http_response_code(403);
-    echo json_encode(['erro' => 'Acesso negado: origem não permitida']);
+// Lê JSON enviado
+$input = json_decode(file_get_contents('php://input'), true);
+
+// Verifica se o JSON é válido
+if (!is_array($input)) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'Dados inválidos ou ausentes']);
     exit;
 }
 
-// Lê entrada JSON
-$input = json_decode(file_get_contents('php://input'), true);
-
-// Validação básica dos campos obrigatórios
-$id_cliente = isset($_ENV['ID_CLIENTE']) ? intval($_ENV['ID_CLIENTE']) : null;
-$nome = trim($input['nome'] ?? '');
-$cpf = trim($input['cpf'] ?? '');
-$data_nascimento = $input['data_nascimento'] ?? null;
-$celular = trim($input['celular'] ?? '');
+// Mapeia os campos recebidos via FormData
+$id_cliente = $_ENV['ID_CLIENTE'] ?: null;
+$nome = trim($input['nomeCompleto'] ?? '');
+$cpf = preg_replace('/\D/', '', trim($input['cpf'] ?? ''));
+$data_nascimento = $input['dataNascimento'] ?? null;
+$celular = preg_replace('/\D/', '', trim($input['celular'] ?? ''));
 $email = trim($input['email'] ?? '');
 $senha = $input['senha'] ?? '';
 $ativo = strtoupper($input['ativo'] ?? 'S');
 
+// Validação básica
 if (!$id_cliente || !$nome || !$cpf || !$senha) {
     http_response_code(400);
-    echo json_encode(['erro' => 'Campos obrigatórios ausentes']);
+    echo json_encode([
+        'erro' => 'Campos obrigatórios ausentes'
+    ]);
     exit;
 }
 
-// Verifica duplicidade (CPF)
+// Verifica se a data está no formato YYYY-MM-DD
+if ($data_nascimento && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $data_nascimento)) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'Formato de data inválido (esperado: YYYY-MM-DD)']);
+    exit;
+}
+
+// Verifica duplicidade de CPF
 $verifica_stmt = $conn->prepare("SELECT id FROM tbl_paciente WHERE cpf = ?");
 $verifica_stmt->bind_param("s", $cpf);
 $verifica_stmt->execute();
@@ -88,5 +98,10 @@ try {
     ]);
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['erro' => 'Erro ao inserir paciente', 'detalhe' => $e->getMessage()]);
+    echo json_encode([
+        'erro' => 'Erro ao inserir paciente',
+        'detalhe' => $e->getMessage()
+    ]);
 }
+
+?>
