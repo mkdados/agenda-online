@@ -3,26 +3,12 @@
 // Includes
 include_once '../../../config/config.php';
 include_once 'funcoes.php';
-
-// Cabeçalhos de segurança
-header('Content-Type: application/json');
-header("X-Content-Type-Options: nosniff");
-header("X-Frame-Options: DENY");
-header("X-XSS-Protection: 1; mode=block");
-header("Referrer-Policy: no-referrer");
-header("Content-Security-Policy: default-src 'self'");
+include_once 'init.php';
 
 // Permitir apenas PATCH
 if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
     http_response_code(405);
     echo json_encode(['erro' => 'Método HTTP não permitido, use PATCH']);
-    exit;
-}
-
-// Verificação da origem
-if ($_SERVER['HTTP_HOST'] != $_ENV['DB_HOST']) {
-    http_response_code(403);
-    echo json_encode(['erro' => 'Acesso negado: origem não permitida']);
     exit;
 }
 

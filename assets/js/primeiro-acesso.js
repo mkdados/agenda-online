@@ -32,9 +32,18 @@ document.addEventListener("DOMContentLoaded", function () {
         case "celular":
           toggleInvalidClass(input, validarCelular(input.value));
           break;
-        case "nomeCompleto":
-          toggleInvalidClass(input, validarNomeCompleto(input.value));
+        case "nome":
+          toggleInvalidClass(input, validarNome(input.value));
           break;
+        case "email":
+          toggleInvalidClass(input, input.value);
+          break;
+        case "senha":
+          toggleInvalidClass(input, input.value);
+          break;
+        case "confirmarSenha":
+          toggleInvalidClass(input, input.value);
+          break;          
       }
     });
   });
@@ -61,19 +70,19 @@ document.addEventListener("DOMContentLoaded", function () {
     dados.ativo = "S";    
     
     // Validações
-    if (!validarNomeCompleto(dados.nomeCompleto)) {
-      Swal.fire({ icon: "warning", title: "Nome incompleto", text: "Digite seu nome completo (nome e sobrenome)." });
-      toggleInvalidClass(form.nomeCompleto, false);
-      form.nomeCompleto.focus();
-      return;
-    }
-
     if (!validarCPF(dados.cpf)) {
       Swal.fire({ icon: "warning", title: "CPF inválido", text: "Insira um CPF válido." });
       toggleInvalidClass(form.cpf, false);
       form.cpf.focus();
       return;
     }
+
+    if (!validarNome(dados.nome)) {
+      Swal.fire({ icon: "warning", title: "Nome incompleto", text: "Digite seu nome completo (nome e sobrenome)." });
+      toggleInvalidClass(form.nome, false);
+      form.nome.focus();
+      return;
+    }    
 
     if (!validarData(dados.dataNascimento)) {
       Swal.fire({ icon: "warning", title: "Data de nascimento inválida", text: "Use o formato dd/mm/aaaa." });
@@ -108,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
     loader.style.display = "flex";
 
     try {
-      const response = await fetch("api/cadastrar-paciente.php", {
+      const response = await fetch("api/cadastrar-acesso.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dados)
@@ -125,16 +134,18 @@ document.addEventListener("DOMContentLoaded", function () {
         await Swal.fire({
           icon: "success",
           title: "Sucesso!",
-          text: data?.mensagem || "Cadastro realizado com sucesso!"
+          html: "Acesso cadastrado com sucesso!"
         });
         
         window.location.href = "index.html";
 
       } else {
+
+        console.log(data.erro);
         Swal.fire({
           icon: "error",
           title: "Erro",
-          text: data?.mensagem || "Erro ao cadastrar."
+          html: data?.erro
         });
       }
     } catch {
@@ -142,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
       Swal.fire({
         icon: "error",
         title: "Erro de conexão",
-        text: "Não foi possível conectar ao servidor."
+        html: "Não foi possível conectar ao servidor."
       });
     }
   });

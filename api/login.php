@@ -3,14 +3,7 @@
 // Includes
 include_once '../../../config/config.php';
 include_once 'funcoes.php';
-
-// Cabeçalhos de segurança
-header('Content-Type: application/json');
-header("X-Content-Type-Options: nosniff");
-header("X-Frame-Options: DENY");
-header("X-XSS-Protection: 1; mode=block");
-header("Referrer-Policy: no-referrer");
-header("Content-Security-Policy: default-src 'self'");
+include_once 'init.php';
 
 // Apenas POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

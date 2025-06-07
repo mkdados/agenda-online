@@ -1,10 +1,8 @@
  /*Máscaras de entrada====================================================================*/
 $(document).ready(function () {
-  setTimeout(() => {
     Inputmask("999.999.999-99").mask("#cpf");
     Inputmask("99/99/9999").mask("#dataNascimento");
     Inputmask("(99) 99999-9999").mask("#celular");
-  }, 300);
 });
 
 /*Input text Caixa Alta====================================================================*/
@@ -69,7 +67,7 @@ function validarCelular(numero) {
   return regex.test(numero);
 }
 
-function validarNomeCompleto(nome) {
+function validarNome(nome) {
   const partes = nome.trim().split(/\s+/);
   return partes.length >= 2 && partes.every(p => p.length >= 2);
 }
