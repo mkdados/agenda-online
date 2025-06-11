@@ -18,8 +18,16 @@ $input = json_decode(file_get_contents('php://input'), true);
 // Verifica se o JSON é válido
 if (!is_array($input)) {
     http_response_code(400);
-    echo json_encode(['erro' => 'Dados inválidos ou ausentes']);
+    $response = ['erro' => 'Dados inválidos ou ausentes'];
+    gravarLogIntegracao($conn, $_ENV['ID_CLIENTE'] ?? null, null, [], $response, 400, false);
+    echo json_encode($response);
     exit;
+}
+
+// Remove senha do input para log
+$input_log = $input;
+if (isset($input_log['senha'])) {
+    $input_log['senha'] = '*********';
 }
 
 // Mapeia os campos
@@ -35,32 +43,42 @@ $ativo = strtoupper($input['ativo'] ?? 'S');
 // Validação de obrigatórios
 if (!$id_cliente || !$nome || !$cpf || !$senha) {
     http_response_code(400);
-    echo json_encode(['erro' => 'Campos obrigatórios ausentes']);
+    $response = ['erro' => 'Campos obrigatórios ausentes'];
+    gravarLogIntegracao($conn, $id_cliente, null, $input_log, $response, 400, false);
+    echo json_encode($response);
     exit;
 }
 
 // Validações
 if (!validarCPF($cpf)) {
     http_response_code(400);
-    echo json_encode(['erro' => 'CPF inválido']);
+    $response = ['erro' => 'CPF inválido'];
+    gravarLogIntegracao($conn, $id_cliente, null, $input_log, $response, 400, false);
+    echo json_encode($response);
     exit;
 }
 
 if (!validarNome($nome)) {
     http_response_code(400);
-    echo json_encode(['erro' => 'Informe nome e sobrenome válidos']);
+    $response = ['erro' => 'Informe nome e sobrenome válidos'];
+    gravarLogIntegracao($conn, $id_cliente, null, $input_log, $response, 400, false);
+    echo json_encode($response);
     exit;
 }
 
 if ($data_nascimento && !validarDataNascimento($data_nascimento)) {
     http_response_code(400);
-    echo json_encode(['erro' => 'Data de nascimento inválida']);
+    $response = ['erro' => 'Data de nascimento inválida'];
+    gravarLogIntegracao($conn, $id_cliente, null, $input_log, $response, 400, false);
+    echo json_encode($response);
     exit;
 }
 
 if ($celular && !validarCelular($celular)) {
     http_response_code(400);
-    echo json_encode(['erro' => 'Celular inválido']);
+    $response = ['erro' => 'Celular inválido'];
+    gravarLogIntegracao($conn, $id_cliente, null, $input_log, $response, 400, false);
+    echo json_encode($response);
     exit;
 }
 
@@ -71,7 +89,9 @@ $verifica_stmt->execute();
 $result = $verifica_stmt->get_result();
 if ($result->num_rows > 0) {
     http_response_code(409);
-    echo json_encode(['erro' => 'CPF já cadastrado']);
+    $response = ['erro' => 'CPF já cadastrado'];
+    gravarLogIntegracao($conn, $id_cliente, null, $input_log, $response, 409, false);
+    echo json_encode($response);
     exit;
 }
 $verifica_stmt->close();
@@ -84,7 +104,9 @@ if (!empty($email)) {
     $result_email = $verifica_email_stmt->get_result();
     if ($result_email->num_rows > 0) {
         http_response_code(409);
-        echo json_encode(['erro' => 'E-mail já cadastrado']);
+        $response = ['erro' => 'E-mail já cadastrado'];
+        gravarLogIntegracao($conn, $id_cliente, null, $input_log, $response, 409, false);
+        echo json_encode($response);
         exit;
     }
     $verifica_email_stmt->close();
@@ -122,32 +144,52 @@ try {
     http_response_code(200);
     echo json_encode($response);
 
-    // Log de sucesso
-    //gravarLogIntegracao($conn, $id_cliente, 1, 1, $novo_id, $input, $response, 200, true);
+    gravarLogIntegracao($conn, $id_cliente, $novo_id, $input_log, $response, 200, true);
 
 } catch (Exception $e) {
-    $erro = [
+    $response = [
         'erro' => 'Erro ao inserir paciente',
         'detalhe' => $e->getMessage()
     ];
     http_response_code(500);
-    echo json_encode($erro);
-
-    // Log de erro
-    //gravarLogIntegracao($conn, $id_cliente, 1, 1, null, $input, $erro, 500, false);
+    gravarLogIntegracao($conn, $id_cliente, null, $input_log, $response, 500, false);
+    echo json_encode($response);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-function gravarLogIntegracao($conn, $id_cliente, $id_integracao, $id_endpoint, $id_paciente, $request, $response, $status_http, $sucesso)
+// Função para gravar log de integração
+function gravarLogIntegracao($conn, $id_cliente, $id_paciente, $request, $response, $status_http, $sucesso)
 {
     try {
-        $ip = $_SERVER['REMOTE_ADDR'];
-        $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $ip = fn_get_ip();
         $metodo = $_SERVER['REQUEST_METHOD'];
         $request_json = json_encode($request, JSON_UNESCAPED_UNICODE);
         $response_json = json_encode($response, JSON_UNESCAPED_UNICODE);
         $sucesso_str = $sucesso ? '1' : '0';
+
+        // Busca dados da integração
+        $nome_endpoint = 'CADASTRA_ACESSO';
+
+        $query = "
+            SELECT c.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota
+            FROM tbl_cliente_integracao c
+            INNER JOIN tbl_integracao i ON i.id = c.id_integracao
+            INNER JOIN tbl_integracao_endpoint e ON e.id_integracao = i.id
+            WHERE c.id_cliente = ? AND e.nome = ?
+            LIMIT 1
+        ";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("is", $id_cliente, $nome_endpoint);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            return;
+        }
+
+        $row = $result->fetch_assoc();
+        $id_integracao          = $row["id_integracao"];
+        $id_integracao_endpoint = $row["id_integracao_endpoint"];
+        $url_integracao         = $row["url"] . $row["rota"];
 
         $log_stmt = $conn->prepare("
             INSERT INTO tbl_integracao_log 
@@ -158,10 +200,10 @@ function gravarLogIntegracao($conn, $id_cliente, $id_integracao, $id_endpoint, $
             "iiiisssssis",
             $id_cliente,
             $id_integracao,
-            $id_endpoint,
+            $id_integracao_endpoint,
             $id_paciente,
             $ip,
-            $url,
+            $url_integracao,
             $metodo,
             $request_json,
             $response_json,
@@ -170,6 +212,7 @@ function gravarLogIntegracao($conn, $id_cliente, $id_integracao, $id_endpoint, $
         );
         $log_stmt->execute();
         $log_stmt->close();
+
     } catch (Exception $e) {
         error_log('Erro ao gravar log de integração: ' . $e->getMessage());
     }

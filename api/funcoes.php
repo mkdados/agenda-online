@@ -27,12 +27,17 @@ function validarDataNascimento($data) {
     [$ano, $mes, $dia] = $partes;
     if (!checkdate((int)$mes, (int)$dia, (int)$ano)) return false;
 
-    $hoje = new DateTime();
-    $nascimento = new DateTime($data);
-    $idade = $hoje->diff($nascimento)->y;
+    try {
+        $hoje = new DateTime();
+        $nascimento = new DateTime($data);
+    } catch (Exception $e) {
+        return false;
+    }
 
+    $idade = $hoje->diff($nascimento)->y;
     return $nascimento <= $hoje && $idade >= 0 && $idade <= 120;
 }
+
 
 function validarCelular($celular) {
     $celular = preg_replace('/\D/', '', $celular);

@@ -35,15 +35,18 @@ if ($result_verifica->num_rows === 0) {
 $verifica_stmt->close();
 
 // Busca dados da integração
+$nome_endpoint = 'AUTENTICACAO';
+
 $query = "
-    SELECT c.id as id_integracao, e.id as id_integracao_endpoint, e.url, e.metodo_http, c.parametros
-    FROM tbl_cliente_integracao c
+    SELECT c.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
+        FROM tbl_cliente_integracao c
     INNER JOIN tbl_integracao i ON i.id = c.id_integracao
     INNER JOIN tbl_integracao_endpoint e ON e.id_integracao = i.id
-    WHERE c.id_cliente = ? AND i.id = ? AND e.nome = 'AUTENTICACAO'
+    WHERE c.id_cliente = ? AND e.nome = ?
+    limit 1
 ";
 $stmt = $conn->prepare($query);
-$stmt->bind_param("ii", $id_cliente, $id_integracao);
+$stmt->bind_param("is", $id_cliente, $nome_endpoint);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -54,8 +57,9 @@ if ($result->num_rows === 0) {
 }
 
 $row = $result->fetch_assoc();
+$id_integracao          = $row["id_integracao"];
 $id_integracao_endpoint = $row["id_integracao_endpoint"];
-$url_integracao         = $row["url"];
+$url_integracao         = $row["url"].$row["rota"];
 $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 
