@@ -98,6 +98,12 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    if (dados.senha.length < 8) {
+      Swal.fire({ icon: "warning", title: "Senha fraca", text: "A senha deve conter no mínimo 8 caracteres." });
+      form.senha.focus();
+      return;
+    }
+
     if (dados.senha !== dados.confirmarSenha) {
       Swal.fire({ icon: "warning", title: "Senhas diferentes", text: "As senhas não coincidem." });
       form.senha.focus();

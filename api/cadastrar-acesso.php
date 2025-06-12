@@ -82,6 +82,14 @@ if ($celular && !validarCelular($celular)) {
     exit;
 }
 
+if (strlen($senha) < 8) {
+    http_response_code(400);
+    $response = ['erro' => 'A senha deve conter no mínimo 8 caracteres'];
+    gravarLogIntegracao($conn, $id_cliente, null, $input_log, $response, 400, false);
+    echo json_encode($response);
+    exit;
+}
+
 // Verifica duplicidade CPF
 $verifica_stmt = $conn->prepare("SELECT id FROM tbl_paciente WHERE cpf = ?");
 $verifica_stmt->bind_param("s", $cpf);
