@@ -51,12 +51,15 @@ document.addEventListener("DOMContentLoaded", function () {
       loader.style.display = "none";
 
       if (response.ok) {
-        Swal.fire({
+
+         Swal.fire({
           icon: "success",
           title: "Instruções enviadas!",
           html: "Verifique seu e-mail para redefinir sua senha."
+        }).then(() => {
+          window.location.href = "index.html";
         });
-        input.value = "";
+        
       } else {
         Swal.fire({
           icon: "error",

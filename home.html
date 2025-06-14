@@ -221,7 +221,7 @@
 <!-- Barra de data e conta -->
 <div class="border-top border-bottom" style="background-color: #d47d48;padding-top:.75rem; padding-bottom:.75rem;">
   <div class="container-fluid d-flex justify-content-between align-items-center" style="padding-left: 2rem;">
-    <div class="small text-white"><i class="bi bi-calendar me-2"></i> quarta-feira, 23 de abril de 2025 <i class="bi bi-clock mx-2"></i> 21:26</div>
+    <div class="small text-white" id="data-hora"></div>
     <a href="#" class="text-white text-decoration-none small">Minha Conta</a>
   </div>
 </div>
@@ -232,10 +232,10 @@
         <div id="user-section">
             <div class="d-flex justify-content-between align-items-center w-100">
             <div class="user-info d-flex align-items-center">
-                <div class="avatar-circle me-3">MV</div>
+                <div class="avatar-circle me-3"></div>
                 <div>
-                <p class="name mb-0">Marcos Vinicios</p>
-                <p class="email mb-0">mkdados@gmail.com</p>
+                <p class="name mb-0"></p>
+                <p class="email mb-0"></p>
                 </div>
             </div>
             <button onclick="toggleSidebar()">
@@ -260,9 +260,7 @@
 
     <!-- Conteúdo principal -->
     <div id="content">
-      <div class="alert alert-secondary" role="alert">
-        Olá! Marcos Vinicios de Morais
-      </div>
+      <div class="alert alert-secondary" role="alert"></div>
     </div>
 </main>
 
@@ -309,6 +307,63 @@
     });
   });
 </script>
+
+
+<!-- Setar dados do usuario -->
+<script>
+  // Pega os dados do paciente do sessionStorage
+  const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+
+  if (usuario) {
+    // Atualiza nome e e-mail no menu lateral
+    document.querySelector('#user-section .name').textContent = usuario.nome;
+    document.querySelector('#user-section .email').textContent = usuario.email;
+
+    // Atualiza saudação principal
+    document.querySelector('#content .alert').textContent = `Olá! ${usuario.nome}`;
+
+    // Atualiza avatar com as iniciais do nome (ex: MV)
+    const avatar = document.querySelector('.avatar-circle');
+    if (avatar && usuario.nome) {
+      const iniciais = usuario.nome.split(' ').map(p => p.charAt(0)).slice(0, 2).join('').toUpperCase();
+      avatar.textContent = iniciais;
+    }
+  } else {
+    // Se não houver login, redireciona para login
+    window.location.href = 'index.html';
+  }
+</script>
+
+<!-- Setar data e hora -->
+<script>
+  function formatarDataHora() {
+    const data = new Date();
+
+    const diasSemana = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+    const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+
+    const diaSemana = diasSemana[data.getDay()];
+    const dia = data.getDate();
+    const mes = meses[data.getMonth()];
+    const ano = data.getFullYear();
+
+    let horas = data.getHours();
+    let minutos = data.getMinutes();
+
+    if (horas < 10) horas = '0' + horas;
+    if (minutos < 10) minutos = '0' + minutos;
+
+    return `<i class="bi bi-calendar me-2"></i> ${diaSemana}, ${dia} de ${mes} de ${ano} <i class="bi bi-clock mx-2"></i> ${horas}:${minutos}`;
+  }
+
+  const elementoDataHora = document.getElementById('data-hora');
+  elementoDataHora.innerHTML = formatarDataHora();
+
+  setInterval(() => {
+    elementoDataHora.innerHTML = formatarDataHora();
+  }, 60000);
+</script>
+
 
 </body>
 </html>

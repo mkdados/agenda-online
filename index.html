@@ -59,7 +59,7 @@
         </div>
 
         <!-- Botões -->
-        <button type="submit" class="btn btn-padrao w-100 mb-3">Entrar</button>
+        <button type="button" class="btn btn-padrao w-100 mb-3" id="btnLogin">Entrar</button>
         
         <!-- Cadastre-se -->
         <p class="text-sm text-muted-foreground text-center">
@@ -105,48 +105,7 @@
 <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
 <script src="assets/jquery/jquery.inputmask.min.js"></script>
 <script src="assets/js/funcoes.js"></script>
-
-<script>
-  document.getElementById('loginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const identificador = document.getElementById('emailCpf').value.trim();
-    const senha = document.getElementById('password').value;
-
-    try {
-      const response = await fetch('api/login.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ identificador, senha })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Login bem-sucedido
-        window.location.href = 'home.html';
-      } else {
-        // Erro no login
-        Swal.fire({
-          icon: 'error',
-          title: 'Erro ao entrar',
-          text: data.erro || 'Não foi possível fazer login'
-        });
-      }
-
-    } catch (error) {
-      console.error('Erro na requisição:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro',
-        text: 'Erro inesperado. Tente novamente mais tarde.'
-      });
-    }
-  });
-</script>
-
+<script src="assets/js/login.js?v=1.0.0"></script>
 
 </body>
 </html>
