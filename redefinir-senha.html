@@ -8,12 +8,13 @@
   <meta http-equiv="Expires" content="0">
   <link rel="shortcut icon" href="assets/images/fave-icon.png" type="image/x-icon">
   <title>Redefinir Senha</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+ <!-- Bibliotecas -->
+  <link href="assets/font-awesome/6.5.1/css/all.min.css">
   <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/css/style.css" rel="stylesheet">
   <link href="assets/fonts/font-lato.css" rel="stylesheet">
-  <link href="assets/fonts/montserrat.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="assets/fonts/montserrat.css" rel="stylesheet"> 
 </head>
 <body>
 
@@ -50,7 +51,7 @@
         </div>
 
         <!-- Botão -->
-        <button type="submit" class="btn btn-padrao w-100 mb-3">Redefinir Senha</button>
+        <button type="button" class="btn btn-padrao w-100 mb-3" id="btnRedefinirSenha">Redefinir Senha</button>
 
         <!-- Voltar -->
         <p class="text-sm text-muted-foreground text-center">
@@ -87,64 +88,14 @@
   </div>
 </div>
 
-<script src="assets/jquery/jquery-3.7.1.js"></script>
-<script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
-<script>
-  $(document).ready(function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+  <!-- Scripts -->
+  <script src="assets/jquery/jquery-3.7.1.js"></script>   
+  <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/jquery/jquery.inputmask.min.js"></script>
+  <script src="assets/sweetalert/sweetalert2@11.js"></script> 
+  <script src="assets/js/funcoes.js?v=1.0.3"></script>
+  <script src="assets/js/redefinir-senha.js?v=1.0.0"></script>
 
-    if (!token) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Token inválido',
-        text: 'O link de redefinição é inválido ou expirou.',
-      });
-      $('#resetForm :input').prop('disabled', true);
-      return;
-    }
-
-    $('#resetForm').on('submit', function (e) {
-      e.preventDefault();
-
-      const senha = $('#senha').val();
-      const confirmarSenha = $('#confirmarSenha').val();
-
-      if (senha.length < 8) {
-        return Swal.fire('Erro', 'A senha deve ter pelo menos 8 caracteres.', 'warning');
-      }
-
-      if (senha !== confirmarSenha) {
-        return Swal.fire('Erro', 'As senhas não coincidem.', 'error');
-      }
-
-      $.ajax({
-        url: 'api/redefinir-senha.php',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ token: token, senha: senha }),
-        beforeSend: () => $('#loader').show(),
-        success: function (res) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Senha redefinida',
-            text: res.mensagem || 'Sua senha foi alterada com sucesso',
-          }).then(() => {
-            window.location.href = 'index.html';
-          });
-        },
-        error: function (xhr) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Erro ao redefinir senha',
-            text: xhr.responseJSON?.erro || 'Ocorreu um erro inesperado.',
-          });
-        },
-        complete: () => $('#loader').hide()
-      });
-    });
-  });
-</script>
 
 </body>
 </html>
