@@ -5,12 +5,23 @@ document.addEventListener("DOMContentLoaded", function () {
   const botaoEnviar = document.getElementById("btnRedefinirSenha");
   const loader = document.getElementById("loader");
 
-  if (!form || !senhaInput || !confirmarInput || !botaoEnviar || !loader) {
-    console.error("Algum elemento obrigatório não foi encontrado no DOM.");
-    return; // para evitar erro no script
+  // 📌 Verifica se o token está presente na URL
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");
+
+  if (!token) {
+    Swal.fire({
+      icon: "error",
+      title: "Link inválido",
+      text: "Token de redefinição não encontrado. Verifique o link enviado por e-mail.",
+      confirmButtonText: "Voltar ao login"
+    }).then(() => {
+      window.location.href = "index.html";
+    });
+    return;
   }
 
-  // Remove erro visual ao digitar
+  // 🧼 Remove erro visual ao digitar
   senhaInput.addEventListener("input", () => {
     senhaInput.classList.remove("is-invalid");
     confirmarInput.classList.remove("is-invalid");
@@ -20,12 +31,13 @@ document.addEventListener("DOMContentLoaded", function () {
     confirmarInput.classList.remove("is-invalid");
   });
 
-  // Submit manual via botão
+  // 📨 Submit manual via botão
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     botaoEnviar.click();
   });
 
+  // 🚀 Clique no botão envia a requisição
   botaoEnviar.addEventListener("click", async function () {
     const senha = senhaInput.value.trim();
     const confirmar = confirmarInput.value.trim();
@@ -44,18 +56,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (senha !== confirmar) {
-      Swal.fire("Senhas não coincidem", "Confirme a senha corretamente.", "warning");
+      Swal.fire("Senhas diferentes", "A confirmação de senha não corresponde.", "warning");
       senhaInput.classList.add("is-invalid");
       confirmarInput.classList.add("is-invalid");
-      return;
-    }
-
-    // Pega token da URL (exemplo: ?token=abcdef)
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-
-    if (!token) {
-      Swal.fire("Erro", "Token de redefinição não encontrado.", "error");
       return;
     }
 
@@ -65,7 +68,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const response = await fetch("api/redefinir-senha.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: token, nova_senha: senha })
+        body: JSON.stringify({
+          token: token,
+          nova_senha: senha
+        })
       });
 
       const data = await response.json();
@@ -77,13 +83,13 @@ document.addEventListener("DOMContentLoaded", function () {
           title: "Senha redefinida!",
           text: data.mensagem || "Sua senha foi alterada com sucesso."
         }).then(() => {
-          window.location.href = "index.html"; // redireciona para login
+          window.location.href = "index.html";
         });
       } else {
         Swal.fire({
           icon: "error",
           title: "Erro",
-          text: data.erro || "Falha ao redefinir senha."
+          text: data.erro || "Falha ao redefinir senha. Tente novamente."
         });
       }
     } catch (err) {
