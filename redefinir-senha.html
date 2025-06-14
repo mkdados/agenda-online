@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="shortcut icon" href="assets/images/fave-icon.png" type="image/x-icon">
+  <title>Redefinir Senha</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/fonts/font-lato.css" rel="stylesheet">
+  <link href="assets/fonts/montserrat.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+<div id="loader" style="display: none;">
+  <div class="spinner"></div>
+</div>
+
+<div class="container-fluid d-flex flex-column flex-md-row h-100">
+  <!-- Formulário -->
+  <div class="col-12 col-md-6 d-flex align-items-center justify-content-center">
+    <div class="login-box w-100">
+      <form id="resetForm" class="w-100">
+        <!-- Logo -->
+        <div class="text-center mb-4 d-flex flex-column justify-content-center align-items-center">
+          <img src="assets/images/logo-dermaclinica.png" alt="Logo Dermaclínica" class="img-fluid" style="max-width: 150px;">
+        </div>
+
+        <!-- Título -->
+        <div class="flex flex-col space-y-1.5 p-6">
+          <h1 class="bem-vindo">Redefinir Senha</h1>
+          <div class="text-sm text-muted-foreground mb-4">Escolha sua nova senha abaixo</div>
+        </div>
+
+        <!-- Senha -->
+        <div class="mb-3">
+          <label for="senha" class="form-label text-sm fw-bold">Nova Senha</label>
+          <input type="password" id="senha" class="form-control" placeholder="Nova senha" required minlength="8">
+        </div>
+
+        <!-- Confirmar senha -->
+        <div class="mb-3">
+          <label for="confirmarSenha" class="form-label text-sm fw-bold">Confirmar Senha</label>
+          <input type="password" id="confirmarSenha" class="form-control" placeholder="Confirme a nova senha" required minlength="8">
+        </div>
+
+        <!-- Botão -->
+        <button type="submit" class="btn btn-padrao w-100 mb-3">Redefinir Senha</button>
+
+        <!-- Voltar -->
+        <p class="text-sm text-muted-foreground text-center">
+          <a class="text-decoration-none text-color-padrao" href="index.html">Voltar para o login</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Carrossel -->
+  <div id="carouselLogin" class="carousel slide d-none d-md-block" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="0" class="active"></button>
+      <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="1"></button>
+      <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="2"></button>
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active h-100">
+        <img src="assets/images/slide-01.jpg" class="d-block w-100" alt="slide-01">
+      </div>
+      <div class="carousel-item h-100">
+        <img src="assets/images/slide-02.png" class="d-block w-100" alt="slide-02">
+      </div>
+      <div class="carousel-item h-100">
+        <img src="assets/images/slide-03.jpg" class="d-block w-100" alt="slide-03">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselLogin" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselLogin" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+</div>
+
+<script src="assets/jquery/jquery-3.7.1.js"></script>
+<script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+<script>
+  $(document).ready(function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (!token) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Token inválido',
+        text: 'O link de redefinição é inválido ou expirou.',
+      });
+      $('#resetForm :input').prop('disabled', true);
+      return;
+    }
+
+    $('#resetForm').on('submit', function (e) {
+      e.preventDefault();
+
+      const senha = $('#senha').val();
+      const confirmarSenha = $('#confirmarSenha').val();
+
+      if (senha.length < 8) {
+        return Swal.fire('Erro', 'A senha deve ter pelo menos 8 caracteres.', 'warning');
+      }
+
+      if (senha !== confirmarSenha) {
+        return Swal.fire('Erro', 'As senhas não coincidem.', 'error');
+      }
+
+      $.ajax({
+        url: 'api/redefinir-senha.php',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ token: token, senha: senha }),
+        beforeSend: () => $('#loader').show(),
+        success: function (res) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Senha redefinida',
+            text: res.mensagem || 'Sua senha foi alterada com sucesso',
+          }).then(() => {
+            window.location.href = 'index.html';
+          });
+        },
+        error: function (xhr) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro ao redefinir senha',
+            text: xhr.responseJSON?.erro || 'Ocorreu um erro inesperado.',
+          });
+        },
+        complete: () => $('#loader').hide()
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
