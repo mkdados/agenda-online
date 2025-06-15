@@ -1,7 +1,8 @@
-body, html {
-  height: 100%;
+html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  font-family: 'Montserrat', sans-serif;
   overflow-x: hidden;
 }
 
@@ -9,14 +10,12 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: 'Montserrat', sans-serif;
 }
 
-/* Permite que o conteúdo cresça */
+/* Conteúdo principal que cresce naturalmente */
 main {
   display: flex;
-  flex: 1;
-  overflow-y: visible; /* deixa o conteúdo rolar se crescer */
+  flex-grow: 1;
 }
 
 /* Botão Padrão */
@@ -135,11 +134,10 @@ main {
 }
 
 #content {
-    transition: all 0.3s;
-    padding: 0.5rem 2rem 2rem;
-    flex-grow: 1;
-    margin-top: 0.5rem;
-    overflow-y: auto;
+  flex-grow: 1;
+  padding: 0.5rem 2rem 2rem;
+  overflow-y: auto;
+  min-height: 0; /* necessário para funcionar bem com flexbox */
 }
 
 #sidebar.collapsed + #content {
