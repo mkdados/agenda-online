@@ -1,39 +1,4 @@
 /*###########################################################################################
-    Script para alternar o menu lateral
-  ############################################################################################*/ 
-  function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const icon = document.querySelector('#user-section button i');
-    sidebar.classList.toggle('collapsed');
-    icon.classList.toggle('bi-chevron-left');
-    icon.classList.toggle('bi-chevron-right');
-  }
-
-  function toggleMobileSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const content = document.getElementById('content');
-
-    sidebar.classList.toggle('mobile-show'); // Alterna a visibilidade do menu
-    overlay.style.display = sidebar.classList.contains('mobile-show') ? 'block' : 'none'; // Exibe a sobreposição
-    content.classList.toggle('mobile-shifted', sidebar.classList.contains('mobile-show')); // Move o conteúdo
-  }
-
-  // Fechar o menu ao clicar no overlay
-  document.getElementById('overlay').addEventListener('click', function() {
-    toggleMobileSidebar(); // Fecha o menu e o overlay
-  });
-
-  // Adicionar evento de clique para os links do menu lateral
-  document.querySelectorAll('#sidebar .nav-link').forEach(link => {
-    link.addEventListener('click', function () {
-      document.querySelectorAll('#sidebar .nav-link').forEach(l => l.classList.remove('active'));
-      this.classList.add('active');
-    });
-  });
-
-
-/*###########################################################################################
     Script para alternar entre as etapas
   ############################################################################################*/ 
   function goToStep(step) {
@@ -113,7 +78,7 @@ function selecionaTipoAtendimento() {
         const listaConvenios = data.value; // <-- Corrigido aqui (era data.value)
 
         const selectConvenio = document.getElementById('convenioSelect');
-        selectConvenio.innerHTML = '<option value="">Selecione um convênio</option>';
+        selectConvenio.innerHTML = '<option value="">Selecione o convênio</option>';
 
         if (Array.isArray(listaConvenios)) {
           // Ordena os convênios por razão social (case insensitive)

@@ -10,15 +10,24 @@
     icon.classList.toggle('bi-chevron-right');
   }
 
-  function toggleMobileSidebar() {
+  function toggleMobileSidebar(forceClose = false) {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
     const content = document.getElementById('content');
 
-    sidebar.classList.toggle('mobile-show'); // Alterna a visibilidade do menu
-    overlay.style.display = sidebar.classList.contains('mobile-show') ? 'block' : 'none'; // Exibe a sobreposição
-    content.classList.toggle('mobile-shifted', sidebar.classList.contains('mobile-show')); // Move o conteúdo
+    const isVisible = sidebar.classList.contains('mobile-show');
+
+    if (forceClose || isVisible) {
+      sidebar.classList.remove('mobile-show');
+      overlay.style.display = 'none';
+      content.classList.remove('mobile-shifted');
+    } else {
+      sidebar.classList.add('mobile-show');
+      overlay.style.display = 'block';
+      content.classList.add('mobile-shifted');
+    }
   }
+
 
   // Fechar o menu ao clicar no overlay
   document.getElementById('overlay').addEventListener('click', function() {
