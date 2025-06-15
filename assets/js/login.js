@@ -19,19 +19,43 @@ async function realizarLogin() {
     const data = await response.json();
     loader.style.display = 'none'; // esconde o loader
 
-    if (response.ok) {
+    if (response.ok) {  
+
+      //Seta sessionStorage com os dados do usuário
       sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
-      window.location.href = 'home.html';
+      sessionStorage.setItem('sessao', JSON.stringify(data.sessao));
+      const id_usuario = data.usuario.id;
+
+      //Resgata o token===============
+      fn_gera_token(id_usuario)
+        .then(data => {
+          
+          sessionStorage.setItem('token', JSON.stringify({
+              chave: data.token.chave,
+              duracao: data.token.duracao
+          }));
+          window.location.href = 'home.html';
+
+        })
+        .catch(error => {
+          loader.style.display = 'none'; // esconde o loader
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: 'Erro inesperado. Tente novamente mais tarde.'
+          });
+        });
+    
     } else {
+      loader.style.display = 'none'; // esconde o loader
       Swal.fire({
         icon: 'error',
-        title: 'Erro ao entrar',
-        text: data.erro || 'Não foi possível fazer login'
+        title: 'Erro',
+        html: data?.erro
       });
     }
   } catch (error) {
     loader.style.display = 'none'; // esconde o loader
-    console.error('Erro na requisição:', error);
     Swal.fire({
       icon: 'error',
       title: 'Erro',

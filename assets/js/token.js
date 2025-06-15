@@ -1,7 +1,7 @@
-function fn_gera_token() {
-  const url = 'api/autenticacao.php';
+function fn_gera_token(id_paciente) {
+  const url = 'api/token.php';
   const body = {
-    id_paciente: 1
+    id_paciente: id_paciente
   };
 
   const options = {

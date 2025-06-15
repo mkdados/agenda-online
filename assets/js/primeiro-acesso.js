@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       } else {
 
-        console.log(data.erro);
+        //onsole.log(data.erro);
         Swal.fire({
           icon: "error",
           title: "Erro",

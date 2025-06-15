@@ -37,7 +37,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
     http_response_code(401);
-    echo json_encode(['erro' => 'Usuário não encontrado ou inativo']);
+    echo json_encode(['erro' => 'Usuário / Senha incorreta']);
     exit;
 }
 
@@ -51,6 +51,9 @@ if (!password_verify($senha, $usuario['senha'])) {
     exit;
 }
 
+// Calcula a expiração da sessão (4 horas a partir de agora)
+$expiracaoSessao = date('c', strtotime('+4 hours')); // formato ISO 8601
+
 // Resposta de sucesso
 echo json_encode([
     'mensagem' => 'Login realizado com sucesso',
@@ -59,5 +62,9 @@ echo json_encode([
         'nome' => $usuario['nome'],
         'cpf' => $usuario['cpf'],
         'email' => $usuario['email']
+    ],
+    'sessao' => [
+        'expira_em' => $expiracaoSessao,
+        'duracao' => 4 * 60 * 60 // em segundos (4 horas)
     ]
 ]);

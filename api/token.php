@@ -4,6 +4,8 @@
 include_once '../../../config/config.php'; 
 include_once 'funcoes.php';
 include_once 'init.php';
+include_once 'curl.php';
+include_once 'log-integracao.php';
 
 // Apenas POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -73,64 +75,51 @@ $request_body = json_encode([
     "plataforma" => $plataforma
 ]);
 
-// Executa cURL
-$curl = curl_init();
-curl_setopt_array($curl, array(
-    CURLOPT_URL => $url_integracao,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_CUSTOMREQUEST => $metodo_http,
-    CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-));
-$response = curl_exec($curl);
-$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-$curl_error = curl_error($curl);
-curl_close($curl);
+// Inicializa cURL
+$curl_result = fn_curl_request([
+    'url' => $url_integracao,
+    'metodo' => $metodo_http,
+    'body' => $request_body,
+    'headers' => [
+        'Content-Type: application/json'
+    ]
+]);
 
-// Interpreta resposta
-$data = json_decode($response, true);
-$sucesso = (isset($data["token"]["chave"])) ? 'SIM' : 'NAO';
-$ip_cliente = fn_get_ip();
+$sucesso     = $curl_result['sucesso']     ?? 'N';
+$response    = $curl_result['response']    ?? '';
+$http_status = $curl_result['http_status'] ?? 0;
+$curl_error  = $curl_result['erro']        ?? '';
+$data        = $curl_result['data']        ?? [];
 
-// Grava log
-try {
-    $log_stmt = $conn->prepare("
-        INSERT INTO tbl_integracao_log 
-        (id_cliente, id_integracao, id_integracao_endpoint, id_paciente, ip, url_utilizada, metodo_http, request, response, status_http, sucesso)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ");
-    $log_stmt->bind_param(
-        "iiisssssssi",
-        $id_cliente,
-        $id_integracao,
-        $id_integracao_endpoint,
-        $id_paciente,
-        $ip_cliente,
-        $url_integracao,
-        $metodo_http,
-        $request_body,
-        $response,
-        $http_status,
-        $sucesso
-    );
-    $log_stmt->execute();
-    $log_stmt->close();
-} catch (Exception $e) {
-    error_log("Erro ao gravar log: " . $e->getMessage());
-}
-
-// Retorno final
-if ($sucesso === 'NAO') {
-    http_response_code(502);
-    echo json_encode(["erro" => "Falha ao obter token", "detalhe" => $curl_error ?: "Resposta inválida"]);
+// Exibe token se sucesso
+if ($sucesso  === 'S' and !empty($data["token"]["chave"])) {
+    http_response_code($http_status);
+    echo json_encode([
+        "token" => [
+            "chave" => htmlspecialchars($data["token"]["chave"]),
+            "duracao" => htmlspecialchars($data["token"]["duracao"])
+        ]
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+} else {
+    http_response_code($http_status);
+    echo json_encode(["erro" => "Erro ao processar a requisição: " . $curl_error ]);
     exit;
 }
 
-echo json_encode([
-    "token" => [
-        "chave" => htmlspecialchars($data["token"]["chave"]),
-        "duracao" => htmlspecialchars($data["token"]["duracao"])
-    ]
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+// Grava log
+fn_log_integracao([
+    'id_cliente' => $id_cliente,
+    'id_integracao' => $id_integracao,
+    'id_integracao_endpoint' => $id_integracao_endpoint,
+    'id_paciente' => $id_paciente,
+    'url_integracao' => $url_integracao,
+    'metodo_http' => $metodo_http,
+    'request_body' => $request_body,
+    'response' => $response,
+    'http_status' => $http_status,
+    'sucesso' => $sucesso
+]);
+
+
 
 ?>
