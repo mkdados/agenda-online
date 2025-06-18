@@ -91,7 +91,7 @@ if (strlen($senha) < 8) {
 }
 
 // Verifica duplicidade CPF
-$verifica_stmt = $conn->prepare("SELECT id FROM tbl_paciente WHERE cpf = ?");
+$verifica_stmt = $conn->prepare("SELECT id FROM tbl_usuario WHERE cpf = ?");
 $verifica_stmt->bind_param("s", $cpf);
 $verifica_stmt->execute();
 $result = $verifica_stmt->get_result();
@@ -106,7 +106,7 @@ $verifica_stmt->close();
 
 // Verifica duplicidade email (se informado)
 if (!empty($email)) {
-    $verifica_email_stmt = $conn->prepare("SELECT id FROM tbl_paciente WHERE email = ?");
+    $verifica_email_stmt = $conn->prepare("SELECT id FROM tbl_usuario WHERE email = ?");
     $verifica_email_stmt->bind_param("s", $email);
     $verifica_email_stmt->execute();
     $result_email = $verifica_email_stmt->get_result();
@@ -126,7 +126,7 @@ $senha_hash = password_hash($senha, PASSWORD_BCRYPT);
 // Tenta inserir e registrar log
 try {
     $insert_stmt = $conn->prepare("
-        INSERT INTO tbl_paciente 
+        INSERT INTO tbl_usuario 
         (id_cliente, nome, cpf, data_nascimento, celular, email, senha, ativo)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ");
@@ -147,7 +147,7 @@ try {
 
     $response = [
         'mensagem' => 'Acesso cadastrado com sucesso',
-        'id_paciente' => $novo_id
+        'id_usuario' => $novo_id
     ];
     http_response_code(200);
     echo json_encode($response);
@@ -156,7 +156,7 @@ try {
 
 } catch (Exception $e) {
     $response = [
-        'erro' => 'Erro ao inserir paciente',
+        'erro' => 'Erro ao inserir usuário',
         'detalhe' => $e->getMessage()
     ];
     http_response_code(500);
@@ -165,7 +165,7 @@ try {
 }
 
 // Função para gravar log de integração
-function gravarLogIntegracao($conn, $id_cliente, $id_paciente, $request, $response, $status_http, $sucesso)
+function gravarLogIntegracao($conn, $id_cliente, $id_usuario, $request, $response, $status_http, $sucesso)
 {
     try {
         $ip = fn_get_ip();
@@ -201,7 +201,7 @@ function gravarLogIntegracao($conn, $id_cliente, $id_paciente, $request, $respon
 
         $log_stmt = $conn->prepare("
             INSERT INTO tbl_integracao_log 
-            (id_cliente, id_integracao, id_integracao_endpoint, id_paciente, ip, url_utilizada, metodo_http, request, response, status_http, sucesso)
+            (id_cliente, id_integracao, id_integracao_endpoint, id_usuario, ip, url_utilizada, metodo_http, request, response, status_http, sucesso)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $log_stmt->bind_param(
@@ -209,7 +209,7 @@ function gravarLogIntegracao($conn, $id_cliente, $id_paciente, $request, $respon
             $id_cliente,
             $id_integracao,
             $id_integracao_endpoint,
-            $id_paciente,
+            $id_usuario,
             $ip,
             $url_integracao,
             $metodo,

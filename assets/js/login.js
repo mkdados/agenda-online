@@ -17,24 +17,48 @@ async function realizarLogin() {
     });
 
     const data = await response.json();
-    loader.style.display = 'none'; // esconde o loader
 
     if (response.ok) {  
 
       //Seta sessionStorage com os dados do usuário
       sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
       sessionStorage.setItem('sessao', JSON.stringify(data.sessao));
-      const id_usuario = data.usuario.id;
+      const id_usuario = data.usuario.id_usuario;
 
       //Resgata o token===============
       fn_gera_token(id_usuario)
-        .then(data => {
+        .then(data => {  
           
+          const chave = data.token.chave;
+          const duracao = data.token.duracao;
+
+          //Grava o token no sessionStorage
           sessionStorage.setItem('token', JSON.stringify({
-              chave: data.token.chave,
-              duracao: data.token.duracao
-          }));
-          window.location.href = 'home.html';
+              chave: chave,
+              duracao: duracao
+          }));   
+
+          //Pega dados do paciente
+          fn_lista_pacientes(id_usuario, chave)
+            .then(data => {
+              const listaPacientes = data.value; 
+              
+              listaPacientes.forEach(paciente => {
+                  //Grava dados do paciente no sessionStorage
+                  sessionStorage.setItem('paciente', JSON.stringify({
+                      id_paciente: paciente.id,
+                      id_convenio: paciente.convenio.id
+                  }));  
+
+              });               
+
+              //Redireciona para a página home
+              window.location.href = 'home.html';   
+            })
+            .catch(error => {
+              loader.style.display = 'none';
+            });
+               
 
         })
         .catch(error => {
@@ -44,7 +68,7 @@ async function realizarLogin() {
             title: 'Erro',
             text: 'Erro inesperado. Tente novamente mais tarde.'
           });
-        });
+        });     
     
     } else {
       loader.style.display = 'none'; // esconde o loader

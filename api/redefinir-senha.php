@@ -30,7 +30,7 @@ if (!$id_cliente) {
 
 // 🔒 Verifica se o token é válido
 $stmt = $conn->prepare("
-    SELECT id_paciente 
+    SELECT id_usuario 
     FROM tbl_recuperacao_senha 
     WHERE id_cliente = ? 
       AND token = ? 
@@ -49,14 +49,14 @@ if ($result->num_rows === 0) {
 }
 
 $recuperacao = $result->fetch_assoc();
-$id_paciente = $recuperacao['id_paciente'];
+$id_usuario = $recuperacao['id_usuario'];
 $stmt->close();
 
-// ✅ Atualiza a senha do paciente
+// ✅ Atualiza a senha do usuário
 $senhaCriptografada = password_hash($novaSenha, PASSWORD_DEFAULT);
 
-$stmt = $conn->prepare("UPDATE tbl_paciente SET senha = ? WHERE id = ? AND id_cliente = ?");
-$stmt->bind_param("sii", $senhaCriptografada, $id_paciente, $id_cliente);
+$stmt = $conn->prepare("UPDATE tbl_usuario SET senha = ? WHERE id = ? AND id_cliente = ?");
+$stmt->bind_param("sii", $senhaCriptografada, $id_usuario, $id_cliente);
 $stmt->execute();
 $stmt->close();
 

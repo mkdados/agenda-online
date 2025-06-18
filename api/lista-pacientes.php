@@ -16,13 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Lê entrada JSON
 $input = json_decode(file_get_contents('php://input'), true);
-$id_paciente = isset($input['id_paciente']) ? intval($input['id_paciente']) : null;
+$id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
 
-// Valida paciente
-if (!$id_paciente) {
+// Valida usuário
+if (!$id_usuario) {
     http_response_code(400);
-    echo json_encode(['erro' => 'id_paciente inválido ou não enviado']);
+    echo json_encode(['erro' => 'id_usuario inválido ou não enviado']);
     exit;
 }
 
@@ -34,7 +34,7 @@ if (!$token) {
 }
 
 // Busca dados da integração
-$nome_endpoint = 'LISTAR_CONVENIOS';
+$nome_endpoint = 'LISTAR_PACIENTES';
 
 $query = "
     SELECT c.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
@@ -62,7 +62,17 @@ $url_integracao         = $row["url"].$row["rota"];
 $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
-$url_integracao         .= "?%24apply=filter(ativado%20eq%20%27S%27)&%24orderby=razaoSocial&%24expand=Planos";
+$params = [
+    '$count' => 'true',
+    '$filter' => "documento/cpf eq '47345287807'",
+    '$expand' => 'convenio',
+];
+
+// Constrói a query string com URL encoding apropriado
+$queryString = http_build_query($params);
+
+// Concatena URL com query string
+$url_integracao  = $url_integracao . '?' . $queryString;
 
 // Inicializa cURL
 $curl_result = fn_curl_request([
@@ -95,7 +105,7 @@ fn_log_integracao([
     'id_cliente' => $id_cliente,
     'id_integracao' => $id_integracao,
     'id_integracao_endpoint' => $id_integracao_endpoint,
-    'id_paciente' => $id_paciente,
+    'id_usuario' => $id_usuario,
     'url_integracao' => $url_integracao,
     'metodo_http' => $metodo_http,
     'request_body' => $request_body,

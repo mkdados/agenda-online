@@ -16,21 +16,21 @@ if ($_SERVER['REQUEST_METHOD'] !== 'PATCH') {
 $input = json_decode(file_get_contents('php://input'), true);
 
 // Verifica ID
-$id_paciente = isset($input['id_paciente']) ? intval($input['id_paciente']) : null;
-if (!$id_paciente) {
+$id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
+if (!$id_usuario) {
     http_response_code(400);
-    echo json_encode(['erro' => 'id_paciente é obrigatório']);
+    echo json_encode(['erro' => 'id_usuario é obrigatório']);
     exit;
 }
 
-// Verifica se o paciente existe
-$stmt = $conn->prepare("SELECT id FROM tbl_paciente WHERE id = ?");
-$stmt->bind_param("i", $id_paciente);
+// Verifica se o usuario existe
+$stmt = $conn->prepare("SELECT id FROM tbl_usuario WHERE id = ?");
+$stmt->bind_param("i", $id_usuario);
 $stmt->execute();
 $res = $stmt->get_result();
 if ($res->num_rows === 0) {
     http_response_code(404);
-    echo json_encode(['erro' => 'Paciente não encontrado']);
+    echo json_encode(['erro' => 'Usuário não encontrado']);
     exit;
 }
 $stmt->close();
@@ -74,9 +74,9 @@ foreach ($campos_filtrados as $campo => $valor) {
 
 // Adiciona o ID ao final
 $param_types .= 'i';
-$param_values[] = $id_paciente;
+$param_values[] = $id_usuario;
 
-$query = "UPDATE tbl_paciente SET " . implode(', ', $set_clause) . " WHERE id = ?";
+$query = "UPDATE tbl_usuario SET " . implode(', ', $set_clause) . " WHERE id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param($param_types, ...$param_values);
 
@@ -84,13 +84,13 @@ $stmt->bind_param($param_types, ...$param_values);
 try {
     $stmt->execute();
     echo json_encode([
-        'mensagem' => 'Paciente atualizado com sucesso',
-        'id_paciente' => $id_paciente
+        'mensagem' => 'Usuário atualizado com sucesso',
+        'id_usuario' => $id_usuario
     ]);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
-        'erro' => 'Erro ao atualizar paciente',
+        'erro' => 'Erro ao atualizar usuário',
         'detalhe' => $e->getMessage()
     ]);
 }

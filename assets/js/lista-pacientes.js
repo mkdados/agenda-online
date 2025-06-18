@@ -1,7 +1,8 @@
-function fn_gera_token(id_usuario) {
-  const url = 'api/token.php';
+function fn_lista_pacientes(id_usuario,token) {
+  const url = 'api/lista-pacientes.php';
   const body = {
-    id_usuario: id_usuario
+    "id_usuario": id_usuario,
+    "token": token
   };
 
   const options = {

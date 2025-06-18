@@ -29,8 +29,8 @@ if (!$identificador || !$senha) {
 $is_email = filter_var($identificador, FILTER_VALIDATE_EMAIL);
 $campo = $is_email ? 'email' : 'cpf';
 
-// Busca o paciente
-$stmt = $conn->prepare("SELECT id, nome, cpf, email, senha FROM tbl_paciente WHERE $campo = ? AND ativo = 'S'");
+// Busca o usuário
+$stmt = $conn->prepare("SELECT id, nome, cpf, email, senha FROM tbl_usuario WHERE $campo = ? AND ativo = 'S'");
 $stmt->bind_param("s", $identificador);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -58,7 +58,7 @@ $expiracaoSessao = date('c', strtotime('+4 hours')); // formato ISO 8601
 echo json_encode([
     'mensagem' => 'Login realizado com sucesso',
     'usuario' => [
-        'id' => $usuario['id'],
+        'id_usuario' => $usuario['id'],
         'nome' => $usuario['nome'],
         'cpf' => $usuario['cpf'],
         'email' => $usuario['email']

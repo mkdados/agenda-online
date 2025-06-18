@@ -70,10 +70,11 @@ function selecionaTipoAtendimento() {
     // Listar convênios
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
     const token = JSON.parse(sessionStorage.getItem('token'));
-    const id_paciente = usuario.id;
+    const id_usuario = usuario.id_usuario;
     const chave = token.chave;
 
-    fn_get_convenio(id_paciente, chave)
+
+    fn_get_convenio(id_usuario, chave)
       .then(data => {
         const listaConvenios = data.value; // <-- Corrigido aqui (era data.value)
 

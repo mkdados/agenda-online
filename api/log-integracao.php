@@ -11,7 +11,7 @@ function fn_log_integracao($parametros) {
         $id_cliente             = $parametros['id_cliente'] ?? null;
         $id_integracao          = $parametros['id_integracao'] ?? null;
         $id_integracao_endpoint = $parametros['id_integracao_endpoint'] ?? null;
-        $id_paciente            = $parametros['id_paciente'] ?? null;
+        $id_usuario            = $parametros['id_usuario'] ?? null;
         $url_integracao         = $parametros['url_integracao'] ?? null;
         $metodo_http            = $parametros['metodo_http'] ?? null;
         $request_body           = $parametros['request_body'] ?? null;
@@ -21,7 +21,7 @@ function fn_log_integracao($parametros) {
 
         $log_stmt = $conn->prepare("
             INSERT INTO tbl_integracao_log 
-            (id_cliente, id_integracao, id_integracao_endpoint, id_paciente, ip, url_utilizada, metodo_http, request, response, status_http, sucesso)
+            (id_cliente, id_integracao, id_integracao_endpoint, id_usuario, ip, url_utilizada, metodo_http, request, response, status_http, sucesso)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
@@ -30,7 +30,7 @@ function fn_log_integracao($parametros) {
             $id_cliente,
             $id_integracao,
             $id_integracao_endpoint,
-            $id_paciente,
+            $id_usuario,
             $ip_cliente,
             $url_integracao,
             $metodo_http,

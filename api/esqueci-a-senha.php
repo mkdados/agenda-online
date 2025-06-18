@@ -46,11 +46,11 @@ if (!empty($input['email'])) {
     exit;
 }
 
-// Busca paciente
+// Busca usuário
 if ($tipo_busca === 'email') {
-    $stmt = $conn->prepare("SELECT id, nome, email FROM tbl_paciente WHERE id_cliente = ? AND email = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT id, nome, email FROM tbl_usuario WHERE id_cliente = ? AND email = ? LIMIT 1");
 } else {
-    $stmt = $conn->prepare("SELECT id, nome, email FROM tbl_paciente WHERE id_cliente = ? AND cpf = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT id, nome, email FROM tbl_usuario WHERE id_cliente = ? AND cpf = ? LIMIT 1");
 }
 
 $stmt->bind_param("is", $id_cliente, $identificador);
@@ -63,10 +63,10 @@ if ($result->num_rows === 0) {
     exit;
 }
 
-$paciente = $result->fetch_assoc();
-$id_paciente = $paciente['id'];
-$nome_paciente = $paciente['nome'];
-$email_paciente = $paciente['email'];
+$usuario = $result->fetch_assoc();
+$id_usuario = $usuario['id'];
+$nome_usuario = $usuario['nome'];
+$email_usuario = $usuario['email'];
 $stmt->close();
 
 // Gera token e insere na tabela de recuperação
@@ -74,10 +74,10 @@ $token = bin2hex(random_bytes(32));
 $data_expiracao = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
 $stmt = $conn->prepare("
-    INSERT INTO tbl_recuperacao_senha (id_cliente, id_paciente, token, data_expiracao)
+    INSERT INTO tbl_recuperacao_senha (id_cliente, id_usuario, token, data_expiracao)
     VALUES (?, ?, ?, ?)
 ");
-$stmt->bind_param("iiss", $id_cliente, $id_paciente, $token, $data_expiracao);
+$stmt->bind_param("iiss", $id_cliente, $id_usuario, $token, $data_expiracao);
 $stmt->execute();
 $stmt->close();
 
@@ -115,7 +115,7 @@ try {
     }
 
     $mail->setFrom($config['email_remetente'], $config['nome_remetente']);
-    $mail->addAddress($email_paciente, $nome_paciente);
+    $mail->addAddress($email_usuario, $nome_usuario);
 
     //Link de redefinição de senha
     $protocolo = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
@@ -131,7 +131,7 @@ try {
         <body style='font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 10px;'>
             <div style='max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 6px;'>
                 <h2 style='color: #d47d48;'>Recuperação de Senha - Dermaclinica</h2>
-                <p>Olá <strong>{$nome_paciente}</strong>,</p>
+                <p>Olá <strong>{$nome_usuario}</strong>,</p>
                 <p>Identificamos seu pedido de recuperação de senha!</p>
                 <p>Utilize o link abaixo para redefinir sua senha:</p>
                 <p><a href='{$link}' style='background: #d47d48; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;'>🔗 Clique aqui para alterar sua senha</a></p>
@@ -145,7 +145,7 @@ try {
         </body>
         </html>";
 
-    $mail->AltBody = "Olá {$nome_paciente}, acesse o link para redefinir sua senha: {$link}";
+    $mail->AltBody = "Olá {$nome_usuario}, acesse o link para redefinir sua senha: {$link}";
 
     $mail->send();
 

@@ -1,7 +1,7 @@
-function fn_get_convenio(id_paciente,token) {
-  const url = 'api/convenio.php';
+function fn_get_convenio(id_usuario,token) {
+  const url = 'api/lista-convenios.php';
   const body = {
-    "id_paciente": id_paciente,
+    "id_usuario": id_usuario,
     "token": token
   };
 
