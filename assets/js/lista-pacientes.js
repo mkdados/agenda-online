@@ -1,9 +1,6 @@
-function fn_lista_pacientes(id_usuario,token) {
+function fn_lista_pacientes(parametros) {
   const url = 'api/lista-pacientes.php';
-  const body = {
-    "id_usuario": id_usuario,
-    "token": token
-  };
+  const body = parametros;
 
   const options = {
     method: 'POST',

@@ -20,6 +20,9 @@
 </head>
 <body>
 
+ <!-- Loader --> 
+<div id="loader"><div class="spinner"></div></div> 
+
 <!-- Overlay de fundo escurecido -->
 <div id="overlay"></div>
 
@@ -105,18 +108,21 @@
             </div>
           </div>
 
-          <!-- Convênio -->
+          <!-- CONVÊNIO -->
           <div id="convenioDiv" class="mt-3" style="display: none;">
             <label for="convenioSelect" class="form-label fw-bold">Convênio</label>
-            <select class="form-select custom-select" id="convenioSelect">
+            <select class="form-select custom-select select2" id="convenioSelect">
               <option value="">Selecione o convênio</option>
+              <option value="1">Amil</option>
+              <option value="2">Unimed</option>
+              <option value="3">SulAmérica</option>
             </select>
           </div>
       
           <!-- Plano -->
           <div id="planoDiv" class="mt-3" style="display: none;">
             <label for="planoSelect" class="form-label fw-bold">Plano</label>
-            <select class="form-select custom-select" id="planoSelect">
+            <select class="form-select custom-select select2" id="planoSelect">
               <option value="">Todos os Planos</option>
               <option value="1">Plano Ouro</option>
             </select>
@@ -128,7 +134,7 @@
             <input type="text" class="form-control" id="carteirinha" placeholder="Digite o número da carteirinha">
           </div>        
       
-          <button class="btn btn-padrao mt-4" onclick="goToStep(2)">Próximo</button>
+          <button class="btn btn-padrao mt-4" id="btnGoToStep2" onclick="goToStep(2)">Próximo</button>
         </div>
       
         <!-- Etapa 2 - Médico -->
@@ -137,18 +143,15 @@
           <!-- Unidade -->
           <div id="unidadeSelectDiv" class="mt-3">
             <label for="unidadeSelect" class="form-label fw-bold">Unidade</label>
-            <select class="form-select custom-select" id="unidadeSelect">
+            <select class="form-select custom-select select2" id="unidadeSelect">
               <option value="">Selecione uma unidade</option>
-              <option value="perdizes">Unidade Perdizes</option>
-              <option value="lazer">Unidade Lazer</option>
-              <option value="higienopolis">Unidade Higienópolis</option>
             </select>
           </div>
 
           <!-- Médicos -->
           <div id="medicoSelectDiv" class="mt-3">
             <label for="medicoSelect" class="form-label fw-bold">Médicos</label>
-            <select class="form-select custom-select" id="medicoSelect">
+            <select class="form-select custom-select select2" id="medicoSelect">
               <option value="">Todos os Médicos</option>
               <option value="1">Dr. Carlos Mendes</option>
               <option value="2">Dra. Ana Lucia</option>
@@ -379,5 +382,12 @@
   <script src="assets/js/home.js"></script>
   <script src="assets/js/agendar-consulta.js?v=1.0.3"></script>
   <script src="assets/js/lista-convenios.js?v=1.0.3"></script>
+  <script src="assets/js/lista-filiais.js?v=1.0.3"></script>
+
+  <!-- Select2 CSS -->
+  <link href="assets/select2/select2.min.css" rel="stylesheet" />
+  <link href="assets/css/select2.css" rel="stylesheet" />
+  <script src="assets/select2/select2.min.js"></script>
+
 </body>
 </html>

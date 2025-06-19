@@ -1,0 +1,74 @@
+/* Fundo e borda quando focado */
+    .select2-container--default.select2-container--focus .select2-selection--single {
+      border-color: #d47d48 !important;
+      box-shadow: 0 0 0 0.2rem rgba(212, 125, 72, 0.25);
+      color: #ffffff !important;
+    }
+
+    /* Texto dentro do select quando aberto ou valor selecionado */
+    .select2-container--default.select2-container--open .select2-selection--single {
+      background-color: #ffffff !important;
+      color: #ffffff !important;
+    }
+
+    /* Itens da lista suspensa - destaque do item ao passar o mouse */
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+      background-color: #d47d48 !important;
+      color: #ffffff !important;
+    }
+
+    /* Item selecionado na lista */
+    .select2-container--default .select2-results__option[aria-selected="true"] {
+      background-color: #f4e2d7;
+      color: #ffffff;
+    }
+
+    /* Borda e fundo padrão do select */
+    .select2-container--default .select2-selection--single {
+      border: 1px solid #cccccc;
+      border-radius: 0.75rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: white;
+      color: #ffffff;
+      height: auto;
+      outline: none !important;
+    }    
+
+    /* Estilo da opção selecionada (quando navegado com teclado ou clicado) */
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+        outline: #d47d48 !important;
+        border: 1px solid #cccccc !important;
+    }
+
+    .select2-container--default .select2-results__option--highlighted[aria-selected],
+    .select2-container--default .select2-results__option--selected {
+        outline: #d47d48 !important;
+        border: 1px solid #cccccc !important;
+    }
+
+    /* Centraliza a seta verticalmente */
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 50%;
+        transform: translateY(-50%);
+        right: 10px; /* ou ajuste conforme a distância desejada da borda */
+        position: absolute;
+    }
+
+    /* Seta padrão para baixo */
+    .select2-container--default .select2-selection--single .select2-selection__arrow b {
+        border-width: 8px 6px 0 6px; /* seta para baixo */
+        border-color: #d47d48 transparent transparent transparent;
+    }
+
+    /* Seta quando aberto para cima */
+    .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+        border-width: 0 6px 8px 6px; /* seta para cima */
+        border-color: transparent transparent #d47d48 transparent;
+    }
+    
+    .select2-selection__clear {
+        display: none !important;
+    }
+
+

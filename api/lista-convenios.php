@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Lê entrada JSON
 $input = json_decode(file_get_contents('php://input'), true);
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
+$id_convenio = isset($input['id_convenio']) ? intval($input['id_convenio']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
 
 // Valida usuário
@@ -62,10 +63,14 @@ $url_integracao         = $row["url"].$row["rota"];
 $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
-$params = [
-    '$count' => 'true',
-    '$apply' => "filter(id eq 1)"
+$params                 = [
+    '$apply' => "filter(ativado eq 'S')",
+    '$orderby' => "razaoSocial"
 ];
+
+if($id_convenio>0){
+    $params['$apply'] = "filter(id eq $id_convenio)";
+}
 
 // Constrói a query string com URL encoding apropriado
 $queryString = http_build_query($params);

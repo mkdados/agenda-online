@@ -1,3 +1,5 @@
+const loader = document.getElementById('loader');
+
 /*###########################################################################################
     Script para alternar entre as etapas
   ############################################################################################*/ 
@@ -61,40 +63,58 @@ function selecionaTipoAtendimento() {
   var convenioDiv = document.getElementById("convenioDiv");
   var planoDiv = document.getElementById("planoDiv");
   var carteirinhaDiv = document.getElementById("carteirinhaDiv");
+  var carteirinha = document.getElementById("carteirinha");
 
   if (tipoAtendimento === "convenio") {
     convenioDiv.style.display = "block";
-    planoDiv.style.display = "block";
+    //planoDiv.style.display = "block";
     carteirinhaDiv.style.display = "block";
 
-    // Listar convênios
+    // Dados do storage
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
     const token = JSON.parse(sessionStorage.getItem('token'));
+    const paciente = JSON.parse(sessionStorage.getItem('paciente'));
     const id_usuario = usuario.id_usuario;
     const chave = token.chave;
+    const numero_carteirinha = paciente.numero_carteirinha || '';
+    const idConvenioSelecionado = paciente.id_convenio || 0;    
 
+    loader.style.display = 'flex'; // mostra o loader
 
-    fn_get_convenio(id_usuario, chave)
+    const parametros = {
+      id_usuario: id_usuario,
+      token: chave,
+      id_convenio: idConvenioSelecionado
+    };
+
+    // Listar convênios
+    fn_lista_convenio(parametros)
       .then(data => {
-        const listaConvenios = data.value; // <-- Corrigido aqui (era data.value)
-
+        const listaConvenios = data.value;
         const selectConvenio = document.getElementById('convenioSelect');
         selectConvenio.innerHTML = '<option value="">Selecione o convênio</option>';
 
         if (Array.isArray(listaConvenios)) {
-          // Ordena os convênios por razão social (case insensitive)
-          listaConvenios.sort((a, b) => {
-            return a.razaoSocial.localeCompare(b.razaoSocial, 'pt-BR', { sensitivity: 'base' });
-          });
-
           listaConvenios.forEach(convenio => {
             const option = document.createElement('option');
             option.value = convenio.id;
             option.textContent = convenio.razaoSocial;
             selectConvenio.appendChild(option);
+
+            // Seleciona o convênio do paciente, se existir
+            if (convenio.id > 0 && convenio.id === idConvenioSelecionado) {
+              option.selected = true;
+            }
+
+            //Seta numero da carteirinha
+            if(numero_carteirinha) {
+              carteirinha.value = numero_carteirinha;
+            }
           });
+          loader.style.display = 'none'; // esconde o loader
         } else {
           console.warn('Formato de resposta inesperado:', data);
+          loader.style.display = 'none'; // esconde o loader
         }
       })
       .catch(error => {
@@ -106,6 +126,7 @@ function selecionaTipoAtendimento() {
     convenioDiv.style.display = "none";
     planoDiv.style.display = "none";
     carteirinhaDiv.style.display = "none";
+    loader.style.display = 'none'; // esconde o loader
   }
 }
 
@@ -113,6 +134,51 @@ function selecionaTipoAtendimento() {
 /*###########################################################################################
     Script para selecionar unidade
   ############################################################################################*/ 
+
+   document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('btnGoToStep2').addEventListener('click', function () {
+
+        // Dados do storage
+        const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+        const token = JSON.parse(sessionStorage.getItem('token'));
+        const id_usuario = usuario.id_usuario;
+        const chave = token.chave;  
+
+        loader.style.display = 'flex'; // mostra o loader
+
+        const parametros = {
+          id_usuario: id_usuario,
+          token: chave
+        };
+
+        // Listar filiais
+        fn_lista_filiais(parametros)
+           .then(data => {
+              const listaFilials = data.value;
+              const selectFilial = document.getElementById('unidadeSelect');
+              selectFilial.innerHTML = '<option value="">Selecione uma unidade</option>';
+
+              if (Array.isArray(listaFilials)) {
+                listaFilials.forEach(filial => {
+                  const option = document.createElement('option');
+                  option.value = filial.id;
+                  option.textContent = filial.nomeCompleto;
+                  selectFilial.appendChild(option);
+                });
+                loader.style.display = 'none'; // esconde o loader
+              } else {
+                console.warn('Formato de resposta inesperado:', data);
+                loader.style.display = 'none'; // esconde o loader
+              }
+          })
+          .catch(error => {
+            console.error('Erro ao carregar filiais:', error.message);
+            loader.style.display = 'none';
+          }); 
+        
+    });
+  });  
+
   document.getElementById('unidadeSelect').addEventListener('change', function () {
     let proximaDataDiv = document.getElementById('proximaDataDisponivelDiv');
     if (this.value) {
@@ -121,6 +187,7 @@ function selecionaTipoAtendimento() {
       proximaDataDiv.style.display = "none";
     }
   });
+  
 
 /*###########################################################################################
     Script para selecionar medico
@@ -154,3 +221,14 @@ function selecionaTipoAtendimento() {
   document.getElementById('scrollRight').addEventListener('click', () => {
     dataScroll.scrollBy({ left: 200, behavior: 'smooth' });
   });
+
+  /*###########################################################################################
+    Set select2
+  ############################################################################################*/ 
+    $(document).ready(function() {
+      $('.select2').select2({
+        minimumResultsForSearch: 0, // sempre mostra a busca
+        width: '100%',              // usa largura do elemento original
+        allowClear: true
+      });
+    });

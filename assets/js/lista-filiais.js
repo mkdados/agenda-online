@@ -1,5 +1,5 @@
-function fn_lista_convenio(parametros) {
-  const url = 'api/lista-convenios.php';
+function fn_lista_filiais(parametros) {
+  const url = 'api/lista-filiais.php';
   const body = parametros;
 
   const options = {
@@ -9,7 +9,7 @@ function fn_lista_convenio(parametros) {
     },
     body: JSON.stringify(body) // <-- Aqui o JSON é enviado no corpo
   };
-  
+
   return fetch(url, options)
     .then(response => {
       if (!response.ok) {

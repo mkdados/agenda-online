@@ -29,25 +29,34 @@ async function realizarLogin() {
       fn_gera_token(id_usuario)
         .then(data => {  
           
+          const id_organizacao = data.organizacaoId;
           const chave = data.token.chave;
-          const duracao = data.token.duracao;
+          const duracao = data.token.duracao;          
 
           //Grava o token no sessionStorage
           sessionStorage.setItem('token', JSON.stringify({
+              id_organizacao: id_organizacao,
               chave: chave,
               duracao: duracao
           }));   
 
+          const parametros = {
+            id_usuario: id_usuario,
+            token: chave
+          };
+
           //Pega dados do paciente
-          fn_lista_pacientes(id_usuario, chave)
+          fn_lista_pacientes(parametros)
             .then(data => {
               const listaPacientes = data.value; 
               
               listaPacientes.forEach(paciente => {
                   //Grava dados do paciente no sessionStorage
                   sessionStorage.setItem('paciente', JSON.stringify({
+                      id_organizacao: paciente.organizacaoId,
                       id_paciente: paciente.id,
-                      id_convenio: paciente.convenio.id
+                      id_convenio: paciente.convenio.id,
+                      numero_carteirinha: paciente.convenio.numCarteira
                   }));  
 
               });               

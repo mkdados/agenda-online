@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Lê entrada JSON
 $input = json_decode(file_get_contents('php://input'), true);
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
+$token = isset($input['token']) ? $input['token'] : null;
 
 // Valida usuário
 if (!$id_usuario) {
@@ -25,19 +26,15 @@ if (!$id_usuario) {
     exit;
 }
 
-$verifica_stmt = $conn->prepare("SELECT id FROM tbl_usuario WHERE id = ?");
-$verifica_stmt->bind_param("i", $id_usuario);
-$verifica_stmt->execute();
-$result_verifica = $verifica_stmt->get_result();
-if ($result_verifica->num_rows === 0) {
-    http_response_code(404);
-    echo json_encode(['erro' => 'Usuário não encontrado']);
+// Valida token
+if (!$token) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'token inválido ou não enviado']);
     exit;
 }
-$verifica_stmt->close();
 
 // Busca dados da integração
-$nome_endpoint = 'AUTENTICACAO';
+$nome_endpoint = 'LISTAR_FILIAIS';
 
 $query = "
     SELECT c.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
@@ -64,16 +61,14 @@ $id_integracao_endpoint = $row["id_integracao_endpoint"];
 $url_integracao         = $row["url"].$row["rota"];
 $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
+$request_body           = json_encode([]);
+$params = [];
 
-$login  = htmlspecialchars($parametros["Login"] ?? '');
-$senha  = htmlspecialchars($parametros["Senha"] ?? '');
-$plataforma = htmlspecialchars($parametros["plataforma"] ?? '');
+// Constrói a query string com URL encoding apropriado
+$queryString = http_build_query($params);
 
-$request_body = json_encode([
-    "Login" => $login,
-    "Senha" => $senha,
-    "plataforma" => $plataforma
-]);
+// Concatena URL com query string
+$url_integracao  = $url_integracao . '?' . $queryString;
 
 // Inicializa cURL
 $curl_result = fn_curl_request([
@@ -81,7 +76,8 @@ $curl_result = fn_curl_request([
     'metodo' => $metodo_http,
     'body' => $request_body,
     'headers' => [
-        'Content-Type: application/json'
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $token
     ]
 ]);
 
@@ -91,13 +87,12 @@ $http_status = $curl_result['http_status'] ?? 0;
 $curl_error  = $curl_result['erro']        ?? '';
 $data        = $curl_result['data']        ?? [];
 
-// Exibe token se sucesso
-if ($sucesso  === 'S' and !empty($data["token"]["chave"])) {
+if(!empty($data)){
     http_response_code($http_status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-} else {
+}else{
     http_response_code($http_status);
-    echo json_encode(["erro" => "Erro ao processar a requisição: " . $curl_error ]);
+    echo json_encode(["erro" => "Erro ao processar a requisição: " . $curl_error]);
     exit;
 }
 
