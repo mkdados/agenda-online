@@ -79,16 +79,15 @@ function selecionaTipoAtendimento() {
     const numero_carteirinha = paciente.numero_carteirinha || '';
     const idConvenioSelecionado = paciente.id_convenio || 0;    
 
-    loader.style.display = 'flex'; // mostra o loader
+    loader.style.display = 'flex'; // mostra o loader    
 
-    const parametros = {
+    // Listar convênios
+    const parametrosConvenios = {
       id_usuario: id_usuario,
       token: chave,
       id_convenio: idConvenioSelecionado
     };
-
-    // Listar convênios
-    fn_lista_convenio(parametros)
+    fn_lista_convenio(parametrosConvenios)
       .then(data => {
         const listaConvenios = data.value;
         const selectConvenio = document.getElementById('convenioSelect');
@@ -144,15 +143,14 @@ function selecionaTipoAtendimento() {
         const id_usuario = usuario.id_usuario;
         const chave = token.chave;  
 
-        loader.style.display = 'flex'; // mostra o loader
+        loader.style.display = 'flex'; // mostra o loader       
 
-        const parametros = {
+        // Listar filiais
+        const parametrosFiliais = {
           id_usuario: id_usuario,
           token: chave
         };
-
-        // Listar filiais
-        fn_lista_filiais(parametros)
+        fn_lista_filiais(parametrosFiliais)
            .then(data => {
               const listaFilials = data.value;
               const selectFilial = document.getElementById('unidadeSelect');
@@ -179,15 +177,92 @@ function selecionaTipoAtendimento() {
     });
   });  
 
-  document.getElementById('unidadeSelect').addEventListener('change', function () {
-    let proximaDataDiv = document.getElementById('proximaDataDisponivelDiv');
-    if (this.value) {
-      proximaDataDiv.style.display = "block";
-    } else {
-      proximaDataDiv.style.display = "none";
-    }
-  });
-  
+  //Seleciona a unidade
+  $('#unidadeSelect').on('select2:select', function () { 
+    
+    // Dados do storage
+    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    const token = JSON.parse(sessionStorage.getItem('token'));
+    const id_usuario = usuario.id_usuario;
+    const chave = token.chave;  
+    var profissionaisAgendaConfig = new Set();
+    var profissionaisAgendaConfigString = '';
+
+    loader.style.display = 'flex'; // mostra o loader   
+
+    // Listar Agendas Config
+    const parametrosAgendaConfig = {
+      id_usuario: id_usuario,
+      token: chave,
+      id_filial: this.value
+    };
+    fn_lista_agenda_config(parametrosAgendaConfig)
+    .then(data => {
+      const listaAgendaConfig = data.value;
+
+      if (Array.isArray(listaAgendaConfig)) {
+        listaAgendaConfig.forEach(AgendaConfig => {
+          const id_profissional = AgendaConfig.profissionalId;
+          profissionaisAgendaConfig.add(id_profissional);
+        });
+      } else {
+        console.warn('Formato de resposta inesperado:', data);
+        loader.style.display = 'none'; // esconde o loader
+      }
+    })
+    .catch(error => {
+      console.error('Erro ao carregar agendas config:', error.message);
+      loader.style.display = 'none';
+    })
+    .finally(() => {
+
+      profissionaisAgendaConfigString = Array.from(profissionaisAgendaConfig).join(',');    
+
+       //Listar profissionais
+          const parametrosProfissionais = {
+            id_usuario: id_usuario,
+            token: chave,
+            profissionais_agenda_config: profissionaisAgendaConfigString
+          };
+          fn_lista_profissionais(parametrosProfissionais)
+            .then(data => {
+              const listaProfissionals = data.value;
+              const selectProfissional = document.getElementById('medicoSelect');
+              selectProfissional.innerHTML = '<option value="">Todos os Médicos</option>';
+
+              if (Array.isArray(listaProfissionals)) {
+                listaProfissionals.forEach(Profissional => {
+                  const option = document.createElement('option');
+                  option.value = Profissional.id;
+                  option.textContent = Profissional.nome;
+                  selectProfissional.appendChild(option);
+                });               
+
+                //Exibe datas
+                  let proximaDataDiv = document.getElementById('proximaDataDisponivelDiv');
+                  if (this.value) {
+                    proximaDataDiv.style.display = "block";
+                  } else {
+                    proximaDataDiv.style.display = "none";
+                  }                  
+
+              } else {
+                console.warn('Formato de resposta inesperado:', data);
+                loader.style.display = 'none'; // esconde o loader
+              }
+          })
+          .catch(error => {
+            console.error('Erro ao carregar profissionais:', error.message);
+            loader.style.display = 'none';
+          })
+          .finally(() => {
+            loader.style.display = 'none'; // esconde o loader
+          });// fim finally 
+          
+
+    });// fim finally   
+    
+  });    
 
 /*###########################################################################################
     Script para selecionar medico
