@@ -23,27 +23,144 @@ const loader = document.getElementById('loader');
 /*###########################################################################################
     Script para selecionar data
   ############################################################################################*/ 
-  document.querySelectorAll('.data-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.data-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
+ document.getElementById('datasAgendamento').addEventListener('click', async function(e) {
+  if (e.target.closest('.data-btn')) {
 
-      let medicoSelecionado = document.getElementById('medicoSelect').value;
+    //Limpa div agendasMedicos===========================================
+    document.getElementById("agendasMedicos").innerHTML = "";  
 
-      if(medicoSelecionado == "1"){
-        document.getElementById('horarioDiv1').style.display = "block";
-        document.getElementById('horarioDiv2').style.display = "none";
+    //Seleciona data================================================
+    const btn = e.target.closest('.data-btn');
+    document.querySelectorAll('.data-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    const dataSelecionada = btn.getAttribute('data-data-agenda');
+    const dataSelecionadaFormatada = btn.getAttribute('data-data-agenda-formatada');
+
+    //Loader=========================================
+    loader.style.display = 'flex'; // mostra o loader  
+
+    /*-------------------- Lista agenda config --------------------*/
+    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    const token = JSON.parse(sessionStorage.getItem('token'));
+    const id_usuario = usuario.id_usuario;
+    const chave = token.chave;
+    const id_filial = document.getElementById('unidadeSelect').value;
+    const lista_profissionais = [];
+    const lista_agendamentos = [];
+
+    const parametrosAgendaConfig = {
+        id_usuario: id_usuario,
+        token: chave,
+        id_filial: id_filial
+    };
+
+    try {
+        const data = await fn_lista_agenda_config(parametrosAgendaConfig);
+        const listaAgendaConfig = data.value;
+
+        if (Array.isArray(listaAgendaConfig)) {
+            for (const agendaConfig of listaAgendaConfig) {
+
+              // Dados do profissional
+                const jaExisteProfissional = lista_profissionais.some(p => p.id === agendaConfig.profissional.id);
+                if (!jaExisteProfissional) {
+
+                    // Buscar profissionais
+                    const parametrosProfissionais = {
+                        id_usuario: id_usuario,
+                        token: chave,
+                        id_profissional: agendaConfig.profissionalId
+                    };
+                    try {
+                        const listaProfissionais = await fn_lista_profissionais(parametrosProfissionais);
+                        lista_profissionais.push(listaProfissionais);
+
+                    } catch (erroProfissionais) {
+                        console.error("Erro ao listar profissionais:", erroProfissionais);
+                        loader.style.display = 'none';
+                    }
+                    
+                }
+
+                // Buscar agendamentos
+                const parametrosAgendamentos = {
+                    id_usuario: id_usuario,
+                    id_filial: id_filial,
+                    token: chave,
+                    id_agenda_config: agendaConfig.id,
+                    id_profissional: agendaConfig.profissionalId,
+                    data_inicio: dataSelecionada,
+                    data_fim: dataSelecionada
+                };
+
+                try {
+                    const dataAgendamento = await fn_lista_agendamentos(parametrosAgendamentos);
+                    const listaAgendamentos = dataAgendamento.value;
+
+                    for (const agendamento of listaAgendamentos) {
+                      lista_agendamentos.push(agendamento);
+                    }                    
+
+                } catch (erroAgendamento) {
+                    console.error("Erro ao listar agendamentos:", erroAgendamento);
+                    loader.style.display = 'none';
+                }
+            }
+        }
+
+    } catch (error) {
+        console.error("Erro ao listar agenda config:", error);
+        loader.style.display = 'none';
+    }
+
+    /*-------------------- Lista agendamentos dos profissionais --------------------*/
+    var html = "";
+
+    for (const profissional of lista_profissionais) {
+      let horarios = "";
+
+      for (const agendamento of lista_agendamentos) {
+        if (agendamento.profissionalId == profissional.id) {
+          const horaInicio = formatarHorarioISO(agendamento.horaInicio);
+          horarios += `
+            <button class="btn horario-btn">${horaInicio}<i class="fa-solid fa-clock" style="font-size:0.7rem;margin-left:4px"></i></button>
+          `;
+        }
       }
-      else if(medicoSelecionado == "2"){
-        document.getElementById('horarioDiv1').style.display = "none";
-        document.getElementById('horarioDiv2').style.display = "block";
-      }
-      else{
-        document.getElementById('horarioDiv1').style.display = "block";
-        document.getElementById('horarioDiv2').style.display = "block";
-      }
-    });
-  });
+
+      html += `
+        <div class="mt-3 align-items-start border rounded horario-div" data-profissional-id="${profissional.id}">
+          <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">
+            <div class="text-left">                  
+              <img src="data:image/jpeg;base64,${profissional.foto || 'assets/images/foto-medico-1.jpg'}" class="img-fluid rounded border" alt="Foto do médico" style="max-width: 120px;">
+            </div>
+            <div class="flex-grow-1">
+              <h3 class="mb-1">${profissional.nome}</h3>
+              <small class="text-muted d-block">CRM: ${profissional.conselhoNumero}</small>
+              <small class="text-muted d-block">Dermatologista</small>
+            </div>
+          </div>
+          <div class="m-3 flex-grow-1">
+             <h6 class="mb-1 text-secondary"><i class="fa-solid fa-calendar mr-3"></i> Data: ${dataSelecionadaFormatada}</h6>
+          </div>
+          <div class="m-3 flex-grow-1">
+            <div class="d-grid gap-2 gridHorario">             
+              ${horarios || '<p class="text-muted">Nenhum horário disponível.</p>'}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Atualiza o DOM
+    document.getElementById("agendasMedicos").innerHTML = html;   
+
+    //Fecha o loader===============
+    loader.style.display = 'none';
+  }
+});
+
+
 
 /*###########################################################################################
     Script para selecionar horário
@@ -177,92 +294,138 @@ function selecionaTipoAtendimento() {
     });
   });  
 
-  //Seleciona a unidade
-  $('#unidadeSelect').on('select2:select', function () { 
-    
-    // Dados do storage
+/*###########################################################################################
+    Seleciona os agendamentos
+############################################################################################*/ 
+$('#unidadeSelect').on('select2:select', async function () {
+
+    //Limpa div agendamentos===========================================
+    document.getElementById('datasAgendamento').innerHTML = "";  
+    document.getElementById("agendasMedicos").innerHTML = "";  
+
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
     const token = JSON.parse(sessionStorage.getItem('token'));
     const id_usuario = usuario.id_usuario;
-    const chave = token.chave;  
-    var profissionaisAgendaConfig = new Set();
-    var profissionaisAgendaConfigString = '';
+    const chave = token.chave;
+    const id_filial = $(this).val();
+    const lista_profissionais = [];
+    const lista_datas = [];
 
-    loader.style.display = 'flex'; // mostra o loader   
+    loader.style.display = 'flex'; // mostra o loader  
 
-    // Listar Agendas Config
+    /*-------------------- Lista agenda config --------------------*/
     const parametrosAgendaConfig = {
-      id_usuario: id_usuario,
-      token: chave,
-      id_filial: this.value
+        id_usuario: id_usuario,
+        token: chave,
+        id_filial: id_filial
     };
-    fn_lista_agenda_config(parametrosAgendaConfig)
-    .then(data => {
-      const listaAgendaConfig = data.value;
 
-      if (Array.isArray(listaAgendaConfig)) {
-        listaAgendaConfig.forEach(AgendaConfig => {
-          const id_profissional = AgendaConfig.profissionalId;
-          profissionaisAgendaConfig.add(id_profissional);
-        });
-      } else {
-        console.warn('Formato de resposta inesperado:', data);
-        loader.style.display = 'none'; // esconde o loader
-      }
-    })
-    .catch(error => {
-      console.error('Erro ao carregar agendas config:', error.message);
-      loader.style.display = 'none';
-    })
-    .finally(() => {
+    try {
+        const data = await fn_lista_agenda_config(parametrosAgendaConfig);
+        const listaAgendaConfig = data.value;
 
-      profissionaisAgendaConfigString = Array.from(profissionaisAgendaConfig).join(',');    
+        if (Array.isArray(listaAgendaConfig)) {
+            for (const agendaConfig of listaAgendaConfig) {
 
-       //Listar profissionais
-          const parametrosProfissionais = {
-            id_usuario: id_usuario,
-            token: chave,
-            profissionais_agenda_config: profissionaisAgendaConfigString
-          };
-          fn_lista_profissionais(parametrosProfissionais)
-            .then(data => {
-              const listaProfissionals = data.value;
-              const selectProfissional = document.getElementById('medicoSelect');
-              selectProfissional.innerHTML = '<option value="">Todos os Médicos</option>';
+                // Dados do profissional
+                const jaExisteProfissional = lista_profissionais.some(p => p.id === agendaConfig.profissional.id);
+                if (!jaExisteProfissional) {
+                    lista_profissionais.push(agendaConfig.profissional);
+                }
 
-              if (Array.isArray(listaProfissionals)) {
-                listaProfissionals.forEach(Profissional => {
-                  const option = document.createElement('option');
-                  option.value = Profissional.id;
-                  option.textContent = Profissional.nome;
-                  selectProfissional.appendChild(option);
-                });               
+                // Buscar agendamentos
+                const parametrosAgendamentos = {
+                    id_usuario: id_usuario,
+                    id_filial: id_filial,
+                    token: chave,
+                    id_agenda_config: agendaConfig.id,
+                    id_profissional: agendaConfig.profissionalId
+                };
 
-                //Exibe datas
-                  let proximaDataDiv = document.getElementById('proximaDataDisponivelDiv');
-                  if (this.value) {
-                    proximaDataDiv.style.display = "block";
-                  } else {
-                    proximaDataDiv.style.display = "none";
-                  }                  
+                try {
+                    const dataAgendamento = await fn_lista_agendamentos(parametrosAgendamentos);
+                    const listaAgendamentos = dataAgendamento.value;
 
-              } else {
-                console.warn('Formato de resposta inesperado:', data);
-                loader.style.display = 'none'; // esconde o loader
-              }
-          })
-          .catch(error => {
-            console.error('Erro ao carregar profissionais:', error.message);
-            loader.style.display = 'none';
-          })
-          .finally(() => {
-            loader.style.display = 'none'; // esconde o loader
-          });// fim finally 
-          
+                    for (const agendamento of listaAgendamentos) {
+                        if (agendamento.dataInicio) {
+                            const somenteData = agendamento.dataInicio.split("T")[0];
+                            const jaExisteData = lista_datas.includes(somenteData);
+                            if (!jaExisteData) {
+                                lista_datas.push(somenteData);
+                            }
+                        }
+                    }
+                } catch (erroAgendamento) {
+                    console.error("Erro ao listar agendamentos:", erroAgendamento);
+                    loader.style.display = 'none';
+                }
+            }
+        }
 
-    });// fim finally   
-    
-  });    
+    } catch (error) {
+        console.error("Erro ao listar agenda config:", error);
+        loader.style.display = 'none';
+    }
+
+    /*-------------------- Select Profissionais --------------------*/
+    const selectProfissional = document.getElementById('medicoSelect');
+    selectProfissional.innerHTML = '<option value="">Todos os Médicos</option>';
+
+    if (lista_profissionais.length > 0) {
+        for (const profissional of lista_profissionais) {
+            const option = document.createElement('option');
+            option.value = profissional.id;
+            option.textContent = profissional.nome;
+            selectProfissional.appendChild(option);
+        }
+    }
+
+    /*-------------------- Select Datas --------------------*/
+    if (lista_datas.length > 0) {
+        const containerDatas = document.getElementById('datasAgendamento');
+        containerDatas.innerHTML = ''; // limpa antes
+
+        const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+        let contador = 1;
+
+        for (const dataStr of lista_datas) {
+            // Cria a data no horário local, quebrando a string:
+            const [ano, mes, dia] = dataStr.split('-');
+            const dataObj = new Date(ano, mes - 1, dia); // mês começa em 0 no JS
+
+            const diaSemana = diasSemana[dataObj.getDay()];
+            const diaFormatado = String(dataObj.getDate()).padStart(2, '0');
+            const mesNome = meses[dataObj.getMonth()];
+
+            // Monta o botão
+            const html = `
+            <button class="btn data-btn text-center" data-data-agenda="${ano}-${mes}-${dia}" data-data-agenda-formatada="${dia}/${mes}/${ano}"> 
+                <span class="small d-block">${diaSemana}</span>
+                <span class="text-lg fw-bold fs-2 d-block">${diaFormatado}</span>
+                <span class="small d-block">${mesNome}</span>
+            </button>`;
+
+            containerDatas.insertAdjacentHTML('beforeend', html);
+
+            if(contador<7){
+              contador++;
+            }else{
+              break;
+            }
+              
+        }
+
+        // Exibe datas==============================================================
+        const proximaDataDiv = document.getElementById('proximaDataDisponivelDiv');
+        proximaDataDiv.style.display = "block";
+
+        //loader======================
+        loader.style.display = 'none';
+    }
+});
+
 
 /*###########################################################################################
     Script para selecionar medico

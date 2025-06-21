@@ -80,3 +80,18 @@ function toggleInvalidClass(element, isValid) {
     element.classList.remove("is-invalid");
   }
 }
+
+// Função para formatar horario iso===========
+function formatarHorarioISO(isoDuration) {
+   // Pega as horas (opcional)
+  const horasMatch = isoDuration.match(/(\d+)H/);
+  // Pega os minutos (opcional)
+  const minutosMatch = isoDuration.match(/(\d+)M/);
+
+  // Se não tiver horas, assume "00"
+  const horas = horasMatch ? horasMatch[1].padStart(2, '0') : '00';
+  // Se não tiver minutos, assume "00"
+  const minutos = minutosMatch ? minutosMatch[1].padStart(2, '0') : '00';
+
+  return `${horas}:${minutos}`;
+}

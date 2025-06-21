@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
+$cpf   = isset($input['cpf']) ? $input['cpf'] : null;
 
 // Valida usuário
 if (!$id_usuario) {
@@ -63,9 +64,10 @@ $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params = [
-    '$count' => 'true',
-    '$filter' => "documento/cpf eq '47345287807'",
+    '$select' => 'organizacaoId, id',
+    '$filter' => "documento/cpf eq '$cpf'",
     '$expand' => 'convenio',
+    '$top'    => '1'
 ];
 
 // Constrói a query string com URL encoding apropriado

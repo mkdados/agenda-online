@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
-$profissionais_agenda_config = isset($input['profissionais_agenda_config']) ? $input['profissionais_agenda_config'] : null;
+$id_profissional = isset($input['id_profissional']) ? intval($input['id_profissional']) : null;
 
 // Valida usuário
 if (!$id_usuario) {
@@ -31,6 +31,13 @@ if (!$id_usuario) {
 if (!$token) {
     http_response_code(400);
     echo json_encode(['erro' => 'token inválido ou não enviado']);
+    exit;
+}
+
+// Valida id profissional
+if (!$id_profissional) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'id_profissional inválido ou não enviado']);
     exit;
 }
 
@@ -64,18 +71,14 @@ $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params                 = [
-    '$orderby' => "nome"
+    '$select'  => "id,organizacaoId,nome,foto,conselhoNumero"
 ];
-
- if($profissionais_agenda_config!=""){
-    $params['$apply'] = "filter(id in ($profissionais_agenda_config))";
- }       
 
 // Constrói a query string com URL encoding apropriado
 $queryString = http_build_query($params);
 
 // Concatena URL com query string
-$url_integracao  = $url_integracao . '?' . $queryString;
+$url_integracao  = $url_integracao . "/$id_profissional?" . $queryString;
 
 // Inicializa cURL
 $curl_result = fn_curl_request([

@@ -24,7 +24,8 @@ async function realizarLogin() {
       sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
       sessionStorage.setItem('sessao', JSON.stringify(data.sessao));
       const id_usuario = data.usuario.id_usuario;
-
+      const cpf = data.usuario.cpf;
+      
       //Resgata o token===============
       fn_gera_token(id_usuario)
         .then(data => {  
@@ -42,22 +43,31 @@ async function realizarLogin() {
 
           const parametros = {
             id_usuario: id_usuario,
-            token: chave
+            token: chave,
+            cpf: cpf
           };
 
           //Pega dados do paciente
           fn_lista_pacientes(parametros)
             .then(data => {
-              const listaPacientes = data.value; 
-              
+              const listaPacientes = data.value;
+
               listaPacientes.forEach(paciente => {
-                  //Grava dados do paciente no sessionStorage
-                  sessionStorage.setItem('paciente', JSON.stringify({
-                      id_organizacao: paciente.organizacaoId,
-                      id_paciente: paciente.id,
-                      id_convenio: paciente.convenio.id,
-                      numero_carteirinha: paciente.convenio.numCarteira
-                  }));  
+                  
+                  const dados_paciente = {
+                    id_organizacao: paciente?.organizacaoId,
+                    id_paciente: paciente?.id,
+                    id_convenio: paciente?.convenio?.id,
+                    numero_carteirinha: paciente?.convenio?.numCarteira
+                  };
+
+                  // Verifica se o paciente tem dados válidos
+                  const data_paciente = Object.fromEntries(
+                    Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
+                  );
+
+                  //Grava o paciente no sessionStorage
+                  sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
 
               });               
 
@@ -65,7 +75,31 @@ async function realizarLogin() {
               window.location.href = 'home.html';   
             })
             .catch(error => {
-              loader.style.display = 'none';
+
+              const dados_paciente = {
+                    id_organizacao: null,
+                    id_paciente: null,
+                    id_convenio: null,
+                    numero_carteirinha: null
+                  };
+
+              // Verifica se o paciente tem dados válidos
+              const data_paciente = Object.fromEntries(
+                Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
+              );
+
+              //Grava o paciente no sessionStorage
+              sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
+
+              //Redireciona para a página home
+              window.location.href = 'home.html';
+              
+              // loader.style.display = 'none';
+              // Swal.fire({
+              //   icon: 'error',
+              //   title: 'Erro',
+              //   text: 'Serviço indisponível. Tente novamente mais tarde.'
+              // });
             });
                
 

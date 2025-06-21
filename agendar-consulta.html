@@ -169,38 +169,7 @@
 
                 <!-- Grade de datas com rolagem horizontal -->
                 <div id="dataScroll" class="overflow-auto px-5" style="scroll-behavior: smooth;">
-                  <div class="data-grid d-grid gap-2" style="grid-template-columns: repeat(10, 1fr); min-width: 600px;">
-                    <button class="btn data-btn text-center">
-                      <span class="small d-block">seg.</span>
-                      <span class="text-lg fw-bold fs-2 d-block">5</span>
-                      <span class="small d-block">Maio</span>
-                    </button>
-                    <button class="btn data-btn text-center">
-                      <span class="small d-block">qui.</span>
-                      <span class="text-lg fw-bold fs-2 d-block">8</span>
-                      <span class="small d-block">Maio</span>
-                    </button>
-                    <button class="btn data-btn text-center">
-                      <span class="small d-block">sab.</span>
-                      <span class="text-lg fw-bold fs-2 d-block">10</span>
-                      <span class="small d-block">Maio</span>
-                    </button>
-                    <button class="btn data-btn text-center">
-                      <span class="small d-block">seg.</span>
-                      <span class="text-lg fw-bold fs-2 d-block">12</span>
-                      <span class="small d-block">Maio</span>
-                    </button>
-                    <button class="btn data-btn text-center">
-                      <span class="small d-block">qui.</span>
-                      <span class="text-lg fw-bold fs-2 d-block">14</span>
-                      <span class="small d-block">Maio</span>
-                    </button>
-                    <button class="btn data-btn text-center">
-                      <span class="small d-block">sab.</span>
-                      <span class="text-lg fw-bold fs-2 d-block">17</span>
-                      <span class="small d-block">Maio</span>
-                    </button>
-                  </div>
+                  <div id="datasAgendamento" class="data-grid d-grid gap-2 justify-content-center" style="display: inline-flex;grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); max-width: 100%; margin: 0 auto;"></div>
                 </div>
 
                 <!-- Seta direita -->
@@ -211,22 +180,21 @@
 
             </div> 
 
-
-
-            <!-- Médico 1 -->
+            <div id="agendasMedicos"></div>    
+            <!-- Médico 1
             <div id="horarioDiv1" class="mt-3 align-items-start border rounded" style="display: none;">                   
               
-              <!-- Datas disponíveis -->
+              Datas disponíveis
               <div id="calendarioDiv">               
 
-                <!-- Foto, dados do médico e horários -->
+                Foto, dados do médico e horários
                 <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">
-                  <!-- Foto e dados do médico -->
+                  Foto e dados do médico
                   <div class="text-left">                  
                     <img src="assets/images/foto-medico-1.jpg" class="img-fluid rounded border" alt="Foto do médico" style="max-width: 120px;">
                   </div>
 
-                  <!-- Horários disponíveis -->
+                  Horários disponíveis
                   <div class="flex-grow-1">
                     <h3 class="mb-1">Dr. Carlos Mendes</h3>
                     <small class="text-muted d-block">CRM: 123456</small>
@@ -235,7 +203,7 @@
                 </div>
 
 
-                <!-- Horários disponíveis -->
+                Horários disponíveis
                 <div class="m-3 flex-grow-1">
                   <div class="d-grid gap-2 gridHorario">
                     <button class="btn horario-btn">08:00</button>
@@ -250,46 +218,7 @@
                 </div>                     
 
               </div>              
-            </div>  
-            
-            <!-- Médico 2 -->
-            <div id="horarioDiv2" class="mt-3 align-items-start border rounded" style="display: none;">                   
-              
-              <!-- Datas disponíveis -->
-              <div id="calendarioDiv">               
-
-                <!-- Foto, dados do médico e horários -->
-                <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">
-                  <!-- Foto e dados do médico -->
-                  <div class="text-left">                  
-                    <img src="assets/images/foto-medico-2.jpg" class="img-fluid rounded border" alt="Foto do médico" style="max-width: 120px;">
-                  </div>
-
-                  <!-- Horários disponíveis -->
-                  <div class="flex-grow-1">
-                    <h3 class="mb-1">Dra Ana Lúcia</h3>
-                    <small class="text-muted d-block">CRM: 123456</small>
-                    <small class="text-muted d-block">Dermatologista</small>
-                  </div>
-                </div>
-
-
-                <!-- Horários disponíveis -->
-                <div class="m-3 flex-grow-1">
-                  <div class="d-grid gap-2 gridHorario">
-                    <button class="btn horario-btn">08:00</button>
-                    <button class="btn horario-btn">08:30</button>
-                    <button class="btn horario-btn">09:00</button>
-                    <button class="btn horario-btn">09:30</button>
-                    <button class="btn horario-btn">10:00</button>
-                    <button class="btn horario-btn">10:30</button>
-                    <button class="btn horario-btn">11:00</button>
-                    <button class="btn horario-btn">11:30</button>
-                  </div>
-                </div>                     
-
-              </div>              
-            </div> 
+            </div>-->  
       
           <div class="mt-4">
             <button class="btn btn-secondary" onclick="goToStep(1)">Voltar</button>
@@ -376,13 +305,14 @@
   <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
   <script src="assets/jquery/jquery.inputmask.min.js"></script>
   <script src="assets/sweetalert/sweetalert2@11.js"></script> 
-  <script src="assets/js/funcoes.js?v=1.0.4"></script>
-  <script src="assets/js/home.js?v=1.0.4"></script>
-  <script src="assets/js/agendar-consulta.js?v=1.0.4"></script>
-  <script src="assets/js/lista-convenios.js?v=1.0.4"></script>
-  <script src="assets/js/lista-filiais.js?v=1.0.4"></script>
-  <script src="assets/js/lista-agenda-config.js?v=1.0.4"></script>
-  <script src="assets/js/lista-profissionais.js?v=1.0.4"></script>
+  <script src="assets/js/funcoes.js?v=1.0.6"></script>
+  <script src="assets/js/home.js?v=1.0.5"></script>
+  <script src="assets/js/agendar-consulta.js?v=1.0.5"></script>
+  <script src="assets/js/lista-convenios.js?v=1.0.5"></script>
+  <script src="assets/js/lista-filiais.js?v=1.0.5"></script>
+  <script src="assets/js/lista-agenda-config.js?v=1.0.5"></script>
+  <script src="assets/js/lista-profissionais.js?v=1.0.5"></script>
+  <script src="assets/js/lista-agendamentos.js?v=1.0.5"></script>
 
   <!-- Select2 CSS -->
   <link href="assets/select2/select2.min.css" rel="stylesheet" />
