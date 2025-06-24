@@ -64,7 +64,7 @@ $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params                 = [
-    '$select'  => "id, razaoSocial",
+    '$select'  => "id, nomeFantasia",
     '$filter'   => "ativado eq 'S'",
     '$orderby' => "razaoSocial"
 ];

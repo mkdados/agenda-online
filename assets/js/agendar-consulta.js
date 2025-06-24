@@ -44,14 +44,16 @@ const loader = document.getElementById('loader');
     const token = JSON.parse(sessionStorage.getItem('token'));
     const id_usuario = usuario.id_usuario;
     const chave = token.chave;
-    const id_filial = document.getElementById('unidadeSelect').value;
+    const idFilialSelecionada = document.getElementById('unidadeSelect').value;
+    const idProfissionalSelecionado = document.getElementById('medicoSelect').value;
     const lista_profissionais = [];
     const lista_agendamentos = [];
 
     const parametrosAgendaConfig = {
         id_usuario: id_usuario,
         token: chave,
-        id_filial: id_filial
+        id_filial: (idFilialSelecionada) ? idFilialSelecionada : "",
+        id_profissional: (idProfissionalSelecionado) ? idProfissionalSelecionado : ""
     };
 
     try {
@@ -65,11 +67,13 @@ const loader = document.getElementById('loader');
                 const jaExisteProfissional = lista_profissionais.some(p => p.id === agendaConfig.profissional.id);
                 if (!jaExisteProfissional) {
 
+                  const id_profissional = (idProfissionalSelecionado) ? idProfissionalSelecionado : agendaConfig.profissionalId;
+
                     // Buscar profissionais
                     const parametrosProfissionais = {
                         id_usuario: id_usuario,
                         token: chave,
-                        id_profissional: agendaConfig.profissionalId
+                        id_profissional: id_profissional
                     };
                     try {
                         const listaProfissionais = await fn_lista_profissionais(parametrosProfissionais);
@@ -85,7 +89,7 @@ const loader = document.getElementById('loader');
                 // Buscar agendamentos
                 const parametrosAgendamentos = {
                     id_usuario: id_usuario,
-                    id_filial: id_filial,
+                    id_filial: idFilialSelecionada,
                     token: chave,
                     id_agenda_config: agendaConfig.id,
                     id_profissional: agendaConfig.profissionalId,
@@ -117,27 +121,33 @@ const loader = document.getElementById('loader');
     var html = "";
 
     for (const profissional of lista_profissionais) {
+
+      const profissionalId = profissional?.id ?? "";
+      const profissionalFoto = "data:image/jpeg;base64,"+profissional.foto ?? 'assets/images/foto-medico-1.jpg';
+      const nomeProfissional = profissional?.nome ?? "";
+      const numeroConselho = "CRM: "+profissional?.conselhoNumero ?? "";
+      const especialidade = profissional?.especialidade?.descricao ?? "";
       let horarios = "";
 
       for (const agendamento of lista_agendamentos) {
         if (agendamento.profissionalId == profissional.id) {
           const horaInicio = formatarHorarioISO(agendamento.horaInicio);
           horarios += `
-            <button class="btn horario-btn">${horaInicio}<i class="fa-solid fa-clock" style="font-size:0.7rem;margin-left:4px"></i></button>
+            <button class="btn horario-btn">${horaInicio}</button>
           `;
         }
-      }
+      }      
 
       html += `
-        <div class="mt-3 align-items-start border rounded horario-div" data-profissional-id="${profissional.id}">
+        <div class="mt-3 align-items-start border rounded horario-div" data-profissional-id="${profissionalId}">
           <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">
             <div class="text-left">                  
-              <img src="data:image/jpeg;base64,${profissional.foto || 'assets/images/foto-medico-1.jpg'}" class="img-fluid rounded border" alt="Foto do médico" style="max-width: 120px;">
+              <img src="${profissionalFoto}" class="img-fluid rounded border" alt="Foto do médico" style="max-width: 120px;">
             </div>
             <div class="flex-grow-1">
-              <h3 class="mb-1">${profissional.nome}</h3>
-              <small class="text-muted d-block">CRM: ${profissional.conselhoNumero}</small>
-              <small class="text-muted d-block">Dermatologista</small>
+              <h3 class="mb-1">${nomeProfissional}</h3>
+              <small class="text-muted d-block">${numeroConselho}</small>
+              <small class="text-muted d-block">${especialidade}</small>
             </div>
           </div>
           <div class="m-3 flex-grow-1">
@@ -214,7 +224,7 @@ function selecionaTipoAtendimento() {
           listaConvenios.forEach(convenio => {
             const option = document.createElement('option');
             option.value = convenio.id;
-            option.textContent = convenio.razaoSocial;
+            option.textContent = convenio.nomeFantasia;
             selectConvenio.appendChild(option);
 
             // Seleciona o convênio do paciente, se existir
@@ -295,21 +305,23 @@ function selecionaTipoAtendimento() {
   });  
 
 /*###########################################################################################
-    Seleciona os agendamentos
+    Selecionar datas agendamentos
 ############################################################################################*/ 
-$('#unidadeSelect').on('select2:select', async function () {
+$('#unidadeSelect, #medicoSelect').on('select2:select', async function () {
 
     //Limpa div agendamentos===========================================
     document.getElementById('datasAgendamento').innerHTML = "";  
     document.getElementById("agendasMedicos").innerHTML = "";  
 
+    const idSelecionado = $(this).attr('id');
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
     const token = JSON.parse(sessionStorage.getItem('token'));
     const id_usuario = usuario.id_usuario;
     const chave = token.chave;
-    const id_filial = $(this).val();
+    const idFilialSelecionada = document.getElementById('unidadeSelect').value;
+    const idProfissionalSelecionado = (idSelecionado=="medicoSelect") ? document.getElementById('medicoSelect').value : "";
     const lista_profissionais = [];
-    const lista_datas = [];
+    const lista_datas = [];    
 
     loader.style.display = 'flex'; // mostra o loader  
 
@@ -317,7 +329,8 @@ $('#unidadeSelect').on('select2:select', async function () {
     const parametrosAgendaConfig = {
         id_usuario: id_usuario,
         token: chave,
-        id_filial: id_filial
+        id_filial: (idFilialSelecionada) ? idFilialSelecionada : "",
+        id_profissional: (idProfissionalSelecionado) ? idProfissionalSelecionado : ""
     };
 
     try {
@@ -325,7 +338,10 @@ $('#unidadeSelect').on('select2:select', async function () {
         const listaAgendaConfig = data.value;
 
         if (Array.isArray(listaAgendaConfig)) {
+
             for (const agendaConfig of listaAgendaConfig) {
+
+              const id_profissional = (idProfissionalSelecionado) ? idProfissionalSelecionado : agendaConfig.profissionalId;
 
                 // Dados do profissional
                 const jaExisteProfissional = lista_profissionais.some(p => p.id === agendaConfig.profissional.id);
@@ -336,10 +352,10 @@ $('#unidadeSelect').on('select2:select', async function () {
                 // Buscar agendamentos
                 const parametrosAgendamentos = {
                     id_usuario: id_usuario,
-                    id_filial: id_filial,
+                    id_filial: idFilialSelecionada,
                     token: chave,
                     id_agenda_config: agendaConfig.id,
-                    id_profissional: agendaConfig.profissionalId
+                    id_profissional: id_profissional
                 };
 
                 try {
@@ -368,16 +384,18 @@ $('#unidadeSelect').on('select2:select', async function () {
     }
 
     /*-------------------- Select Profissionais --------------------*/
-    const selectProfissional = document.getElementById('medicoSelect');
-    selectProfissional.innerHTML = '<option value="">Todos os Médicos</option>';
+    if(idProfissionalSelecionado==""){
+      const selectProfissional = document.getElementById('medicoSelect');
+      selectProfissional.innerHTML = '<option value="">Todos os Médicos</option>';
 
-    if (lista_profissionais.length > 0) {
-        for (const profissional of lista_profissionais) {
-            const option = document.createElement('option');
-            option.value = profissional.id;
-            option.textContent = profissional.nome;
-            selectProfissional.appendChild(option);
-        }
+      if (lista_profissionais.length > 0) {
+          for (const profissional of lista_profissionais) {
+              const option = document.createElement('option');
+              option.value = profissional.id;
+              option.textContent = profissional.nome;
+              selectProfissional.appendChild(option);
+          }
+      }
     }
 
     /*-------------------- Select Datas --------------------*/
@@ -427,6 +445,8 @@ $('#unidadeSelect').on('select2:select', async function () {
 });
 
 
+
+
 /*###########################################################################################
     Script para selecionar medico
   ############################################################################################*/ 
@@ -452,13 +472,22 @@ $('#unidadeSelect').on('select2:select', async function () {
  /*###########################################################################################
     JavaScript para rolagem proxima data
   ############################################################################################*/ 
-  const dataScroll = document.getElementById('dataScroll');
-  document.getElementById('scrollLeft').addEventListener('click', () => {
-    dataScroll.scrollBy({ left: -200, behavior: 'smooth' });
+   document.addEventListener('DOMContentLoaded', () => {
+    const dataScroll = document.getElementById('dataScroll');
+    const scrollLeft = document.getElementById('scrollLeft');
+    const scrollRight = document.getElementById('scrollRight');
+
+    if (dataScroll && scrollLeft && scrollRight) {
+      scrollLeft.addEventListener('click', () => {
+        dataScroll.scrollBy({ left: -200, behavior: 'smooth' });
+      });
+
+      scrollRight.addEventListener('click', () => {
+        dataScroll.scrollBy({ left: 200, behavior: 'smooth' });
+      });
+    }
   });
-  document.getElementById('scrollRight').addEventListener('click', () => {
-    dataScroll.scrollBy({ left: 200, behavior: 'smooth' });
-  });
+
 
   /*###########################################################################################
     Set select2

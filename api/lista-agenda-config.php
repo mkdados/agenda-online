@@ -19,6 +19,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
 $id_filial = isset($input['id_filial']) ? intval($input['id_filial']) : null;
+$id_profissional = isset($input['id_profissional']) ? intval($input['id_profissional']) : null;
 
 // Valida usuário
 if (!$id_usuario) {
@@ -70,8 +71,12 @@ $params = [
 ];
 
 if($id_filial>0){
-    $params['$apply'] = "filter(filialId eq $id_filial)";
- } 
+    $params['$filter'] .= "and filialId eq $id_filial";
+} 
+
+if($id_profissional>0){
+    $params['$filter'] .= "and profissionalId eq $id_profissional";
+} 
 
 // Constrói a query string com URL encoding apropriado
 $queryString = http_build_query($params);

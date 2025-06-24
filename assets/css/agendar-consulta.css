@@ -309,6 +309,26 @@ footer a:hover {
     animation: spin 1s linear infinite;
   }
 
+#datasAgendamento {
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap;
+  padding: 0 2rem;
+}  
+
+#datasAgendamento > button {
+  min-width: 120px;
+  flex: 0 0 auto;
+}
+
+#dataScroll {
+  overflow-x: auto;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
   /* Animação do spinner */
   @keyframes spin {
     0% {

@@ -71,7 +71,8 @@ $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params                 = [
-    '$select'  => "id,organizacaoId,nome,foto,conselhoNumero"
+    '$select'  => "id,organizacaoId,nome,foto,conselhoNumero",
+    '$expand'  => "especialidade"
 ];
 
 // Constrói a query string com URL encoding apropriado
