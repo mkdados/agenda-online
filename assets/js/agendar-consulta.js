@@ -308,141 +308,272 @@ function selecionaTipoAtendimento() {
     Selecionar datas agendamentos
 ############################################################################################*/ 
 $('#unidadeSelect, #medicoSelect').on('select2:select', async function () {
-
-    //Limpa div agendamentos===========================================
+    // Limpa agendamentos existentes da interface
     document.getElementById('datasAgendamento').innerHTML = "";  
     document.getElementById("agendasMedicos").innerHTML = "";  
 
-    const idSelecionado = $(this).attr('id');
+    // Loader on
+    loader.style.display = 'flex';
+
+    // Dados do usuário
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
     const token = JSON.parse(sessionStorage.getItem('token'));
     const id_usuario = usuario.id_usuario;
     const chave = token.chave;
+    const medicosSelecionados = [];
+
+    // Parâmetros básicos
     const idFilialSelecionada = document.getElementById('unidadeSelect').value;
-    const idProfissionalSelecionado = (idSelecionado=="medicoSelect") ? document.getElementById('medicoSelect').value : "";
-    const lista_profissionais = [];
-    const lista_datas = [];    
+    const idProfissionalSelecionado = document.getElementById('medicoSelect').value;
 
-    loader.style.display = 'flex'; // mostra o loader  
-
-    /*-------------------- Lista agenda config --------------------*/
-    const parametrosAgendaConfig = {
+    // Define parâmetros para requisição
+    const parametrosAgendamentos = {
         id_usuario: id_usuario,
-        token: chave,
-        id_filial: (idFilialSelecionada) ? idFilialSelecionada : "",
-        id_profissional: (idProfissionalSelecionado) ? idProfissionalSelecionado : ""
+        id_filial: idFilialSelecionada,
+        token: chave
     };
 
+    const parametrosProfissionais = {
+        id_usuario: id_usuario,
+        token: chave
+    };
+
+    if (idProfissionalSelecionado) {
+        parametrosAgendamentos.id_profissional = idProfissionalSelecionado;
+    }
+
     try {
-        const data = await fn_lista_agenda_config(parametrosAgendaConfig);
-        const listaAgendaConfig = data.value;
+        // Chamada da API
+        const [resposta] = await Promise.all([
+            fn_lista_agendamentos(parametrosAgendamentos),
+            fn_lista_profissionais(parametrosProfissionais)
+        ]);
 
-        if (Array.isArray(listaAgendaConfig)) {
+        const agendamentos = resposta?.value ?? [];
 
-            for (const agendaConfig of listaAgendaConfig) {
-
-              const id_profissional = (idProfissionalSelecionado) ? idProfissionalSelecionado : agendaConfig.profissionalId;
-
-                // Dados do profissional
-                const jaExisteProfissional = lista_profissionais.some(p => p.id === agendaConfig.profissional.id);
-                if (!jaExisteProfissional) {
-                    lista_profissionais.push(agendaConfig.profissional);
-                }
-
-                // Buscar agendamentos
-                const parametrosAgendamentos = {
-                    id_usuario: id_usuario,
-                    id_filial: idFilialSelecionada,
-                    token: chave,
-                    id_agenda_config: agendaConfig.id,
-                    id_profissional: id_profissional
-                };
-
-                try {
-                    const dataAgendamento = await fn_lista_agendamentos(parametrosAgendamentos);
-                    const listaAgendamentos = dataAgendamento.value;
-
-                    for (const agendamento of listaAgendamentos) {
-                        if (agendamento.dataInicio) {
-                            const somenteData = agendamento.dataInicio.split("T")[0];
-                            const jaExisteData = lista_datas.includes(somenteData);
-                            if (!jaExisteData) {
-                                lista_datas.push(somenteData);
-                            }
-                        }
-                    }
-                } catch (erroAgendamento) {
-                    console.error("Erro ao listar agendamentos:", erroAgendamento);
-                    loader.style.display = 'none';
-                }
+        for (const agendamento of agendamentos) {
+            const id = agendamento.profissionalId;
+            if (id && !medicosSelecionados.includes(id)) {
+                medicosSelecionados.push(id);
             }
         }
 
-    } catch (error) {
-        console.error("Erro ao listar agenda config:", error);
-        loader.style.display = 'none';
-    }
 
-    /*-------------------- Select Profissionais --------------------*/
-    if(idProfissionalSelecionado==""){
-      const selectProfissional = document.getElementById('medicoSelect');
-      selectProfissional.innerHTML = '<option value="">Todos os Médicos</option>';
+        //Seleciona os profissionais======================
+        console.log(medicosSelecionados)
 
-      if (lista_profissionais.length > 0) {
-          for (const profissional of lista_profissionais) {
-              const option = document.createElement('option');
-              option.value = profissional.id;
-              option.textContent = profissional.nome;
-              selectProfissional.appendChild(option);
-          }
-      }
-    }
+        // Buscar profissionais
+        for (const medico of medicosSelecionados) {
 
-    /*-------------------- Select Datas --------------------*/
-    if (lista_datas.length > 0) {
-        const containerDatas = document.getElementById('datasAgendamento');
-        containerDatas.innerHTML = ''; // limpa antes
+            const parametrosProfissionais = {
+                id_usuario: id_usuario,
+                token: chave,
+                id_profissional: medico
+            };
+            try {
+                const listaProfissionais = fn_lista_profissionais(parametrosProfissionais);
+                console.log(listaProfissionais.values);
+
+            } catch (erroProfissionais) {
+                console.error("Erro ao listar profissionais:", erroProfissionais);
+                loader.style.display = 'none';
+            }
+
+         }
+
+        // -------------------------------------------
+        // Datas disponíveis
+        // -------------------------------------------
+        const datasUnicas = [...new Set(
+            agendamentos
+                .map(a => a.dataInicio?.split('T')[0])
+                .filter(Boolean)
+        )];
+
+        if (datasUnicas.length === 0) {
+            document.getElementById('datasAgendamento').innerHTML = '<p class="text-muted">Nenhuma data disponível.</p>';
+            loader.style.display = 'none';
+            return;
+        }
 
         const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
         const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-        let contador = 1;
+        const containerDatas = document.getElementById('datasAgendamento');
+        containerDatas.innerHTML = '';
 
-        for (const dataStr of lista_datas) {
-            // Cria a data no horário local, quebrando a string:
+        datasUnicas.forEach(dataStr => {
+          
             const [ano, mes, dia] = dataStr.split('-');
-            const dataObj = new Date(ano, mes - 1, dia); // mês começa em 0 no JS
-
+            const dataObj = new Date(ano, mes - 1, dia);
             const diaSemana = diasSemana[dataObj.getDay()];
-            const diaFormatado = String(dataObj.getDate()).padStart(2, '0');
             const mesNome = meses[dataObj.getMonth()];
+            const diaFormatado = String(dataObj.getDate()).padStart(2, '0');
 
-            // Monta o botão
-            const html = `
-            <button class="btn data-btn text-center" data-data-agenda="${ano}-${mes}-${dia}" data-data-agenda-formatada="${dia}/${mes}/${ano}"> 
-                <span class="small d-block">${diaSemana}</span>
-                <span class="text-lg fw-bold fs-2 d-block">${diaFormatado}</span>
-                <span class="small d-block">${mesNome}</span>
-            </button>`;
+            const btn = `
+                <button class="btn data-btn text-center" 
+                    data-data-agenda="${ano}-${mes}-${dia}" 
+                    data-data-agenda-formatada="${dia}/${mes}/${ano}">
+                    <span class="small d-block">${diaSemana}</span>
+                    <span class="text-lg fw-bold fs-2 d-block">${diaFormatado}</span>
+                    <span class="small d-block">${mesNome}</span>
+                </button>`;
+            
+            containerDatas.insertAdjacentHTML('beforeend', btn);
+        });
 
-            containerDatas.insertAdjacentHTML('beforeend', html);
+        document.getElementById('proximaDataDisponivelDiv').style.display = "block";
 
-            if(contador<7){
-              contador++;
-            }else{
-              break;
-            }
-              
-        }
-
-        // Exibe datas==============================================================
-        const proximaDataDiv = document.getElementById('proximaDataDisponivelDiv');
-        proximaDataDiv.style.display = "block";
-
-        //loader======================
+    } catch (error) {
+        console.error("Erro ao buscar agendamentos:", error);
+        document.getElementById('datasAgendamento').innerHTML = '<p class="text-danger">Erro ao carregar agendamentos.</p>';
+    } finally {
         loader.style.display = 'none';
     }
 });
+
+
+
+
+
+
+
+// $('#unidadeSelect, #medicoSelect').on('select2:select', async function () {
+
+    //Limpa div agendamentos===========================================
+    // document.getElementById('datasAgendamento').innerHTML = "";  
+    // document.getElementById("agendasMedicos").innerHTML = "";  
+
+    // const idSelecionado = $(this).attr('id');
+    // const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    // const token = JSON.parse(sessionStorage.getItem('token'));
+    // const id_usuario = usuario.id_usuario;
+    // const chave = token.chave;
+    // const idFilialSelecionada = document.getElementById('unidadeSelect').value;
+    // const idProfissionalSelecionado = (idSelecionado=="medicoSelect") ? document.getElementById('medicoSelect').value : "";
+    // const lista_profissionais = [];
+    // const lista_datas = [];    
+
+    // loader.style.display = 'flex'; // mostra o loader  
+
+    // /*-------------------- Lista agenda config --------------------*/
+    // const parametrosAgendaConfig = {
+    //     id_usuario: id_usuario,
+    //     token: chave,
+    //     id_filial: (idFilialSelecionada) ? idFilialSelecionada : "",
+    //     id_profissional: (idProfissionalSelecionado) ? idProfissionalSelecionado : ""
+    // };
+
+    // try {
+    //     const data = await fn_lista_agenda_config(parametrosAgendaConfig);
+    //     const listaAgendaConfig = data.value;
+
+    //     if (Array.isArray(listaAgendaConfig)) {
+
+    //         for (const agendaConfig of listaAgendaConfig) {
+
+    //           const id_profissional = (idProfissionalSelecionado) ? idProfissionalSelecionado : agendaConfig.profissionalId;
+
+    //             // Dados do profissional
+    //             const jaExisteProfissional = lista_profissionais.some(p => p.id === agendaConfig.profissional.id);
+    //             if (!jaExisteProfissional) {
+    //                 lista_profissionais.push(agendaConfig.profissional);
+    //             }
+
+    //             // Buscar agendamentos
+    //             const parametrosAgendamentos = {
+    //                 id_usuario: id_usuario,
+    //                 id_filial: idFilialSelecionada,
+    //                 token: chave,
+    //                 id_agenda_config: agendaConfig.id,
+    //                 id_profissional: id_profissional
+    //             };
+
+    //             try {
+    //                 const dataAgendamento = await fn_lista_agendamentos(parametrosAgendamentos);
+    //                 const listaAgendamentos = dataAgendamento.value;
+
+    //                 for (const agendamento of listaAgendamentos) {
+    //                     if (agendamento.dataInicio) {
+    //                         const somenteData = agendamento.dataInicio.split("T")[0];
+    //                         const jaExisteData = lista_datas.includes(somenteData);
+    //                         if (!jaExisteData) {
+    //                             lista_datas.push(somenteData);
+    //                         }
+    //                     }
+    //                 }
+    //             } catch (erroAgendamento) {
+    //                 console.error("Erro ao listar agendamentos:", erroAgendamento);
+    //                 loader.style.display = 'none';
+    //             }
+    //         }
+    //     }
+
+    // } catch (error) {
+    //     console.error("Erro ao listar agenda config:", error);
+    //     loader.style.display = 'none';
+    // }
+
+    // /*-------------------- Select Profissionais --------------------*/
+    // if(idProfissionalSelecionado==""){
+    //   const selectProfissional = document.getElementById('medicoSelect');
+    //   selectProfissional.innerHTML = '<option value="">Todos os Médicos</option>';
+
+    //   if (lista_profissionais.length > 0) {
+    //       for (const profissional of lista_profissionais) {
+    //           const option = document.createElement('option');
+    //           option.value = profissional.id;
+    //           option.textContent = profissional.nome;
+    //           selectProfissional.appendChild(option);
+    //       }
+    //   }
+    // }
+
+    // /*-------------------- Select Datas --------------------*/
+    // if (lista_datas.length > 0) {
+    //     const containerDatas = document.getElementById('datasAgendamento');
+    //     containerDatas.innerHTML = ''; // limpa antes
+
+    //     const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    //     const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+    //     let contador = 1;
+
+    //     for (const dataStr of lista_datas) {
+    //         // Cria a data no horário local, quebrando a string:
+    //         const [ano, mes, dia] = dataStr.split('-');
+    //         const dataObj = new Date(ano, mes - 1, dia); // mês começa em 0 no JS
+
+    //         const diaSemana = diasSemana[dataObj.getDay()];
+    //         const diaFormatado = String(dataObj.getDate()).padStart(2, '0');
+    //         const mesNome = meses[dataObj.getMonth()];
+
+    //         // Monta o botão
+    //         const html = `
+    //         <button class="btn data-btn text-center" data-data-agenda="${ano}-${mes}-${dia}" data-data-agenda-formatada="${dia}/${mes}/${ano}"> 
+    //             <span class="small d-block">${diaSemana}</span>
+    //             <span class="text-lg fw-bold fs-2 d-block">${diaFormatado}</span>
+    //             <span class="small d-block">${mesNome}</span>
+    //         </button>`;
+
+    //         containerDatas.insertAdjacentHTML('beforeend', html);
+
+    //         if(contador<7){
+    //           contador++;
+    //         }else{
+    //           break;
+    //         }
+              
+    //     }
+
+    //     // Exibe datas==============================================================
+    //     const proximaDataDiv = document.getElementById('proximaDataDisponivelDiv');
+    //     proximaDataDiv.style.display = "block";
+
+    //     //loader======================
+    //     loader.style.display = 'none';
+    // }
+// });
 
 
 
