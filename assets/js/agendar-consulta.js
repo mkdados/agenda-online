@@ -49,14 +49,13 @@ document.getElementById('datasAgendamento').addEventListener('click', function (
       id_profissional: idProfissionalSelecionado,
       data_inicio: dataSelecionada,
       data_fim: dataSelecionada,
-      expand: 'profissional($select=id,nome,foto)',
+      expand: 'profissional($select=id,nome,conselhoNumero,especialidade)',
       orderby: 'profissionalId, agendaConfigId'
     };
 
     fn_lista_agendamentos(parametrosAgendamentos)
       .then(dataAgendamento => {
         const listaAgendamentos = dataAgendamento.value || [];
-
         const horariosPorProfissional = {};
 
         listaAgendamentos.forEach(agendamento => {
@@ -65,22 +64,19 @@ document.getElementById('datasAgendamento').addEventListener('click', function (
           const agendaConfigId = agendamento.agendaConfigId;
           const id = agendamento.profissionalId;
           const nome = agendamento.profissional?.nome || 'Desconhecido';
-          const foto = agendamento.profissional?.foto || '';
           const numeroConselho = agendamento.profissional?.conselhoNumero || '';
           const especialidade = agendamento.profissional?.especialidade?.descricao || '';
           const hora = agendamento.horaInicio;
 
-          // Garante que o objeto do agendaconfigId exista
           if (!horariosPorProfissional[id]) {
             horariosPorProfissional[id] = {};
           }
 
-          // Garante que o objeto do profissionalId dentro do agendaconfigId exista
           if (!horariosPorProfissional[id][agendaConfigId]) {
             horariosPorProfissional[id][agendaConfigId] = {
+              id,
               agendaConfigId,
               nome,
-              foto,
               numeroConselho,
               especialidade,
               horarios: []
@@ -90,24 +86,30 @@ document.getElementById('datasAgendamento').addEventListener('click', function (
           horariosPorProfissional[id][agendaConfigId].horarios.push(hora);
         });
 
-        // Monta HTML
+        // Monta o HTML inicial sem foto
         let html = '';
 
-        for (const agendaConfigId in horariosPorProfissional) {
-          const profissionais = horariosPorProfissional[agendaConfigId];
+        for (const profissionalId in horariosPorProfissional) {
+            const agendas  = horariosPorProfissional[profissionalId];
 
-          for (const id in profissionais) {
-            const prof = profissionais[id];
+          for (const agendaConfigId in agendas) {
+            const prof = agendas[agendaConfigId];
+          
 
             const horariosHtml = prof.horarios.length > 0
               ? prof.horarios.map(h => `<button class="btn horario-btn">${formatarHorarioISO(h)}</button>`).join('')
               : '<p class="text-muted">Nenhum horário disponível.</p>';
 
             html += `
-              <div class="mt-3 align-items-start border rounded horario-div" data-profissional-id="${id}">
+              <div class="mt-3 align-items-start border rounded horario-div" data-profissional-id="${profissionalId}">
                 <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">
-                  <div class="text-left">                  
-                    <img src="data:image/jpeg;base64,${prof.foto}" class="img-fluid rounded border" alt="Foto do médico" style="max-width: 120px;">
+                  <div class="text-left">
+                    <img 
+                      data-profissional-id="${prof.id}"
+                      src="" 
+                      class="img-fluid rounded border foto-medico" 
+                      alt="Foto do médico" 
+                      style="max-width: 120px;">
                   </div>
                   <div class="flex-grow-1">
                     <h3 class="mb-1">${prof.nome}</h3>
@@ -120,7 +122,7 @@ document.getElementById('datasAgendamento').addEventListener('click', function (
                   <h6 class="mb-1 text-secondary"><i class="fa-solid fa-calendar mr-3"></i> Data: ${dataSelecionadaFormatada}</h6>
                 </div>
                 <div class="m-3 flex-grow-1">
-                  <div class="d-grid gap-2 gridHorario">             
+                  <div class="d-grid gap-2 gridHorario">
                     ${horariosHtml}
                   </div>
                 </div>
@@ -129,6 +131,27 @@ document.getElementById('datasAgendamento').addEventListener('click', function (
         }
 
         document.getElementById("agendasMedicos").innerHTML = html;
+        
+
+        // === Buscar fotos em segundo plano ===
+        document.querySelectorAll('.foto-medico').forEach(imgEl => {
+          const profissionalId = imgEl.getAttribute('data-profissional-id');
+
+          const parametrosProfissionais = {
+            id_usuario: id_usuario,
+            id_filial: idFilialSelecionada,
+            token: chave,
+            id_profissional: profissionalId
+          };
+
+          fn_lista_profissionais(parametrosProfissionais)
+            .then(dataProfissionais => {              
+                if (dataProfissionais.foto) {
+                  imgEl.src = `data:image/jpeg;base64,${dataProfissionais.foto}`;
+                }
+            });
+
+        });
 
         loader.style.display = 'none';
       })
@@ -138,6 +161,7 @@ document.getElementById('datasAgendamento').addEventListener('click', function (
       });
   }
 });
+
 
 
 

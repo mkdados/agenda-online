@@ -15,10 +15,10 @@ function fn_log_integracao($parametros) {
         $url_integracao         = $parametros['url_integracao'] ?? null;
         $metodo_http            = $parametros['metodo_http'] ?? null;
         $request_body           = addslashes($parametros['request_body']) ?? null;
-        $response               = addslashes($parametros['response']) ?? null;
+        //$response               = addslashes($parametros['response']) ?? null;
         $http_status            = $parametros['http_status'] ?? null;
         $sucesso                = $parametros['sucesso'] ?? null;
-
+        $response = "";
         $log_stmt = $conn->prepare("
             INSERT INTO tbl_integracao_log 
             (id_cliente, id_integracao, id_integracao_endpoint, id_usuario, ip, url_utilizada, metodo_http, request, response, status_http, sucesso)

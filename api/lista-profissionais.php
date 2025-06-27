@@ -81,6 +81,7 @@ $queryString = http_build_query($params);
 // Concatena URL com query string
 $url_integracao  = $url_integracao . "/$id_profissional?" . $queryString;
 
+
 // Inicializa cURL
 $curl_result = fn_curl_request([
     'url' => $url_integracao,
