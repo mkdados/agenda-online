@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
-$id_profissional = isset($input['id_profissional']) ? intval($input['id_profissional']) : null;
+$id_profissional = isset($input['id_profissional']) ? $input['id_profissional'] : null;
 
 // Valida usuário
 if (!$id_usuario) {
@@ -71,16 +71,17 @@ $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params                 = [
-    '$select'  => "id,organizacaoId,nome,foto,conselhoNumero",
-    '$expand'  => "especialidade"
+    '$select'  => "id,organizacaoId,nome,conselhoNumero",
+    '$expand'  => "especialidade",
+    '$filter'  => "id in ($id_profissional)"
 ];
 
 // Constrói a query string com URL encoding apropriado
 $queryString = http_build_query($params);
 
 // Concatena URL com query string
-$url_integracao  = $url_integracao . "/$id_profissional?" . $queryString;
-
+//$url_integracao  = $url_integracao . "/$id_profissional?" . $queryString;
+$url_integracao  = $url_integracao . '?' . $queryString;
 
 // Inicializa cURL
 $curl_result = fn_curl_request([

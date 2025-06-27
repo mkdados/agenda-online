@@ -72,6 +72,7 @@ $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params = [ 
     '$select'  => "id, organizacaoId, filialId, profissionalId, dataInicio, horaInicio, agendaConfigId",
+    //'$filter'  => "profissionalId gt 0  and agendaConfig/online eq 'S' and horaInicio lt duration'PT13H'",
     '$filter'  => "profissionalId gt 0  and agendaConfig/online eq 'S'",
     '$expand'  =>  $expand,
     '$orderby' =>  $orderby

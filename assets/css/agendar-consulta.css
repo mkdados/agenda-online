@@ -73,7 +73,7 @@ main {
 }
 
 .gridHorario{
-    grid-template-columns: repeat(10, 1fr);
+    grid-template-columns: repeat(5, 1fr);
 } 
 
 
@@ -339,6 +339,17 @@ footer a:hover {
     }
   }
 
+@media (max-width: 1200px) {
+    .gridHorario{
+        grid-template-columns: repeat(3, 1fr);
+    } 
+}
+
+@media (max-width: 992px) {
+    .gridHorario{
+        grid-template-columns: repeat(2, 1fr);
+    } 
+}
 
 /* Estilo para dispositivos móveis */
 @media (max-width: 767.98px) {
@@ -392,7 +403,7 @@ footer a:hover {
     }
 
     .gridHorario{
-    grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     } 
     
 }
