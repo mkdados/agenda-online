@@ -66,8 +66,10 @@ $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 
 $login  = htmlspecialchars($parametros["Login"] ?? '');
-$senha  = htmlspecialchars($parametros["Senha"] ?? '');
+// $senha  = htmlspecialchars($parametros["Senha"] ?? '');
+$senha  = $parametros["Senha"] ?? '';
 $plataforma = htmlspecialchars($parametros["plataforma"] ?? '');
+
 
 $request_body = json_encode([
     "Login" => $login,
@@ -92,7 +94,7 @@ $curl_error  = $curl_result['erro']        ?? '';
 $data        = $curl_result['data']        ?? [];
 
 // Exibe token se sucesso
-if ($sucesso  === 'S' and !empty($data["token"]["chave"])) {
+if ($sucesso  === 'S' and !empty($data["chave"])) {
     http_response_code($http_status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } else {

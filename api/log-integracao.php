@@ -11,11 +11,11 @@ function fn_log_integracao($parametros) {
         $id_cliente             = $parametros['id_cliente'] ?? null;
         $id_integracao          = $parametros['id_integracao'] ?? null;
         $id_integracao_endpoint = $parametros['id_integracao_endpoint'] ?? null;
-        $id_usuario            = $parametros['id_usuario'] ?? null;
+        $id_usuario             = $parametros['id_usuario'] ?? null;
         $url_integracao         = $parametros['url_integracao'] ?? null;
         $metodo_http            = $parametros['metodo_http'] ?? null;
-        $request_body           = $parametros['request_body'] ?? null;
-        $response               = $parametros['response'] ?? null;
+        $request_body           = addslashes($parametros['request_body']) ?? null;
+        $response               = addslashes($parametros['response']) ?? null;
         $http_status            = $parametros['http_status'] ?? null;
         $sucesso                = $parametros['sucesso'] ?? null;
 

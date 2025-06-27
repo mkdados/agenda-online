@@ -31,8 +31,8 @@ async function realizarLogin() {
         .then(data => {  
           
           const id_organizacao = data.organizacaoId;
-          const chave = data.token.chave;
-          const duracao = data.token.duracao;          
+          const chave = data.chave;
+          const duracao = data.duracao;          
 
           //Grava o token no sessionStorage
           sessionStorage.setItem('token', JSON.stringify({
