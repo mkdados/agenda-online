@@ -370,7 +370,7 @@ function selecionaTipoAtendimento() {
 
                   if(endereco){
                     endereco_maps = `https://www.google.com/maps/search/?api=1&query=${endereco_logradouro},+${endereco_numero},+${endereco_municipio},+${endereco_uf}`;
-                    endereco_link = `<a href="${endereco_maps}" target="_blank" rel="noopener" style="color:#000000;"><i class="fa-solid fa-location-dot me-2" style="color:#d47d48"></i> ${endereco}</a>`;
+                    endereco_link = `<a href="${endereco_maps}" target="_blank" rel="noopener" style="color:#000000;">${endereco}</a>`;
                   }             
 
                   //Option----------------------------------------------
@@ -655,8 +655,8 @@ function fn_selecionar_datas(evento,data_inicio){
 
 
 /*###########################################################################################
-    Script dados confirmação
-  ############################################################################################*/ 
+    Etapa confirmação
+############################################################################################*/ 
 
    document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('btnGoToStep3').addEventListener('click', function () {
@@ -721,12 +721,12 @@ function fn_selecionar_datas(evento,data_inicio){
         }        
 
         // Exibe os dados=========
-        document.getElementById("confirmacao-nome-profissional").innerHTML = '<i class="fa-solid fa-user-doctor me-2" style="color:#d47d48"></i>'+nomeProfissional;
-        document.getElementById("confirmacao-unidade").innerHTML = '<i class="fa-solid fa-hospital-user me-2" style="color:#d47d48"></i>'+unidade;
+        document.getElementById("confirmacao-nome-profissional").innerHTML = nomeProfissional;
+        document.getElementById("confirmacao-unidade").innerHTML = unidade;
         document.getElementById("confirmacao-unidade-endereco").innerHTML = unidadeEndereco;
-        document.getElementById("confirmacao-data").innerHTML = '<i class="fa-solid fa-calendar me-2" style="color:#d47d48"></i>'+dataAgenda;
-        document.getElementById("confirmacao-hora").innerHTML = '<i class="fa-solid fa-clock me-2" style="color:#d47d48"></i>'+horaSelecionada;
-        document.getElementById("confirmacao-forma-pagamento").innerHTML = '<i class="fa-solid fa-dollar-sign me-2" style="color:#d47d48"></i>'+forma_pagamento;        
+        document.getElementById("confirmacao-data").innerHTML = dataAgenda;
+        document.getElementById("confirmacao-hora").innerHTML = horaSelecionada;
+        document.getElementById("confirmacao-forma-pagamento").innerHTML = forma_pagamento;        
         
         
         //Avança a etapa======
@@ -736,3 +736,32 @@ function fn_selecionar_datas(evento,data_inicio){
       }
     });
   });  
+
+/*###########################################################################################
+    Agendar Paciente
+############################################################################################*/ 
+document.addEventListener('DOMContentLoaded', function () {
+    const btnConfirmar = document.getElementById('btnConfirmarAgendamento');
+
+    btnConfirmar.addEventListener('click', function () {
+
+        Swal.fire({
+          title: "Confirma o agendamento?",
+          icon: "info",
+          showDenyButton: false,
+          showCancelButton: true,
+          confirmButtonText: "Sim",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Agendamento realizado com sucesso!",
+              showConfirmButton: false,
+              timer: 1500
+            });
+            document.getElementById("step3").innerHTML = '<div class="alert alert-info" role="alert">Agendamento realizado com sucesso</div>';
+          } 
+        });
+    });
+  });
