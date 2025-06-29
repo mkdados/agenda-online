@@ -322,24 +322,56 @@ footer a:hover {
 }
 
 #dataScroll {
-  overflow-x: auto;
+  overflow-x: hidden;
   white-space: nowrap;
   scroll-behavior: smooth;
   padding-left: 2rem;
   padding-right: 2rem;
 }
 
-  /* Animação do spinner */
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
+/* Animação do spinner */
+@keyframes spin {
+0% {
+    transform: rotate(0deg);
+}
+100% {
+    transform: rotate(360deg);
+}
+}
 
-@media (max-width: 1200px) {
+/* Inicio Periodo da agenda================= */
+.btn-outline-custom {
+    color: #d47d48;
+    border: 1px solid #d47d48;
+    background-color: transparent;
+}
+
+.btn-outline-custom:hover {
+    background-color: #d47d48;
+    color: white;
+}
+
+/* Quando selecionado */
+.btn-check:checked + .btn-outline-custom {
+    background-color: #d47d48;
+    color: white;
+}
+
+/* Removendo a borda azul de foco */
+.btn-outline-custom:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Ícones */
+.btn-outline-custom i {
+    margin-right: 4px;
+}
+/* Fim - Periodo da agenda================= */
+
+/* Estilo para dispositivos móveis */
+@media (max-width: 1200px) {    
+
     .gridHorario{
         grid-template-columns: repeat(3, 1fr);
     } 
@@ -351,9 +383,8 @@ footer a:hover {
     } 
 }
 
-/* Estilo para dispositivos móveis */
-@media (max-width: 767.98px) {
-    
+@media (max-width: 767.98px) { 
+
     #sidebar {
     transform: translateX(-100%);        
     position: fixed;
@@ -405,5 +436,23 @@ footer a:hover {
     .gridHorario{
         grid-template-columns: repeat(3, 1fr);
     } 
+
+    /*Datas===============================*/
+    #dataScroll {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+
+    #datasAgendamento span{
+        font-size: .655em !important;
+    }
+
+     #datasAgendamento span.text-lg{
+        font-size: .800em !important;
+    }
+
+    #datasAgendamento > button{
+        min-width: 74px !important;
+    }
     
 }

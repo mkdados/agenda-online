@@ -62,7 +62,9 @@ $url_integracao         = $row["url"].$row["rota"];
 $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
-$params = [];
+$params = [ '$select' => 'id, nomeCompleto, endereco',
+            '$filter' => 'id ne 3309'
+          ];
 
 // Constrói a query string com URL encoding apropriado
 $queryString = http_build_query($params);

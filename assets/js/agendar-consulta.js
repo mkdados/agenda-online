@@ -24,183 +24,204 @@ const loader = document.getElementById('loader');
     Script para selecionar data
 ############################################################################################*/ 
 document.getElementById('datasAgendamento').addEventListener('click', function (e) {
-  if (e.target.closest('.data-btn')) {
-    const idFilialSelecionada = document.getElementById('unidadeSelect').value;
-    const idProfissionalSelecionado = document.getElementById('medicoSelect').value;
-    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
-    const token = JSON.parse(sessionStorage.getItem('token'));
-    const id_usuario = usuario.id_usuario;
-    const chave = token.chave;
-
-    const btn = e.target.closest('.data-btn');
-    document.querySelectorAll('.data-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-
-    const dataSelecionada = btn.getAttribute('data-data-agenda');
-    const dataSelecionadaFormatada = btn.getAttribute('data-data-agenda-formatada');
-
-    document.getElementById("agendasMedicos").innerHTML = "";
-    loader.style.display = 'flex';
-
-    const parametrosAgendamentos = {
-      id_usuario,
-      id_filial: idFilialSelecionada,
-      token: chave,
-      id_profissional: idProfissionalSelecionado,
-      data_inicio: dataSelecionada,
-      data_fim: dataSelecionada,
-      expand: 'profissional($select=id,nome,conselhoNumero,especialidadeId,foto)',
-      orderby: 'profissionalId, horaInicio'
-    };
-
-    fn_lista_agendamentos(parametrosAgendamentos)
-      .then(dataAgendamento => {
-        const listaAgendamentos = dataAgendamento.value || [];
-        const horariosPorProfissional = {};
-
-        listaAgendamentos.forEach(agendamento => {
-          const agendaConfigId = agendamento.agendaConfigId;
-          const id = agendamento.profissionalId;
-          const nome = agendamento.profissional?.nome || 'Desconhecido';
-          const foto = agendamento.profissional?.foto || '';
-          const numeroConselho = agendamento.profissional?.conselhoNumero || 'NÃO INFORMADO';
-          const especialidade = agendamento.profissional?.especialidade?.descricao || '';
-          const hora = agendamento.horaInicio;
-
-          if (!horariosPorProfissional[id]) {
-            horariosPorProfissional[id] = {};
-          }
-
-          if (!horariosPorProfissional[id][agendaConfigId]) {
-            horariosPorProfissional[id][agendaConfigId] = {
-              id,
-              agendaConfigId,
-              nome,
-              foto,
-              numeroConselho,
-              especialidade,
-              horarios: []
-            };
-          }
-
-          horariosPorProfissional[id][agendaConfigId].horarios.push(hora);
-        });
-
-        // TRANSFORMAR EM ARRAY E ORDENAR POR NOME
-        const profissionaisLista = [];
-        for (const profissionalId in horariosPorProfissional) {
-          const agendas = horariosPorProfissional[profissionalId];
-          for (const agendaConfigId in agendas) {
-            profissionaisLista.push(agendas[agendaConfigId]);
-          }
-        }
-
-        profissionaisLista.sort((a, b) =>
-          a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' })
-        );
-
-        // GERAR HTML ORDENADO
-        let html = '';
-        let i = 1;
-
-        profissionaisLista.forEach(prof => {
-          let horariosHtml = "<div class='container-fluid'><div class='row'>";
-          let m = 1, t = 1;
-
-          prof.horarios.forEach(horario => {
-            const hora = formatarHorarioISO(horario);
-
-            if (hora < "13:00") {
-              if (m === 1) {
-                horariosHtml += `<div class="col-12 col-md-6">
-                  <h5 class="my-3 text-secondary"><i class="fa-solid fa-clock mr-3"></i> Manhã</h5>
-                  <div class="d-grid gap-2 gridHorario">`;
-              }
-              horariosHtml += `<button class="btn horario-btn">${hora}</button>`;
-              m++;
-            } else {
-              if (t === 1) {
-                if (m > 1) horariosHtml += `</div></div><div class="col-12 col-md-6">`;
-                horariosHtml += `<h5 class="my-3 text-secondary"><i class="fa-solid fa-clock mr-3"></i> Tarde</h5>
-                  <div class="d-grid gap-2 gridHorario">`;
-                t++;
-              }
-              horariosHtml += `<button class="btn horario-btn">${hora}</button>`;
-            }
-          });
-
-          horariosHtml += `</div></div></div>`;
-
-          if(i>1){
-            html += '</div>';
-            i=1;
-          }
-
-          html += `
-            <div class="my-3 align-items-start border rounded horario-div" data-profissional-id="${prof.id}">
-              <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">
-                <div class="text-left">
-                  <img 
-                    data-profissional-id="${prof.id}"
-                    data-foto-base64="${prof.foto}"
-                    src="assets/images/foto-medico.png" 
-                    class="img-fluid rounded border foto-medico lazy-foto" 
-                    alt="Foto do médico" 
-                    style="max-width: 90px; border: 1px solid #ccc !important;">
-                </div>
-                <div class="flex-grow-1">
-                  <h3 class="mb-1">${prof.nome}</h3>
-                  <small class="text-muted d-block">CRM: ${prof.numeroConselho}</small>
-                  <small class="text-muted d-block">${prof.especialidade}</small>
-                </div>
-              </div>
-              <div class="m-3 flex-grow-1">
-                <h6 class="mb-1 text-secondary"><i class="fa-solid fa-calendar mr-3"></i> Data da agenda: ${dataSelecionadaFormatada}</h6>
-              </div>
-              <div class="m-3 flex-grow-1">
-                ${horariosHtml}
-              </div>
-            </div>`;
-
-            i++;
-        });
-
-        // INSERIR HTML FINAL
-        const container = document.getElementById("agendasMedicos");
-        container.innerHTML = html;
-
-        // CARREGAR FOTOS BASE64
-        setTimeout(() => {
-          document.querySelectorAll('.lazy-foto').forEach(imgEl => {
-            const fotoBase64 = imgEl.getAttribute('data-foto-base64');
-            if (fotoBase64) {
-              const novaImg = new Image();
-              novaImg.onload = () => {
-                imgEl.src = `data:image/png;base64,${fotoBase64}`;
-              };
-              novaImg.src = `data:image/png;base64,${fotoBase64}`;
-            }
-          });
-        }, 100);
-
-        loader.style.display = 'none';
-      })
-      .catch(err => {
-        console.error("Erro ao listar agendamentos:", err);
-        loader.style.display = 'none';
-      });
+  const btn = e.target.closest('.data-btn');
+  if (btn) {
+    fn_carrega_agendamentos(btn);
   }
 });
+
+// === Evento de clique nos botões de turno (radio buttons) ===
+document.querySelectorAll('input[name="turno"]').forEach(radio => {
+  radio.addEventListener('click', () => {
+    const btnSelecionado = document.querySelector('.data-btn.selected');
+    if (btnSelecionado) {
+      fn_carrega_agendamentos(btnSelecionado);
+    }
+  });
+});
+
+
+// === Função reutilizável para carregar agendamentos com base na data selecionada ===
+function fn_carrega_agendamentos(btn) {
+  // Se o botão não for passado, pega o atualmente selecionado
+  if (!btn) {
+    btn = document.querySelector('.data-btn.selected');
+    if (!btn) return;
+  }
+
+  // Marcar como selecionado
+  document.querySelectorAll('.data-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  // Coletar dados da sessão e inputs
+  const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+  const token = JSON.parse(sessionStorage.getItem('token'));
+  const id_usuario = usuario?.id_usuario;
+  const chave = token?.chave;
+  const idFilialSelecionada = document.getElementById('unidadeSelect').value;
+  const idProfissionalSelecionado = document.getElementById('medicoSelect').value;
+  const turnoSelecionado = document.querySelector('input[name="turno"]:checked').value;
+
+  const dataSelecionada = btn.getAttribute('data-data-agenda');
+  const dataSelecionadaFormatada = btn.getAttribute('data-data-agenda-formatada');
+
+  // Limpar agenda atual e exibir loader
+  document.getElementById("agendasMedicos").innerHTML = "";
+  loader.style.display = 'flex';
+
+  const parametrosAgendamentos = {
+    id_usuario,
+    id_filial: idFilialSelecionada,
+    token: chave,
+    id_profissional: idProfissionalSelecionado,
+    data_inicio: dataSelecionada,
+    data_fim: dataSelecionada,
+    turno: turnoSelecionado,
+    expand: 'profissional($select=id,nome,conselhoNumero,especialidadeId)',
+    orderby: 'profissionalId, horaInicio'
+  };
+
+  fn_lista_agendamentos(parametrosAgendamentos)
+    .then(dataAgendamento => {
+      const listaAgendamentos = dataAgendamento.value || [];
+      const horariosPorProfissional = {};
+
+      listaAgendamentos.forEach(agendamento => {
+        const {
+          id,
+          agendaConfigId,
+          profissionalId: profissionalId,
+          profissional = {},
+          horaInicio: hora
+        } = agendamento;
+
+        const nome = profissional.nome || 'Desconhecido';
+        const foto = profissional.foto || '';
+        const numeroConselho = profissional.conselhoNumero || 'NÃO INFORMADO';
+        const especialidade = profissional.especialidade?.descricao || '';
+
+        if (!horariosPorProfissional[profissionalId]) horariosPorProfissional[profissionalId] = {};
+        if (!horariosPorProfissional[profissionalId][agendaConfigId]) {
+          horariosPorProfissional[profissionalId][agendaConfigId] = {
+            id, agendaConfigId, profissionalId, nome, foto, numeroConselho, especialidade, horarios: []
+          };
+        }
+        horariosPorProfissional[profissionalId][agendaConfigId].horarios.push({'id': id,'hora': hora});
+      });
+
+      const profissionaisLista = [];
+      for (const profId in horariosPorProfissional) {
+        for (const agId in horariosPorProfissional[profId]) {
+          profissionaisLista.push(horariosPorProfissional[profId][agId]);
+        }
+      }
+
+      profissionaisLista.sort((a, b) => a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' }));
+
+      // Gerar HTML dos cards
+      let html = '';
+      let i = 1;
+      profissionaisLista.forEach(prof => {
+        let horariosHtml = "<div class='container-fluid'><div class='row'>";
+        let m = 1, t = 1;
+
+        prof.horarios.forEach(horario => {
+          const hora = formatarHorarioISO(horario.hora);
+          if (hora < "13:00") {
+            if (m === 1) {
+              horariosHtml += `<div class="col-12 col-md-6 ps-0 mb-3 mb-md-0">
+                <h5 class="mt-2 mb-3 text-secondary"><i class="fa-solid fa-clock mr-3"></i> Manhã</h5>
+                <div class="d-grid gap-2 gridHorario">`;
+            }
+            horariosHtml += `<button class="btn horario-btn" data-id-agenda-md="${horario.id}">${hora}</button>`;
+            m++;
+          } else {
+            if (t === 1) {
+              if (m > 1) horariosHtml += `</div></div><div class="col-12 col-md-6 ps-0 ps-md-3">`;
+              horariosHtml += `<h5 class="mt-2 mb-3 text-secondary"><i class="fa-solid fa-clock mr-3"></i> Tarde</h5>
+                <div class="d-grid gap-2 gridHorario">`;
+            }
+            horariosHtml += `<button class="btn horario-btn" data-id-agenda-md=="${horario.id}">${hora}</button>`;
+            t++;
+          }
+        });
+
+        horariosHtml += `</div></div></div>`;
+
+        if (i > 1) {
+          html += '</div>';
+          i = 1;
+        }
+
+        html += `
+          <div class="my-3 align-items-start border rounded horario-div" data-profissional-id="${prof.profissionalId}">
+            <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">
+              <div class="text-left">
+                <img 
+                  data-profissional-id="${prof.profissionalId}"
+                  data-foto-base64="${prof.foto}"
+                  src="assets/images/foto-medico.png" 
+                  class="img-fluid rounded border foto-medico lazy-foto" 
+                  alt="Foto do médico" 
+                  style="max-width: 90px; border: 1px solid #ccc !important;">
+              </div>
+              <div class="flex-grow-1">
+                <h3 class="mb-1">${prof.nome}</h3>
+                <small class="text-muted d-block"><strong>CRM:</strong> ${prof.numeroConselho}</small>
+                <small class="text-muted d-block">Dermatologista</small>
+                <small class="text-muted d-block">
+                  <a href="https://dermaclinica.com.br/corpo-clinico/" target="blank" style="color:#000000"><i class="fa-solid fa-link me-2" style="color:#6c757d"></i> Formação e especializações</a>
+                </small>
+              </div>
+            </div>
+            <div class="mx-3 mt-4 flex-grow-1">
+              <h6 class="mb-1 text-secondary">
+                <i class="fa-solid fa-calendar me-2"></i> 
+                Data da agenda: ${dataSelecionadaFormatada}
+              </h6>
+            </div>
+            <div class="m-3 flex-grow-1">
+              ${horariosHtml}
+            </div>
+          </div>`;
+        i++;
+      });
+
+      document.getElementById("agendasMedicos").innerHTML = html;
+
+      // Carregar fotos base64
+      // setTimeout(() => {
+      //   document.querySelectorAll('.lazy-foto').forEach(imgEl => {
+      //     const fotoBase64 = imgEl.getAttribute('data-foto-base64');
+      //     if (fotoBase64) {
+      //       const novaImg = new Image();
+      //       novaImg.onload = () => {
+      //         imgEl.src = `data:image/png;base64,${fotoBase64}`;
+      //       };
+      //       novaImg.src = `data:image/png;base64,${fotoBase64}`;
+      //     }
+      //   });
+      // }, 100);
+
+      loader.style.display = 'none';
+    })
+    .catch(err => {
+      console.error("Erro ao listar agendamentos:", err);
+      loader.style.display = 'none';
+    });
+}
 
 /*###########################################################################################
     Script para selecionar horário
   ############################################################################################*/ 
-  document.querySelectorAll('.horario-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+document.getElementById('agendasMedicos').addEventListener('click', function (e) {
+  const btn = e.target.closest('.horario-btn');
+  if (btn) {
       document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-    });
-  });
+      btn.classList.add('selected'); // ou btn.classList.add('selected')      
+  }
+});
+
 
 /*###########################################################################################
     Script para selecionar tipo de atendimento
@@ -209,13 +230,13 @@ function selecionaTipoAtendimento() {
   var tipoAtendimento = document.querySelector('input[name="tipoAtendimento"]:checked').value;
   var convenioDiv = document.getElementById("convenioDiv");
   var planoDiv = document.getElementById("planoDiv");
-  var carteirinhaDiv = document.getElementById("carteirinhaDiv");
+  //var carteirinhaDiv = document.getElementById("carteirinhaDiv");
   var carteirinha = document.getElementById("carteirinha");
 
   if (tipoAtendimento === "convenio") {
     convenioDiv.style.display = "block";
     //planoDiv.style.display = "block";
-    carteirinhaDiv.style.display = "block";
+    //carteirinhaDiv.style.display = "block";
 
     // Dados do storage
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
@@ -223,8 +244,8 @@ function selecionaTipoAtendimento() {
     const paciente = JSON.parse(sessionStorage.getItem('paciente'));
     const id_usuario = usuario.id_usuario;
     const chave = token.chave;
-    const numero_carteirinha = paciente.numero_carteirinha || '';
-    const idConvenioSelecionado = paciente.id_convenio || 0;    
+    //const numero_carteirinha = paciente.numero_carteirinha || '';
+    const idConvenioSelecionado = paciente ? paciente.id_convenio : 0;    
 
     loader.style.display = 'flex'; // mostra o loader    
 
@@ -253,9 +274,9 @@ function selecionaTipoAtendimento() {
             }
 
             //Seta numero da carteirinha
-            if(numero_carteirinha) {
-              carteirinha.value = numero_carteirinha;
-            }
+            // if(numero_carteirinha) {
+            //   carteirinha.value = numero_carteirinha;
+            // }
           });
           loader.style.display = 'none'; // esconde o loader
         } else {
@@ -284,7 +305,27 @@ function selecionaTipoAtendimento() {
    document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('btnGoToStep2').addEventListener('click', function () {
 
-        // Dados do storage
+      const tipoAtendimento = document.querySelector('input[name="tipoAtendimento"]:checked'); 
+      const convenioSelect = document.getElementById('convenioSelect');
+      const convenioValor = convenioSelect.value;  // pega o valor da option selecionada  
+
+      if (!tipoAtendimento) {
+          Swal.fire({
+            icon: 'info',
+            title: 'Aviso',
+            text: 'Selecione o tipo de atendimento'
+          });
+      }
+      else if (tipoAtendimento.value === "convenio" && (!convenioValor || convenioValor === "")) {
+          Swal.fire({
+            icon: 'info',
+            title: 'Aviso',
+            text: 'Selecione o convênio'
+          });
+      }
+      else{
+
+          // Dados do storage
         const usuario = JSON.parse(sessionStorage.getItem('usuario'));
         const token = JSON.parse(sessionStorage.getItem('token'));
         const id_usuario = usuario.id_usuario;
@@ -304,22 +345,55 @@ function selecionaTipoAtendimento() {
               selectFilial.innerHTML = '<option value="">Selecione uma unidade</option>';
 
               if (Array.isArray(listaFilials)) {
+
+                //Filiais
                 listaFilials.forEach(filial => {
                   const option = document.createElement('option');
+
+                  //Endereço------------------------
+                  let endereco = "";
+                  let endereco_logradouro = (filial.endereco) ? filial?.endereco?.logradouro : "";
+                  let endereco_numero =  (filial.endereco) ? filial?.endereco?.numero : "";
+                  let endereco_complemento =  (filial.endereco) ? filial?.endereco?.complemento : "";
+                  let endereco_bairro =  (filial.endereco) ? filial?.endereco?.bairro : "";
+                  let endereco_municipio =  (filial.endereco) ? filial?.endereco?.municipio : "";
+                  let endereco_uf =  (filial.endereco) ? filial?.endereco?.uf : "";
+                  let endereco_maps = "";
+                  let endereco_link = "";
+
+                  endereco += (endereco_logradouro) ? endereco_logradouro : "";
+                  endereco += (endereco_numero) ? ", "+endereco_numero : "";
+                  endereco += (endereco_complemento) ? ", "+endereco_complemento : "";
+                  endereco += (endereco_bairro) ? ", "+endereco_bairro : "";
+                  endereco += (endereco_municipio) ? ", "+endereco_municipio : "";
+                  endereco += (endereco_uf) ? " - "+endereco_uf : "";
+
+                  if(endereco){
+                    endereco_maps = `https://www.google.com/maps/search/?api=1&query=${endereco_logradouro},+${endereco_numero},+${endereco_municipio},+${endereco_uf}`;
+                    endereco_link = `<a href="${endereco_maps}" target="_blank" rel="noopener" style="color:#000000;"><i class="fa-solid fa-location-dot me-2" style="color:#d47d48"></i> ${endereco}</a>`;
+                  }             
+
+                  //Option----------------------------------------------
                   option.value = filial.id;
                   option.textContent = filial.nomeCompleto;
+                  option.setAttribute('data-endereco-unidade', endereco_link);
                   selectFilial.appendChild(option);
                 });
+
                 loader.style.display = 'none'; // esconde o loader
               } else {
                 console.warn('Formato de resposta inesperado:', data);
                 loader.style.display = 'none'; // esconde o loader
               }
+
+              //Avança a etapa
+              goToStep(2);
           })
           .catch(error => {
             console.error('Erro ao carregar filiais:', error.message);
             loader.style.display = 'none';
-          }); 
+          });
+      }        
         
     });
   });  
@@ -327,41 +401,133 @@ function selecionaTipoAtendimento() {
 /*###########################################################################################
     Selecionar datas agendamentos
 ############################################################################################*/ 
-$('#unidadeSelect, #medicoSelect').on('select2:select', function () {
+$('#unidadeSelect').on('select2:select', function () {
 
-    document.getElementById('datasAgendamento').innerHTML = "";  
-    document.getElementById("agendasMedicos").innerHTML = "";  
+  // Zera select medico======================================
+  const selectMedico = document.getElementById('medicoSelect');
+  selectMedico.innerHTML = '<option value="">Todos os Médicos</option>';
 
-    const idSelecionado = $(this).attr('id');
+  const idFilialSelecionada = document.getElementById('unidadeSelect').value;
+
+  if(idFilialSelecionada){
+    fn_selecionar_datas("selectUnidade","");   
+  } 
+});
+
+$('#medicoSelect').on('select2:select', function () {
+  fn_selecionar_datas("selectMedico","");    
+});
+
+//Selecionar mais datas========================================
+$('#scrollRight').on('click', function () {
+
+  //Validar scroll lateral===========================================================================
+  const scrollContainer = document.getElementById('dataScroll');
+  const hasHorizontalScroll = scrollContainer.scrollWidth > scrollContainer.clientWidth;
+  var carrega_datas = "N";
+
+  // Verifica se existe scroll horizontal
+  if (hasHorizontalScroll) {
+      const scrollLeft = scrollContainer.scrollLeft;
+      const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+
+      // Verifica se chegou ao final do scroll (com margem de erro de 1px para evitar problemas de arredondamento)
+      if (Math.abs(scrollLeft - maxScrollLeft) <= 30) {        
+        carrega_datas = "S";      
+      }
+  }else{
+    carrega_datas = "S";  
+  }
+
+  if(carrega_datas=="S"){
+    const container = document.getElementById("datasAgendamento");
+    const botoes = container.querySelectorAll(".data-btn");
+    const primeiroBotao = botoes[0];
+    const ultimoBotao = botoes[botoes.length - 1]; 
+
+    // Pegando os valores dos atributos data
+    const data_inicio = primeiroBotao.getAttribute("data-data-agenda");
+    const data_fim = ultimoBotao.getAttribute("data-data-agenda"); 
+
+    fn_selecionar_datas("maisDatas",data_fim);   
+    
+  }
+    
+});
+
+//Selecionar datas anterior========================================
+$('#scrollLeft').on('click', function () {
+  const scrollContainer = document.getElementById('dataScroll');
+  const hasHorizontalScroll = scrollContainer.scrollWidth > scrollContainer.clientWidth;
+  let carrega_datas = "N";
+
+  if (hasHorizontalScroll) {
+    const scrollLeft = scrollContainer.scrollLeft;
+
+    // Verifica se está no início do scroll (com margem de 20px)
+    if (scrollLeft <= 20) {
+      carrega_datas = "S";
+    }
+  } else {
+    carrega_datas = "S";
+  }
+
+  if (carrega_datas === "S") {
+    const container = document.getElementById("datasAgendamento");
+    const botoes = container.querySelectorAll(".data-btn");
+    const primeiroBotao = botoes[0];
+    const ultimoBotao = botoes[botoes.length - 1]; 
+
+    const data_inicio = primeiroBotao.getAttribute("data-data-agenda");
+    const data_fim = ultimoBotao.getAttribute("data-data-agenda");
+
+    fn_selecionar_datas("menosDatas", data_inicio);  
+  }
+});
+
+
+function fn_selecionar_datas(evento,data_inicio){  
+
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
     const token = JSON.parse(sessionStorage.getItem('token'));
     const id_usuario = usuario.id_usuario;
     const chave = token.chave;
     const idFilialSelecionada = document.getElementById('unidadeSelect').value;
-    const idProfissionalSelecionado = (idSelecionado === "medicoSelect") ? document.getElementById('medicoSelect').value : "";
+    const idProfissionalSelecionado = document.getElementById('medicoSelect').value;   
     const lista_profissionais = []; // Opcional se precisar preencher select
     const lista_datas = [];
     const promises = [];
 
     //Carrega loader=============
-    loader.style.display = 'flex';    
+    loader.style.display = 'flex'; 
+    
+    //Setar dom=================================================
+    // document.getElementById('datasAgendamento').innerHTML = "";  
+    document.getElementById("agendasMedicos").innerHTML = "";  
 
     //Lista agendamentos=====================================================================
     const parametrosAgendamentos = {
         id_usuario: id_usuario,
         id_filial: idFilialSelecionada,
         token: chave,
-        id_profissional: idProfissionalSelecionado,
-        expand: 'profissional($select=id,nome)'/*,
-        data_inicio: '2025-06-26',
-        data_fim: '2025-07-15'*/
+        expand: 'profissional($select=id,nome)'        
     };
+
+    if(idProfissionalSelecionado){
+        parametrosAgendamentos["id_profissional"] = idProfissionalSelecionado;
+    }
+
+    if(data_inicio){
+        parametrosAgendamentos["evento"] = evento;
+        parametrosAgendamentos["data_inicio"] = data_inicio;
+    }
 
     const promessa = fn_lista_agendamentos(parametrosAgendamentos)
         .then(dataAgendamento => {
             const listaAgendamentos = dataAgendamento.value;
             if (Array.isArray(listaAgendamentos)) {
                 listaAgendamentos.forEach(agendamento => {
+
                     //Lista datas============================================================
                     if (agendamento.dataInicio) {
                         
@@ -416,7 +582,7 @@ $('#unidadeSelect, #medicoSelect').on('select2:select', function () {
             document.getElementById('proximaDataDisponivelDiv').style.display = "block";
 
             //Carrega profissionais============================================================================ 
-            if(!idProfissionalSelecionado){           
+            if(evento=="selectUnidade"){           
                 // Ordena por nome (alfabético)
                 lista_profissionais.sort((a, b) => a.nome.localeCompare(b.nome));
 
@@ -443,36 +609,17 @@ $('#unidadeSelect, #medicoSelect').on('select2:select', function () {
 
         }
 
+        // Volta scroll suavemente para o início
+        const scrollContainer = document.getElementById('dataScroll');
+        scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
+
         //Fecha loader===============
         loader.style.display = 'none';
     }).catch(() => {
         //Fecha loader===============
         loader.style.display = 'none';
     });
-});
-
-
-
-/*###########################################################################################
-    Script para selecionar medico
-  ############################################################################################*/ 
-  document.getElementById('medicoSelect').addEventListener('change', function () {
-    let horarioDiv1 = document.getElementById('horarioDiv1');
-    let horarioDiv2 = document.getElementById('horarioDiv2');
-
-    if (this.value == "1") {
-      horarioDiv1.style.display = "block";
-      horarioDiv2.style.display = "none";
-    } 
-    else if (this.value == "2") {
-      horarioDiv2.style.display = "block";
-      horarioDiv1.style.display = "none";
-    }
-    else {
-      horarioDiv1.style.display = "block";
-      horarioDiv2.style.display = "block";
-    }
-  });
+}
 
 
  /*###########################################################################################
@@ -495,13 +642,97 @@ $('#unidadeSelect, #medicoSelect').on('select2:select', function () {
   });
 
 
-  /*###########################################################################################
-    Set select2
-  ############################################################################################*/ 
-    $(document).ready(function() {
-      $('.select2').select2({
-        minimumResultsForSearch: 0, // sempre mostra a busca
-        width: '100%',              // usa largura do elemento original
-        allowClear: true
-      });
+/*###########################################################################################
+  Set select2
+############################################################################################*/ 
+  $(document).ready(function() {
+    $('.select2').select2({
+      minimumResultsForSearch: 0, // sempre mostra a busca
+      width: '100%',              // usa largura do elemento original
+      allowClear: true
     });
+  });
+
+
+/*###########################################################################################
+    Script dados confirmação
+  ############################################################################################*/ 
+
+   document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('btnGoToStep3').addEventListener('click', function () {
+
+      // Seleciona o botão selecionado
+      const botaoSelecionado = document.querySelector('.horario-btn.selected');
+      const unidadeSelect = document.getElementById('unidadeSelect');
+      const unidadeValor = unidadeSelect.value;
+
+      if (!unidadeValor || unidadeValor === "") {
+          Swal.fire({
+            icon: 'info',
+            title: 'Aviso',
+            text: 'Selecione uma unidade'
+          });
+      }
+      else if (!botaoSelecionado) {
+          Swal.fire({
+            icon: 'info',
+            title: 'Aviso',
+            text: 'Selecione um horário'
+          });
+      }
+      else{
+
+        // Sobe até a div que representa a agenda do médico
+        const horarioDiv = botaoSelecionado.closest('.horario-div');
+
+        // Nome do profissional
+        const nomeProfissional = horarioDiv.querySelector('h3')?.textContent.trim();
+
+        //Unidade
+        const unidadeSelect = document.getElementById('unidadeSelect');
+        const unidade = unidadeSelect.options[unidadeSelect.selectedIndex].text;
+        const unidadeEndereco = unidadeSelect.options[unidadeSelect.selectedIndex].getAttribute('data-endereco-unidade');
+      
+        // Data da agenda
+        const dataAgenda = horarioDiv.querySelector('h6')?.textContent
+          .replace('Data da agenda:', '')
+          .trim();
+
+        // Hora selecionada
+        const horaSelecionada = botaoSelecionado.textContent.trim();
+
+        // Forma de pagamento
+        var forma_pagamento = "";
+        const tipoAtendimento = document.querySelector('input[name="tipoAtendimento"]:checked');  
+
+        if (tipoAtendimento && tipoAtendimento.value === "convenio") {
+
+          const convenioSelect = document.getElementById('convenioSelect');
+          var convenio = "";
+          
+          if(convenioSelect){
+            convenio = convenioSelect.options[convenioSelect.selectedIndex].text;            
+          }
+          
+          forma_pagamento = "CONVÊNIO "+convenio;
+        }
+        else {
+          forma_pagamento = "PARTICULAR";
+        }        
+
+        // Exibe os dados=========
+        document.getElementById("confirmacao-nome-profissional").innerHTML = '<i class="fa-solid fa-user-doctor me-2" style="color:#d47d48"></i>'+nomeProfissional;
+        document.getElementById("confirmacao-unidade").innerHTML = '<i class="fa-solid fa-hospital-user me-2" style="color:#d47d48"></i>'+unidade;
+        document.getElementById("confirmacao-unidade-endereco").innerHTML = unidadeEndereco;
+        document.getElementById("confirmacao-data").innerHTML = '<i class="fa-solid fa-calendar me-2" style="color:#d47d48"></i>'+dataAgenda;
+        document.getElementById("confirmacao-hora").innerHTML = '<i class="fa-solid fa-clock me-2" style="color:#d47d48"></i>'+horaSelecionada;
+        document.getElementById("confirmacao-forma-pagamento").innerHTML = '<i class="fa-solid fa-dollar-sign me-2" style="color:#d47d48"></i>'+forma_pagamento;        
+        
+        
+        //Avança a etapa======
+        goToStep(3); 
+              
+        
+      }
+    });
+  });  

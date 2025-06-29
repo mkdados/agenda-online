@@ -21,11 +21,33 @@ $token = isset($input['token']) ? $input['token'] : null;
 $id_filial = isset($input['id_filial']) ? intval($input['id_filial']) : null;
 $id_agenda_config = isset($input['id_agenda_config']) ? $input['id_agenda_config'] : null;
 $id_profissional = isset($input['id_profissional']) ? $input['id_profissional'] : null;
-$data_inicio = isset($input['data_inicio']) ? $input['data_inicio'] : date("Y-m-d");
-$data_fim    = isset($input['data_fim']) ? $input['data_fim'] : date("Y-m-d", strtotime("+7 days"));
+$qtd_dias    = 6;
+$data_inicio = isset($input['data_inicio']) ?  $input['data_inicio'] : date("Y-m-d");
+$data_fim    = isset($input['data_fim']) ? $input['data_fim'] : date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
+$turno       = isset($input['turno']) ? $input['turno'] : "";
 $expand      = isset($input['expand']) ? $input['expand'] : 'profissional($select=id,nome)';
 $orderby     = isset($input['orderby']) ? $input['orderby'] : "dataInicio";
-//$data_fim = date("Y-m-d");
+
+//Trata datas======================================================
+if(isset($input['evento'])){
+    if($input['evento']=="menosDatas"){
+        
+        $hoje = date("Y-m-d");
+        $data_inicio_anterior = date("Y-m-d", strtotime($data_inicio . " -$qtd_dias days"));
+
+        if ($data_inicio_anterior > $hoje) {
+            $data_inicio = date("Y-m-d", strtotime($data_inicio . " -$qtd_dias days"));
+            $data_fim    = date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
+        }else{
+            $data_inicio = date("Y-m-d");
+            $data_fim    = date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
+        }
+    }
+    elseif($input['evento']=="maisDatas"){
+        $data_inicio = date("Y-m-d", strtotime($data_inicio . " +1 days"));
+        $data_fim = date("Y-m-d", strtotime($data_fim . " +1 days"));
+    }
+}
 
 // Valida usuário
 if (!$id_usuario) {
@@ -72,7 +94,6 @@ $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params = [ 
     '$select'  => "id, organizacaoId, filialId, profissionalId, dataInicio, horaInicio, agendaConfigId",
-    //'$filter'  => "profissionalId gt 0  and agendaConfig/online eq 'S' and horaInicio lt duration'PT13H'",
     '$filter'  => "profissionalId gt 0  and agendaConfig/online eq 'S'",
     '$expand'  =>  $expand,
     '$orderby' =>  $orderby
@@ -89,6 +110,15 @@ if($id_agenda_config!=""){
 if($id_profissional!=""){
     $filtro .= "and profissionalId eq $id_profissional";
 } 
+if($turno!=""){
+    if($turno=="manha"){
+        $filtro .= "and horaInicio lt duration'PT13H'";
+    }
+    elseif($turno=="tarde"){
+        $filtro .= "and horaInicio ge duration'PT13H'";
+    }    
+}
+
 
 $params['$filter'] .= $filtro;
 

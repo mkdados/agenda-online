@@ -30,13 +30,11 @@ async function realizarLogin() {
       fn_gera_token(id_usuario)
         .then(data => {  
           
-          const id_organizacao = data.organizacaoId;
           const chave = data.chave;
           const duracao = data.duracao;          
 
           //Grava o token no sessionStorage
           sessionStorage.setItem('token', JSON.stringify({
-              id_organizacao: id_organizacao,
               chave: chave,
               duracao: duracao
           }));   
@@ -55,7 +53,6 @@ async function realizarLogin() {
               listaPacientes.forEach(paciente => {
                   
                   const dados_paciente = {
-                    id_organizacao: paciente?.organizacaoId,
                     id_paciente: paciente?.id,
                     id_convenio: paciente?.convenio?.id,
                     numero_carteirinha: paciente?.convenio?.numCarteira
@@ -77,7 +74,6 @@ async function realizarLogin() {
             .catch(error => {
 
               const dados_paciente = {
-                    id_organizacao: null,
                     id_paciente: null,
                     id_convenio: null,
                     numero_carteirinha: null
@@ -93,13 +89,7 @@ async function realizarLogin() {
 
               //Redireciona para a página home
               window.location.href = 'home.html';
-              
-              // loader.style.display = 'none';
-              // Swal.fire({
-              //   icon: 'error',
-              //   title: 'Erro',
-              //   text: 'Serviço indisponível. Tente novamente mais tarde.'
-              // });
+
             });
                
 

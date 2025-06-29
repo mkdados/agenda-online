@@ -54,7 +54,10 @@
     document.querySelector('#user-section .email').textContent = usuario.email;
 
     // Atualiza saudação principal
-    document.querySelector('#content .alert').textContent = `Olá! ${usuario.nome}`;
+    const homeInfo = document.querySelector('#home-info');
+    if (usuario && usuario.nome && homeInfo) {
+      homeInfo.textContent = `Olá! ${usuario.nome}`;
+    }    
 
     // Atualiza avatar com as iniciais do nome (ex: MV)
     const avatar = document.querySelector('.avatar-circle');

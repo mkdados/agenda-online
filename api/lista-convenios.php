@@ -66,7 +66,7 @@ $request_body           = json_encode([]);
 $params                 = [
     '$select'  => "id, nomeFantasia",
     '$filter'   => "ativado eq 'S'",
-    '$orderby' => "razaoSocial"
+    '$orderby' => "nomeFantasia"
 ];
 
 if($id_convenio>0){
