@@ -155,16 +155,14 @@ function fn_carrega_agendamentos(btn) {
 
         html += `
           <div class="my-3 align-items-start border rounded horario-div" data-profissional-id="${prof.profissionalId}">
-            <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">
-              <div class="text-left">
+            <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">              
                 <img 
                   data-profissional-id="${prof.profissionalId}"
                   data-foto-base64="${prof.foto}"
                   src="assets/images/foto-medico.png" 
-                  class="img-fluid rounded border foto-medico lazy-foto" 
+                  class="img-fluid rounded border foto-medico lazy-foto mx-auto mx-md-0 d-block" 
                   alt="Foto do médico" 
                   style="max-width: 90px; border: 1px solid #ccc !important;">
-              </div>
               <div class="flex-grow-1">
                 <h3 class="mb-1">${prof.nome}</h3>
                 <small class="text-muted d-block"><strong>CRM:</strong> ${prof.numeroConselho}</small>
