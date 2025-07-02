@@ -763,10 +763,10 @@ document.addEventListener('DOMContentLoaded', function () {
               const usuario = JSON.parse(sessionStorage.getItem('usuario'));
               const token = JSON.parse(sessionStorage.getItem('token'));              
               const id_organizacao = token.id_organizacao;
-              const paciente = JSON.parse(sessionStorage.getItem('paciente'));
+              const paciente = JSON.parse(sessionStorage?.getItem('paciente'));
               const id_usuario = usuario.id_usuario;
               const chave = token.chave;  
-              const id_paciente = paciente.id_paciente;
+              const id_paciente = paciente?.id_paciente;
               const botaoSelecionado = document.querySelector('.horario-btn.selected');
               const id_agenda_md = botaoSelecionado ? botaoSelecionado.getAttribute('data-id-agenda-md') : null;
               var tipoAtendimento = document.querySelector('input[name="tipoAtendimento"]:checked').value; 
