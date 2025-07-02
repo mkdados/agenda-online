@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Lê entrada JSON
 $input = json_decode(file_get_contents('php://input'), true);
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
+$id_organizacao = isset($input['id_organizacao']) ? intval($input['id_organizacao']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
 $id_filial = isset($input['id_filial']) ? intval($input['id_filial']) : null;
 $id_agenda_config = isset($input['id_agenda_config']) ? $input['id_agenda_config'] : null;
@@ -117,6 +118,14 @@ if($turno!=""){
     elseif($turno=="tarde"){
         $filtro .= "and horaInicio ge duration'PT13H'";
     }    
+}
+
+//Fixar agenda LUIZ GUILHERME MARTINS CASTRO
+if($id_organizacao==2911){
+    $filtro .= "and profissionalId eq 24014";
+}
+elseif($id_organizacao==7){
+    $filtro .= "and profissionalId eq 14581";
 }
 
 

@@ -30,11 +30,13 @@ async function realizarLogin() {
       fn_gera_token(id_usuario)
         .then(data => {  
           
+          const id_organizacao = data.id_organizacao;
           const chave = data.chave;
           const duracao = data.duracao;          
 
           //Grava o token no sessionStorage
           sessionStorage.setItem('token', JSON.stringify({
+              id_organizacao: id_organizacao,
               chave: chave,
               duracao: duracao
           }));   

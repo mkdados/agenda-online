@@ -65,8 +65,8 @@ $url_integracao         = $row["url"].$row["rota"];
 $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 
+$id_organizacao = $parametros["id_organizacao"];
 $login  = htmlspecialchars($parametros["Login"] ?? '');
-// $senha  = htmlspecialchars($parametros["Senha"] ?? '');
 $senha  = $parametros["Senha"] ?? '';
 $plataforma = htmlspecialchars($parametros["plataforma"] ?? '');
 
@@ -92,6 +92,7 @@ $response    = $curl_result['response']    ?? '';
 $http_status = $curl_result['http_status'] ?? 0;
 $curl_error  = $curl_result['erro']        ?? '';
 $data        = $curl_result['data']        ?? [];
+$data["id_organizacao"] = $id_organizacao;
 
 // Exibe token se sucesso
 if ($sucesso  === 'S' and !empty($data["chave"])) {

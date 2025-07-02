@@ -17,10 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Lê entrada JSON
 $input = json_decode(file_get_contents('php://input'), true);
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
+$id_organizacao = isset($input['id_organizacao']) ? intval($input['id_organizacao']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
 $dados_agendamento = $input['data'] ?? null;
 $id = $dados_agendamento['id'] ?? null;
-
+$id_paciente = $dados_agendamento['pacienteId'] ?? null;
 
 // Valida usuário
 if (!$id_usuario) {
@@ -48,6 +49,20 @@ if (!$id) {
     exit;
 }
 
+if (!$id_paciente) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'Não foi possível identificar o paciente']);
+    exit;
+}
+
+ //Liberar apenas para organizacao 7 e 2911 
+if (!(($id_organizacao == 2911 && $id_paciente == 1004105435) || 
+      ($id_organizacao == 7 && $id_paciente == 1001136818))) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'Paciente não liberado para agendamento']);
+    exit;
+}
+
 
 // Busca dados da integração
 $nome_endpoint = 'AGENDAR_PACIENTE';
@@ -67,7 +82,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
     http_response_code(404);
-    echo json_encode(["erro" => "Integração 'AUTENTICACAO' não encontrada"]);
+    echo json_encode(["mensagem" => "Integração 'AUTENTICACAO' não encontrada"]);
     exit;
 }
 

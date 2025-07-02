@@ -56,8 +56,9 @@ function fn_carrega_agendamentos(btn) {
   // Coletar dados da sessão e inputs
   const usuario = JSON.parse(sessionStorage.getItem('usuario'));
   const token = JSON.parse(sessionStorage.getItem('token'));
-  const id_usuario = usuario?.id_usuario;
   const chave = token?.chave;
+  const id_organizacao = token?.id_organizacao;
+  const id_usuario = usuario?.id_usuario; 
   const idFilialSelecionada = document.getElementById('unidadeSelect').value;
   const idProfissionalSelecionado = document.getElementById('medicoSelect').value;
   const turnoSelecionado = document.querySelector('input[name="turno"]:checked').value;
@@ -71,6 +72,7 @@ function fn_carrega_agendamentos(btn) {
 
   const parametrosAgendamentos = {
     id_usuario,
+    id_organizacao: id_organizacao,
     id_filial: idFilialSelecionada,
     token: chave,
     id_profissional: idProfissionalSelecionado,
@@ -489,6 +491,7 @@ function fn_selecionar_datas(evento,data_inicio){
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
     const token = JSON.parse(sessionStorage.getItem('token'));
     const id_usuario = usuario.id_usuario;
+    const id_organizacao = token?.id_organizacao;
     const chave = token.chave;
     const idFilialSelecionada = document.getElementById('unidadeSelect').value;
     const idProfissionalSelecionado = document.getElementById('medicoSelect').value;   
@@ -506,6 +509,7 @@ function fn_selecionar_datas(evento,data_inicio){
     //Lista agendamentos=====================================================================
     const parametrosAgendamentos = {
         id_usuario: id_usuario,
+        id_organizacao: id_organizacao,
         id_filial: idFilialSelecionada,
         token: chave,
         expand: 'profissional($select=id,nome)'        
@@ -750,15 +754,86 @@ document.addEventListener('DOMContentLoaded', function () {
           showCancelButton: true,
           confirmButtonText: "Sim",
         }).then((result) => {
-          if (result.isConfirmed) {
-            Swal.fire({
-              position: "center",
-              icon: "success",
-              title: "Agendamento realizado com sucesso!",
-              showConfirmButton: false,
-              timer: 1500
-            });
-            document.getElementById("step3").innerHTML = '<div class="alert alert-info" role="alert">Agendamento realizado com sucesso</div>';
+          if (result.isConfirmed) {           
+
+              //Carrega loader=============
+              loader.style.display = 'flex'; 
+
+              // Dados do storage            
+              const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+              const token = JSON.parse(sessionStorage.getItem('token'));              
+              const id_organizacao = token.id_organizacao;
+              const paciente = JSON.parse(sessionStorage.getItem('paciente'));
+              const id_usuario = usuario.id_usuario;
+              const chave = token.chave;  
+              const id_paciente = paciente.id_paciente;
+              const botaoSelecionado = document.querySelector('.horario-btn.selected');
+              const id_agenda_md = botaoSelecionado ? botaoSelecionado.getAttribute('data-id-agenda-md') : null;
+              var tipoAtendimento = document.querySelector('input[name="tipoAtendimento"]:checked').value; 
+
+              // Agendar paciente---------------------
+              const parametrosAgendamento = {
+                id_usuario: id_usuario,
+                id_organizacao: id_organizacao,
+                token: chave,
+                data: {
+                  "id": id_agenda_md,
+                  "titulo": "AGENDAMENTO ONLINE",
+                  "pacienteId": id_paciente,
+                  "observacoes": "AGENDAMENTO ONLINE",
+                  "agendaStatusId": 2,
+                  "online": "S"
+                }
+              };
+
+              //Tipo atendimento==========================
+              if (tipoAtendimento === "particular") {
+                parametrosAgendamento["data"]["tipoAtendimento"] = "1";
+              }
+              else if (tipoAtendimento === "convenio") {
+                parametrosAgendamento["data"]["tipoAtendimento"] = "2";
+                const convenioId = document.getElementById('convenioSelect').value;
+                parametrosAgendamento["data"]["convenioId"] = convenioId;
+              }
+
+              fn_agendar_paciente(parametrosAgendamento)
+                .then(data => {
+
+                  const status = data?.status;
+                  const mensagem = data?.mensagem ?? data?.erro;
+
+                    if(status==200){
+
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Agendamento realizado com sucesso!",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+
+                        //Seta a div
+                        document.getElementById("step3").innerHTML = '<div class="alert alert-info" role="alert">Agendamento realizado com sucesso</div>';
+                        
+
+                    }else{
+
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Erro',
+                          text: mensagem
+                        });                          
+                    }                  
+                  
+                  //Esconde o loader----------------------------------
+                  loader.style.display = 'none'; // esconde o loader
+                
+                })
+                .catch(error => {
+                  //console.error('Erro ao agendar o paciente:', error.message);
+                  loader.style.display = 'none';
+                }); 
+                
           } 
         });
     });
