@@ -95,3 +95,28 @@ function formatarHorarioISO(isoDuration) {
 
   return `${horas}:${minutos}`;
 }
+
+function formatarDataISO(dataISO) {
+  const dataUtc = new Date(dataISO);
+  dataUtc.setHours(dataUtc.getHours() + 3); // Corrige o UTC-3 (horário do Brasil)
+  
+  const dia = String(dataUtc.getDate()).padStart(2, '0');
+  const mes = String(dataUtc.getMonth() + 1).padStart(2, '0');
+  const ano = dataUtc.getFullYear();
+  
+  return `${dia}/${mes}/${ano}`;
+}
+
+function pegarIniciais(nomeCompleto) {
+  if (!nomeCompleto) return '';
+
+  const preposicoes = ['de', 'da', 'do', 'das', 'dos', 'e'];
+  
+  const palavras = nomeCompleto
+    .trim()
+    .split(' ')
+    .filter(palavra => palavra && !preposicoes.includes(palavra.toLowerCase()));
+
+  const iniciais = palavras.slice(0, 2).map(p => p[0].toUpperCase()).join('');
+  return iniciais;
+}

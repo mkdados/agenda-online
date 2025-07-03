@@ -19,6 +19,20 @@ main {
   overflow-y: visible; /* deixa o conteúdo rolar se crescer */
 }
 
+/* Botão Padrão */
+.btn-padrao {
+    background-color: #d47d48;
+    color: white;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 1rem;
+
+    &:hover {
+        background-color: #b8683d;
+        color: #d47d48;
+    }
+}
+
 /* Menu lateral */
 #sidebar {
     width: 250px;
@@ -190,6 +204,62 @@ footer a:hover {
     height: 50px;
     animation: spin 1s linear infinite;
   }
+
+  /*Cards consultas======================================*/
+
+    .card-top-border {
+      border-top: 5px solid #d47d48;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .doctor-name {
+      color: #000;
+      font-weight: bold;
+      font-size: 1.25rem;
+    }
+
+    .card-text-muted {
+      color: #6c757d;
+      margin: 0px;
+    }
+
+    .cancel-button {
+      background-color: #d47d48;
+      color: #fff;
+    }
+
+    .cancel-button:hover {
+      background-color: #bd683a;
+    }
+
+    .circle-initials {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #e0e0e0;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1rem;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+
+    .doctor-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .icon-orange {
+      color: #d47d48;
+    }
+
+    .icon-gray {
+      color: #6c757d;
+    }
 
   /* Animação do spinner */
   @keyframes spin {

@@ -21,8 +21,8 @@
 </head>
 <body>
 
-<!-- Loader --> 
-<div id="loader"><div class="spinner"></div></div>
+ <!-- Loader --> 
+<div id="loader"><div class="spinner"></div></div> 
 
 <!-- Overlay de fundo escurecido -->
 <div id="overlay"></div>
@@ -81,7 +81,16 @@
 
     <!-- Conteúdo principal -->
     <div id="content">
-      <div class="alert alert-secondary" role="alert" id="home-info"></div>
+      <div class="alert alert-secondary" role="alert">
+        <h4 id="home-info" style="font-weight:800"></h4>
+        <span>Gerencie suas consultas e agendamentos na Dermaclínica</span>
+      </div>
+        
+      <!-- Próximas consultas -->
+      <div class="container mt-5">         
+          <h3>Próximas consultas</h3>
+          <div class="row g-4 mt-3" id="card-proximas-consultas"></div>
+      </div>
     </div>
 </main>
 
@@ -99,8 +108,10 @@
   <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
   <script src="assets/jquery/jquery.inputmask.min.js"></script>
   <script src="assets/sweetalert/sweetalert2@11.js"></script> 
-  <script src="assets/js/funcoes.js?v=1.0.3"></script>
-  <script src="assets/js/home.js?v=1.0.6"></script>
-
+  <script src="assets/js/funcoes.js?v=2.0.1"></script>
+  <script src="assets/js/lista-proximas-consultas.js?v=2.0.1"></script>
+  <script src="assets/js/menu.js?v=2.0.1"></script>
+  <script src="assets/js/home.js?v=2.0.1"></script>
+  
 </body>
 </html>
