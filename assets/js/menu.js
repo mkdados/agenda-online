@@ -53,7 +53,7 @@
   const id_usuario = usuario.id_usuario;
   const chave = token.chave;  
   const paciente = JSON.parse(sessionStorage.getItem("paciente"));
-  const id_paciente = paciente.id_paciente;
+  const id_paciente = paciente?.id_paciente;
 
   if (usuario) {
     // Atualiza nome e e-mail no menu lateral

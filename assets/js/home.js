@@ -30,7 +30,7 @@
                                 <div class="card card-top-border shadow-sm">
                                   <div class="card-body">
                                     <div class="doctor-info mb-2">
-                                      <div class="circle-initials">${iniciais}</div>
+                                      <div class="circle-initials d-none d-md-flex">${iniciais}</div>
                                       <div>
                                         <h5 class="doctor-name mb-0">${profissional}</h5>
                                         <p class="card-text card-text-muted mb-1">Dermatologista</p>
