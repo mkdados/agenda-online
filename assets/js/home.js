@@ -55,16 +55,22 @@
 
         if(!html_consultas){
             html_consultas = `<div class="alert alert-info" role="alert">Nenhuma consulta agendada</div>`;            
-        }
-
-        document.getElementById("card-proximas-consultas").innerHTML =  html_consultas;
+        }        
         
     })
     .catch(error => {
       console.error('Erro ao carregar consultas:', error.message || error);
     })
     .finally(() => {
-      loader.style.display = 'none'; // Sempre oculta o loader
+      
+      if(!html_consultas){
+          html_consultas = `<div class="alert alert-info" role="alert">Nenhuma consulta agendada</div>`;            
+      }
+
+      document.getElementById("card-proximas-consultas").innerHTML =  html_consultas;
+
+      // Sempre oculta o loader
+      loader.style.display = 'none'; 
     });  
 
            
