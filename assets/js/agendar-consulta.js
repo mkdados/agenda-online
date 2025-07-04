@@ -813,7 +813,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
 
                         //Seta a div
-                        document.getElementById("step3").innerHTML = '<div class="alert alert-info" role="alert">Agendamento realizado com sucesso</div>';
+                        //document.getElementById("step3").innerHTML = '<div class="alert alert-info" role="alert">Agendamento realizado com sucesso</div>';
+                        //Redireciona para a página meus-agendamentos
+                          setTimeout(function(){
+                              window.location.href = 'meus-agendamentos.html';
+                          }, 1500);
                         
 
                     }else{

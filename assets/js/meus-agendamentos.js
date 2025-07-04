@@ -27,7 +27,7 @@
           const hora = formatarHorarioISO(consultas?.horaInicio);
           const unidade = consultas?.clinica.nomeCompleto;
 
-            html_consultas += `<div class="col-md-4 col-xl-3">
+            html_consultas += `<div class="col-md-4">
                                 <div class="card card-top-border shadow-sm">
                                   <div class="card-body">
                                     <div class="doctor-info mb-2">
@@ -120,8 +120,11 @@ document.addEventListener('click', function (event) {
                               timer: 1500
                           });
 
-                           //Seta a div
-                          document.getElementById("card-proximas-consultas").innerHTML = '<div class="alert alert-info" role="alert">Agendamento realizado com sucesso</div>';
+                          //Redireciona para a página meus-agendamentos
+                          setTimeout(function(){
+                              window.location.href = 'meus-agendamentos.html';
+                          }, 1500);
+                          
 
                       }else{
 
