@@ -20,6 +20,7 @@
 
         proximas_consultas.forEach(consultas => {   
           
+          const id_agenda_md = consultas?.id;
           const profissional = consultas?.profissional?.nome;
           const iniciais = pegarIniciais(profissional);
           const data = formatarDataISO(consultas?.dataInicio);      
@@ -47,7 +48,7 @@
                                     </p>
                                   </div>
                                   <div class="card-footer bg-transparent border-top-0">
-                                    <button class="btn btn-padrao w-100">Cancelar Consulta</button>
+                                    <button class="btn btn-padrao w-100 btn-desmarcar" id="${id_agenda_md}">Cancelar Consulta</button>
                                   </div>
                                 </div>
                               </div>`;
@@ -72,5 +73,75 @@
       // Sempre oculta o loader
       loader.style.display = 'none'; 
     });  
+
+/*###########################################################################################
+     Desmarcar consultas
+  ############################################################################################*/ 
+document.addEventListener('click', function (event) {
+  if (event.target && event.target.classList.contains('btn-desmarcar')) {
+    
+    Swal.fire({
+          title: "Deseja realmente desmarcar a consulta?",
+          icon: "info",
+          showDenyButton: false,
+          showCancelButton: true,
+          confirmButtonText: "Sim",
+        }).then((result) => {
+          if (result.isConfirmed) { 
+
+                const id_agenda_md = event.target.id; // o ID da consulta
+                
+                loader.style.display = 'flex'; // mostra o loader  
+
+                // Desmarcar consulta
+                const paramentrosDesmarcarConsultas = {
+                  id_usuario: id_usuario,
+                  token: chave,
+                  id: id_agenda_md,
+                  data: {
+                    "desmarcar": {
+                        "justificativa": "DESMARCADO PELO PACIENTE VIA AGENDAMENTO ONLINE"
+                    }
+                  }
+                };
+
+                fn_desmarcar_paciente(paramentrosDesmarcarConsultas)
+                  .then(data => { 
+                      const status = data?.status;
+                      const mensagem = data?.mensagem ?? data?.erro;
+
+                      if(status==200){
+
+                          Swal.fire({
+                              position: "center",
+                              icon: "success",
+                              title: "Agendamento desmarcado com sucesso!",
+                              showConfirmButton: false,
+                              timer: 1500
+                          });
+
+                           //Seta a div
+                          document.getElementById("card-proximas-consultas").innerHTML = '<div class="alert alert-info" role="alert">Agendamento realizado com sucesso</div>';
+
+                      }else{
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro',
+                            text: mensagem
+                          });                          
+                      }  
+                  })
+                  .catch(error => {
+                    console.error('Erro ao desmarcar consultas:', error.message || error);
+                  })
+                  .finally(() => {
+                    loader.style.display = 'none'; // Sempre oculta o loader
+                  });  
+          }      
+        }); 
+  }
+});
+  
 
            

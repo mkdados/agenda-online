@@ -18,20 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
 $id_organizacao = isset($input['id_organizacao']) ? intval($input['id_organizacao']) : null;
-$id_paciente = isset($input['id_paciente']) ? intval($input['id_paciente']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
-$qtd_dias    = 7;
-$data_inicio = date("Y-m-d");
-$data_fim    = date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
-$expand      = isset($input['expand']) ? $input['expand'] : 'profissional($select=id,nome), clinica($select=id,nomeCompleto)';
-$orderby     = isset($input['orderby']) ? $input['orderby'] : "dataInicio";
-
-// Valida paciente
-if (!$id_paciente) {
-    http_response_code(400);
-    echo json_encode(['erro' => 'id_paciente inválido ou não enviado']);
-    exit;
-}
+$dados_agendamento = $input['data'] ?? null;
+$id = isset($input['id']) ? $input['id'] : null;
 
 // Valida usuário
 if (!$id_usuario) {
@@ -47,8 +36,20 @@ if (!$token) {
     exit;
 }
 
+if (!$dados_agendamento || !is_array($dados_agendamento)) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'Dados de agendamento inválidos ou não enviados']);
+    exit;
+}
+
+if (!$id) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'ID do agendamento não informado']);
+    exit;
+}
+
 // Busca dados da integração
-$nome_endpoint = 'LISTA_CONSULTAS';
+$nome_endpoint = 'DESMARCAR_PACIENTE';
 
 $query = "
     SELECT c.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
@@ -65,7 +66,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
     http_response_code(404);
-    echo json_encode(["erro" => "Integração 'AUTENTICACAO' não encontrada"]);
+    echo json_encode(["mensagem" => "Integração 'AUTENTICACAO' não encontrada"]);
     exit;
 }
 
@@ -75,27 +76,10 @@ $id_integracao_endpoint = $row["id_integracao_endpoint"];
 $url_integracao         = $row["url"].$row["rota"];
 $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
-$request_body           = json_encode([]);
-$params = [ 
-    '$select'  => "id, organizacaoId, filialId, profissionalId, dataInicio, horaInicio, agendaConfigId, pacienteId",
-    '$filter'  => "agendaStatusId eq 2",
-    '$expand'  =>  $expand,
-    '$orderby' =>  $orderby
-];
-
-$filtro = "";
-
-if($id_paciente>0){
-    $filtro .= " and pacienteId eq $id_paciente";
-}
-
-$params['$filter'] .= $filtro;
-
-// Constrói a query string com URL encoding apropriado
-$queryString = http_build_query($params);
+$request_body           = json_encode($dados_agendamento, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 // Concatena URL com query string
-$url_integracao  = $url_integracao . '?' . $queryString;
+$url_integracao  = $url_integracao . '/' . $id . '/Desmarcar';
 
 // Inicializa cURL
 $curl_result = fn_curl_request([
@@ -103,8 +87,6 @@ $curl_result = fn_curl_request([
     'metodo' => $metodo_http,
     'body' => $request_body,
     'headers' => [
-        "dataInicio: $data_inicio",
-        "dataFim: $data_fim",
         'Content-Type: application/json',
         'Authorization: Bearer ' . $token
     ]
