@@ -27,7 +27,7 @@
           const hora = formatarHorarioISO(consultas?.horaInicio);
           const unidade = consultas?.clinica.nomeCompleto;
 
-            html_consultas += `<div class="col-md-4">
+            html_consultas += `<div class="col-md-4 col-xl-3">
                                 <div class="card card-top-border shadow-sm">
                                   <div class="card-body">
                                     <div class="doctor-info mb-2">
@@ -52,15 +52,15 @@
                                   </div>
                                 </div>
                               </div>`;
-        });
-
-        if(!html_consultas){
-            html_consultas = `<div class="alert alert-info" role="alert">Nenhuma consulta agendada</div>`;            
-        }        
+        });       
         
     })
     .catch(error => {
       console.error('Erro ao carregar consultas:', error.message || error);
+
+      if(!html_consultas){
+          html_consultas = `<div class="alert alert-info" role="alert">Nenhuma consulta agendada</div>`;            
+      }
     })
     .finally(() => {
       
