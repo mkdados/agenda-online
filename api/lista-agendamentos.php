@@ -23,6 +23,9 @@ $id_filial = isset($input['id_filial']) ? intval($input['id_filial']) : null;
 $id_agenda_config = isset($input['id_agenda_config']) ? $input['id_agenda_config'] : null;
 $id_profissional = isset($input['id_profissional']) ? $input['id_profissional'] : null;
 $qtd_dias    = 7;
+$data_atual  = date("Y-m-d");
+$hora_atual  = date('H');
+$minuto_atual  = date('i');
 $data_inicio = isset($input['data_inicio']) ?  $input['data_inicio'] : date("Y-m-d");
 $data_fim    = isset($input['data_fim']) ? $input['data_fim'] : date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
 $turno       = isset($input['turno']) ? $input['turno'] : "";
@@ -30,7 +33,7 @@ $expand      = isset($input['expand']) ? $input['expand'] : 'profissional($selec
 $orderby     = isset($input['orderby']) ? $input['orderby'] : "dataInicio";
 
 //Trata datas======================================================
-if(isset($input['evento'])){
+if(isset($input['evento'])){     
     if($input['evento']=="menosDatas"){
         
         $hoje = date("Y-m-d");
@@ -119,6 +122,10 @@ if($turno!=""){
         $filtro .= "and horaInicio ge duration'PT13H'";
     }    
 }
+if(isset($input['data_inicio']) and $input['data_inicio']==$data_atual){
+    $filtro .= "and (horaInicio gt duration'PT{$hora_atual}H{$minuto_atual}M')";
+}
+
 
 //Fixar agenda LUIZ GUILHERME MARTINS CASTRO
 if($id_organizacao==2911){
