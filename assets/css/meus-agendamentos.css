@@ -1,0 +1,288 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Permite que o conteúdo cresça */
+main {
+  display: flex;
+  flex: 1;
+  overflow-y: visible; /* deixa o conteúdo rolar se crescer */
+}
+
+/* Botão Padrão */
+.btn-padrao {
+    background-color: #d47d48;
+    color: white;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 1rem;
+
+    &:hover {
+        background-color: #b8683d;
+        color: #d47d48;
+    }
+}
+
+/* Menu lateral */
+#sidebar {
+    width: 250px;
+    height: 100%;
+    background-color: #e5e5e5;
+    transition: all 0.3s ease;
+    border-right: 1px solid #d3d3d3;
+    align-self: flex-start;
+}
+
+#sidebar.collapsed {
+    width: 60px;
+}
+
+#sidebar.collapsed .nav-link {
+    padding: 2px;
+    border-radius: 0;
+    text-align: center;
+    justify-content: center;
+}
+
+#sidebar.collapsed .nav-link span, #sidebar.collapsed p {
+    display: none;
+}
+
+#sidebar .nav-link {
+    display: block;
+    width: 100%;
+    padding: 6px 16px;
+    border-radius: 6px;
+    color: #6e6e78;
+}
+
+#sidebar .nav-link:hover {
+    color: #252525;
+}
+
+#sidebar .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0px; /* Altura reduzida */
+    border-radius: 0.75rem;
+    text-wrap: nowrap;
+}
+
+#sidebar .nav-item span {
+    margin-left: 10px;
+}
+
+#sidebar .nav-link.active {
+    background-color: #d47d48;
+    color: white !important;
+    border-radius: 0.75rem;
+}
+
+#content {
+  flex-grow: 1;
+  padding: 1.5rem 2rem 2rem;
+  overflow-y: auto;
+  min-height: 0; /* necessário para funcionar bem com flexbox */
+}
+
+#sidebar.collapsed + #content {
+    margin-left: 60px;
+}
+
+#user-section {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #d3d3d3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#user-section .user-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+#user-section .user-info img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+#user-section .user-info .name {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#user-section .user-info .email {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+#user-section button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+#sidebar.collapsed #user-section .user-info .name,
+#sidebar.collapsed #user-section .user-info .email {
+    display: none;
+}
+
+footer {
+    background-color: #232325;
+    padding: 1rem;
+    text-align: left;
+    border-top: 1px solid #dee2e6;
+    width: 100%;
+}
+
+footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ffffff;
+}
+
+footer a {
+    color: #ffffff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Estilo para mobile */
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Escurecer o fundo */
+    z-index: 998;
+}
+
+ /* Estilo do loader */
+ #loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  /* Estilo do spinner (carregando) */
+  .spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3); /* Cor de fundo */
+    border-top: 4px solid #ffffff; /* Cor da parte visível do spinner */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+  }
+
+  /*Cards consultas======================================*/
+
+    .card-top-border {
+      border-top: 5px solid #d47d48;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .doctor-name {
+      color: #000;
+      font-weight: bold;
+      font-size: 1.25rem;
+    }
+
+    .card-text-muted {
+      color: #6c757d;
+      margin: 0px;
+    }
+
+    .cancel-button {
+      background-color: #d47d48;
+      color: #fff;
+    }
+
+    .cancel-button:hover {
+      background-color: #bd683a;
+    }
+
+    .circle-initials {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #e0e0e0;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1rem;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+
+    .doctor-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .icon-orange {
+      color: #d47d48;
+    }
+
+    .icon-gray {
+      color: #6c757d;
+    }
+
+  /* Animação do spinner */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+@media (max-width: 767.98px) {
+    #sidebar {
+    transform: translateX(-100%);        
+    position: fixed;
+    z-index: 999;        
+    top: 0px;
+    }
+
+    #sidebar.mobile-show {
+    transform: translateX(0);
+    }
+
+    #content {
+    margin-left: 0 !important;
+    }
+}

@@ -143,7 +143,7 @@ function fn_carrega_agendamentos(btn) {
               horariosHtml += `<h5 class="mt-2 mb-3 text-secondary"><i class="fa-solid fa-clock mr-3"></i> Tarde</h5>
                 <div class="d-grid gap-2 gridHorario">`;
             }
-            horariosHtml += `<button class="btn horario-btn" data-id-agenda-md=="${horario.id}">${hora}</button>`;
+            horariosHtml += `<button class="btn horario-btn" data-id-agenda-md="${horario.id}">${hora}</button>`;
             t++;
           }
         });

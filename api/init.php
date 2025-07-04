@@ -14,4 +14,6 @@ if ($_SERVER['HTTP_HOST']!=$dominio) {
     exit;
 }
 
+date_default_timezone_set('America/Sao_Paulo');
+
 ?>

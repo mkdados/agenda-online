@@ -11,7 +11,7 @@
 
   <!-- Bibliotecas --> 
   <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/css/home.css?v=2.0.1" rel="stylesheet">
+  <link href="assets/css/meus-agendamentos.css" rel="stylesheet">
   <link href="assets/fonts/font-lato.css" rel="stylesheet">
   <link href="assets/fonts/montserrat.css" rel="stylesheet"> 
   <link href="assets/font-awesome/6.7.2/css/all.css" rel="stylesheet">
@@ -68,13 +68,13 @@
     <ul class="nav flex-column p-2">  
         <p class="text-sm text-muted px-2 py-1">Menu Principal</p>     
         <li class="nav-item mb-2">
-            <a class="nav-link active" href="home.html"><i class="bi bi-house-door"></i><span style="font-size:0.9rem">Home</span></a>
+            <a class="nav-link" href="home.html"><i class="bi bi-house-door"></i><span style="font-size:0.9rem">Home</span></a>
         </li>
         <li class="nav-item mb-2">
             <a class="nav-link" href="agendar-consulta.html"><i class="bi bi-calendar"></i><span style="font-size:0.9rem">Agendar Consulta</span></a>
         </li>
         <li class="nav-item mb-2">
-            <a class="nav-link" href="meus-agendamentos.html"><i class="bi bi-calendar"></i><span style="font-size:0.9rem">Meus Agendamentos</span></a>
+            <a class="nav-link active" href="meus-agendamentos.html"><i class="bi bi-calendar"></i><span style="font-size:0.9rem">Meus Agendamentos</span></a>
         </li>
         <li class="nav-item mb-2">
         <a class="nav-link" href="index.html"><i class="bi bi-box-arrow-right"></i><span style="font-size:0.9rem">Sair</span></a>
@@ -83,12 +83,11 @@
     </div>
 
     <!-- Conteúdo principal -->
-    <div id="content">
-      <div class="alert alert-secondary" role="alert">
-        <h4 id="home-info" style="font-weight:800"></h4>
-        <span>Gerencie suas consultas e agendamentos na Dermaclínica</span>
-      </div>
-
+    <div id="content" class="container-fluid">             
+      <!-- Próximas consultas -->
+      <h1 style="letter-spacing:-.025em;font-weight: 700;font-size: 1.5rem;line-height: 2rem">Próximas consultas</h1>
+      <div class="row g-4 mt-3" id="card-proximas-consultas"></div>      
+    </div>
 </main>
 
 <!-- Rodapé -->
@@ -108,6 +107,8 @@
   <script src="assets/js/funcoes.js?v=2.0.1"></script>
   <script src="assets/js/lista-proximas-consultas.js?v=2.0.1"></script>
   <script src="assets/js/menu.js?v=2.0.1"></script>
+  <script src="assets/js/meus-agendamentos.js?v=2.0.1"></script>
+  <script src="assets/js/desmarcar-paciente.js?v=2.0.1"></script>
   
 </body>
 </html>
