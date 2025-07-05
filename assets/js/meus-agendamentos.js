@@ -1,3 +1,4 @@
+ 
   /*###########################################################################################
      Próximas consultas
   ############################################################################################*/ 
@@ -48,7 +49,7 @@
                                     </p>
                                   </div>
                                   <div class="card-footer bg-transparent border-top-0">
-                                    <button class="btn btn-padrao w-100 btn-desmarcar" id="${id_agenda_md}">Cancelar Consulta</button>
+                                    <button class="btn btn-sm btn-padrao w-100 mb-2 btn-desmarcar" id="${id_agenda_md}">Cancelar Consulta</button>
                                   </div>
                                 </div>
                               </div>`;
@@ -65,7 +66,7 @@
     .finally(() => {
       
       if(!html_consultas){
-          html_consultas = `<div class="alert alert-info" role="alert">Nenhuma consulta agendada</div>`;            
+          html_consultas = `<div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Nenhuma consulta agendada</div>`;            
       }
 
       document.getElementById("card-proximas-consultas").innerHTML =  html_consultas;

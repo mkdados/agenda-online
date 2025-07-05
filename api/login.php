@@ -29,6 +29,11 @@ if (!$identificador || !$senha) {
 $is_email = filter_var($identificador, FILTER_VALIDATE_EMAIL);
 $campo = $is_email ? 'email' : 'cpf';
 
+// Se for CPF, remove pontos e traços
+if (!$is_email) {
+    $identificador = preg_replace('/[\.\-]/', '', $identificador);
+}
+
 // Busca o usuário
 $stmt = $conn->prepare("SELECT id, nome, cpf, email, senha FROM tbl_usuario WHERE $campo = ? AND ativo = 'S'");
 $stmt->bind_param("s", $identificador);

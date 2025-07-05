@@ -270,6 +270,30 @@ footer a:hover {
     }
   }
 
+ /*Abas============================================================*/
+
+ .custom-border {
+      border: 1px solid #d47d48;
+      border-top: none;
+      padding: 20px;
+      border-radius: 0 0 5px 5px;
+    }
+
+    .nav-tabs .nav-link.active {
+      background-color: #f9f0ec;
+      border-color: #d47d48 #d47d48 #fff;
+      color: #d47d48;
+    }
+
+    .nav-tabs .nav-link {
+      border: 1px solid #d47d48;
+      color: #d47d48;
+    }
+
+    .nav-tabs {
+      border-bottom: 1px solid #d47d48;
+    } 
+
 @media (max-width: 767.98px) {
     #sidebar {
     transform: translateX(-100%);        

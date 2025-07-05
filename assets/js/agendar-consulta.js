@@ -20,6 +20,9 @@ const loader = document.getElementById('loader');
     goToStep(1);
   });
 
+  document.getElementById("btnGoToStep2").disabled = true;
+  document.getElementById("btnGoToStep3").disabled = true;
+
 /*###########################################################################################
     Script para selecionar data
 ############################################################################################*/ 
@@ -187,7 +190,14 @@ function fn_carrega_agendamentos(btn) {
         i++;
       });
 
-      document.getElementById("agendasMedicos").innerHTML = html;
+      //Seta a div
+      if(html){
+        document.getElementById("agendasMedicos").innerHTML = html;
+      }else{        
+        document.getElementById("agendasMedicos").innerHTML = '<div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Nenhuma agenda disponível para agendamento</div>';
+      }
+      
+      
 
       // Carregar fotos base64
       // setTimeout(() => {
@@ -220,6 +230,8 @@ document.getElementById('agendasMedicos').addEventListener('click', function (e)
       document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected'); // ou btn.classList.add('selected')      
   }
+  //Habilita o botao
+  document.getElementById("btnGoToStep3").disabled = false;
 });
 
 
@@ -277,24 +289,34 @@ function selecionaTipoAtendimento() {
             // if(numero_carteirinha) {
             //   carteirinha.value = numero_carteirinha;
             // }
+            
           });
-          loader.style.display = 'none'; // esconde o loader
+
+          // esconde o loader
+          loader.style.display = 'none'; 
         } else {
           console.warn('Formato de resposta inesperado:', data);
-          loader.style.display = 'none'; // esconde o loader
+          // esconde o loader
+          loader.style.display = 'none'; 
         }
       })
       .catch(error => {
         console.error('Erro ao carregar convênios:', error.message);
         loader.style.display = 'none';
       });
+      
 
   } else {
     convenioDiv.style.display = "none";
     planoDiv.style.display = "none";
     carteirinhaDiv.style.display = "none";
     loader.style.display = 'none'; // esconde o loader
+    
   }
+
+  //Habilita o botao
+  document.getElementById("btnGoToStep2").disabled = false;
+  
 }
 
 
