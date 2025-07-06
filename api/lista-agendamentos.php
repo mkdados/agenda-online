@@ -26,7 +26,7 @@ $qtd_dias    = 7;
 $data_atual  = date("Y-m-d");
 $hora_atual  = date('H');
 $minuto_atual  = date('i');
-$data_inicio = isset($input['data_inicio']) ?  $input['data_inicio'] : date("Y-m-d");
+$data_inicio = isset($input['data_inicio']) ?  $input['data_inicio'] : date("Y-m-d", strtotime(date("Y-m-d") . " +1 days"));
 $data_fim    = isset($input['data_fim']) ? $input['data_fim'] : date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
 $turno       = isset($input['turno']) ? $input['turno'] : "";
 $expand      = isset($input['expand']) ? $input['expand'] : 'profissional($select=id,nome)';
@@ -98,7 +98,7 @@ $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params = [ 
     '$select'  => "id, organizacaoId, filialId, profissionalId, dataInicio, horaInicio, agendaConfigId",
-    '$filter'  => "profissionalId gt 0  and agendaConfig/online eq 'S'",
+    '$filter'  => "profissionalId gt 0 and agendaConfig/online eq 'S'",
     '$expand'  =>  $expand,
     '$orderby' =>  $orderby
 ];
@@ -131,10 +131,6 @@ if(isset($input['data_inicio']) and $input['data_inicio']==$data_atual){
 if($id_organizacao==2911){
     $filtro .= "and profissionalId eq 24014";
 }
-elseif($id_organizacao==7){
-    $filtro .= "and profissionalId eq 14581";
-}
-
 
 $params['$filter'] .= $filtro;
 

@@ -16,7 +16,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Lê entrada JSON
 $input = json_decode(file_get_contents('php://input'), true);
+$identificador = trim($input['identificador'] ?? '');
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
+
+// Valida id_usuario
+$id_cliente = $_ENV['ID_CLIENTE'] ?? null;
+if (!$id_cliente) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'Cliente não identificado']);
+    exit;
+}
 
 // Valida usuário
 if (!$id_usuario) {
@@ -25,8 +34,17 @@ if (!$id_usuario) {
     exit;
 }
 
-$verifica_stmt = $conn->prepare("SELECT id FROM tbl_usuario WHERE id = ?");
-$verifica_stmt->bind_param("i", $id_usuario);
+// Verifica se é CPF ou E-mail
+$is_email = filter_var($identificador, FILTER_VALIDATE_EMAIL);
+$campo = $is_email ? 'email' : 'cpf';
+
+// Se for CPF, remove pontos e traços
+if (!$is_email) {
+    $identificador = preg_replace('/[\.\-]/', '', $identificador);
+}
+
+$verifica_stmt = $conn->prepare("SELECT id FROM tbl_usuario WHERE id_cliente = ? and id = ?");
+$verifica_stmt->bind_param("ii", $id_cliente, $id_usuario);
 $verifica_stmt->execute();
 $result_verifica = $verifica_stmt->get_result();
 if ($result_verifica->num_rows === 0) {
@@ -70,11 +88,11 @@ $login  = htmlspecialchars($parametros["Login"] ?? '');
 $senha  = $parametros["Senha"] ?? '';
 $plataforma = htmlspecialchars($parametros["plataforma"] ?? '');
 
-
+//Validar se é da medicina direta
 $request_body = json_encode([
-    "Login" => $login,
-    "Senha" => $senha,
-    "plataforma" => $plataforma
+        "Login" => $login,
+        "Senha" => $senha,
+        "plataforma" => $plataforma
 ]);
 
 // Inicializa cURL

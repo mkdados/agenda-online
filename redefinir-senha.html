@@ -11,7 +11,7 @@
 
  <!-- Bibliotecas -->
   <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/style.css?v=3.0.4" rel="stylesheet">
   <link href="assets/fonts/font-lato.css" rel="stylesheet">
   <link href="assets/fonts/montserrat.css" rel="stylesheet"> 
   <link href="assets/font-awesome/6.7.2/css/all.css" rel="stylesheet">
@@ -64,40 +64,56 @@
   </div>
 
   <!-- Carrossel -->
-    <div id="carouselLogin" class="carousel slide d-none d-md-block" data-bs-ride="carousel">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="2" aria-label="Slide 3"></button>
-      </div>
-      <div class="carousel-inner">
-        <div class="carousel-item h-100 active">
-          <img src="assets/images/slide-01.jpg?v=1.0.1" class="d-block w-100" alt="slide-01.jpg">
-        </div>
-        <div class="carousel-item h-100">
-          <img src="assets/images/slide-02.jpg?v=1.0.1" class="d-block w-100" alt="slide-02.jpg">
-        </div>
-        <div class="carousel-item h-100">
-          <img src="assets/images/slide-03.jpg?v=1.0.1" class="d-block w-100" alt="slide-03.jpg">
-        </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselLogin" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselLogin" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
+  <div id="carouselLogin" class="carousel slide d-none d-md-block" data-bs-ride="carousel" data-bs-interval="2500">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="2" aria-label="Slide 3"></button>
     </div>
+    <div class="carousel-inner">
+      <div class="carousel-item h-100 active">
+        <img src="assets/images/slide-01.jpg?v=3.0.4" class="d-block w-100" alt="slide-01.jpg">
+      </div>
+      <div class="carousel-item h-100 position-relative">
+        <img src="assets/images/slide-02.jpg?v=3.0.4" class="d-block w-100" alt="slide-02.jpg">
+        <div class="position-absolute bottom-0 start-0 w-100 text-white text-center p-3" 
+     style="background-color: rgba(0, 0, 0, 0.5) !important;transform: translateY(-50px);">
+          <div class="container">
+            <small>
+              <h5><strong>Rua Pará, 50, 12º andar – São Paulo - SP CEP 01243-020</strong></h5> 
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item h-100 position-relative">
+        <img src="assets/images/slide-03.jpg?v=3.0.4" class="d-block w-100" alt="slide-03.jpg">
+        <div class="position-absolute bottom-0 start-0 w-100 text-white text-center  p-3" 
+     style="background-color: rgba(0, 0, 0, 0.5) !important;transform: translateY(-50px);">
+          <div class="container">
+            <small>
+              <h5><strong>Rua Turiassú, 519, 5º andar – São Paulo - SP CEP 05005-001</strong></h5>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselLogin" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselLogin" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
 
   <!-- Scripts -->
   <script src="assets/jquery/jquery-3.7.1.js"></script>   
   <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
   <script src="assets/jquery/jquery.inputmask.min.js"></script>
   <script src="assets/sweetalert/sweetalert2@11.js"></script> 
-  <script src="assets/js/funcoes.js?v=1.0.3"></script>
-  <script src="assets/js/redefinir-senha.js?v=1.0.0"></script>
+  <script src="assets/js/funcoes.js?v=3.0.4"></script>
+  <script src="assets/js/redefinir-senha.js?v=3.0.4"></script>
 
 
 </body>

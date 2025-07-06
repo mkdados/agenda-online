@@ -18,6 +18,12 @@ main {
   flex-grow: 1;
 }
 
+/* Estilo Texto */
+.text-color-padrao{
+    color:#d47d48;
+}
+
+
 /* Botão Padrão */
 .btn-padrao {
     background-color: #d47d48;

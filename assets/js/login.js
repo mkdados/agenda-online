@@ -25,9 +25,14 @@ async function realizarLogin() {
       sessionStorage.setItem('sessao', JSON.stringify(data.sessao));
       const id_usuario = data.usuario.id_usuario;
       const cpf = data.usuario.cpf;
+
+      const parametrosToken = {
+        identificador: identificador,
+        id_usuario: id_usuario       
+      };
       
       //Resgata o token===============
-      fn_gera_token(id_usuario)
+      fn_gera_token(parametrosToken)
         .then(data => {  
           
           const id_organizacao = data.id_organizacao;

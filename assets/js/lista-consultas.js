@@ -1,5 +1,5 @@
-function fn_lista_proximas_consultas(parametros) {
-  const url = 'api/lista-proximas-consultas.php';
+function fn_lista_consultas(parametros) {
+  const url = 'api/lista-consultas.php';
   const body = parametros;
 
   const options = {

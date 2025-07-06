@@ -11,7 +11,7 @@
 
   <!-- Bibliotecas --> 
   <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/css/meus-agendamentos.css?v=3.0.2" rel="stylesheet">
+  <link href="assets/css/meus-agendamentos.css?v=3.0.4" rel="stylesheet">
   <link href="assets/fonts/font-lato.css" rel="stylesheet">
   <link href="assets/fonts/montserrat.css" rel="stylesheet"> 
   <link href="assets/font-awesome/6.7.2/css/all.css" rel="stylesheet">
@@ -65,8 +65,7 @@
             </div>
         </div>
 
-    <ul class="nav flex-column p-2">  
-        <p class="text-sm text-muted px-2 py-1">Menu Principal</p>     
+    <ul class="nav flex-column p-2">     
         <li class="nav-item mb-2">
             <a class="nav-link" href="home.html"><i class="bi bi-house-door"></i><span style="font-size:0.9rem">Home</span></a>
         </li>
@@ -74,7 +73,7 @@
             <a class="nav-link" href="agendar-consulta.html"><i class="bi bi-calendar"></i><span style="font-size:0.9rem">Agendar Consulta</span></a>
         </li>
         <li class="nav-item mb-2">
-            <a class="nav-link active" href="meus-agendamentos.html"><i class="bi bi-calendar"></i><span style="font-size:0.9rem">Meus Agendamentos</span></a>
+            <a class="nav-link active" href="meus-agendamentos.html"><i class="bi bi-file-medical"></i><span style="font-size:0.9rem">Meus Agendamentos</span></a>
         </li>
         <li class="nav-item mb-2">
         <a class="nav-link" href="index.html"><i class="bi bi-box-arrow-right"></i><span style="font-size:0.9rem">Sair</span></a>
@@ -105,7 +104,7 @@
             <div class="row g-4" id="card-proximas-consultas"></div> 
           </div>
           <div class="tab-pane fade" id="historico" role="tabpanel" aria-labelledby="historico-tab">
-            <div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Histórico de consultas.</div>
+            <div class="row g-4" id="card-historico-consultas"></div> 
           </div>
         </div>
            
@@ -113,21 +112,16 @@
 </main>
 
 <!-- Rodapé -->
-<footer>
-  <div class="container">
-    <div>
-      © 2025 Dermaclínica. Todos os direitos reservados.
-    </div>
-  </div>
-</footer>
+<div id="footer-placeholder"></div>
 
 <!-- Scripts -->
   <script src="assets/jquery/jquery-3.7.1.js"></script>   
   <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
   <script src="assets/jquery/jquery.inputmask.min.js"></script>
   <script src="assets/sweetalert/sweetalert2@11.js"></script> 
+  <script src="assets/js/footer.js?v=3.0.4"></script>
   <script src="assets/js/funcoes.js?v=3.0.4"></script>
-  <script src="assets/js/lista-proximas-consultas.js?v=3.0.4"></script>
+  <script src="assets/js/lista-consultas.js?v=3.0.4"></script>
   <script src="assets/js/menu.js?v=3.0.4"></script>
   <script src="assets/js/meus-agendamentos.js?v=3.0.4"></script>
   <script src="assets/js/desmarcar-paciente.js?v=3.0.4"></script>

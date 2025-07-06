@@ -11,7 +11,7 @@
 
   <!-- Bibliotecas --> 
   <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/css/home.css?v=3.0.1" rel="stylesheet">
+  <link href="assets/css/home.css?v=3.0.4" rel="stylesheet">
   <link href="assets/fonts/font-lato.css" rel="stylesheet">
   <link href="assets/fonts/montserrat.css" rel="stylesheet"> 
   <link href="assets/font-awesome/6.7.2/css/all.css" rel="stylesheet">
@@ -65,8 +65,7 @@
             </div>
         </div>
 
-    <ul class="nav flex-column p-2">  
-        <p class="text-sm text-muted px-2 py-1">Menu Principal</p>     
+    <ul class="nav flex-column p-2">     
         <li class="nav-item mb-2">
             <a class="nav-link active" href="home.html"><i class="bi bi-house-door"></i><span style="font-size:0.9rem">Home</span></a>
         </li>
@@ -74,7 +73,7 @@
             <a class="nav-link" href="agendar-consulta.html"><i class="bi bi-calendar"></i><span style="font-size:0.9rem">Agendar Consulta</span></a>
         </li>
         <li class="nav-item mb-2">
-            <a class="nav-link" href="meus-agendamentos.html"><i class="bi bi-calendar"></i><span style="font-size:0.9rem">Meus Agendamentos</span></a>
+            <a class="nav-link" href="meus-agendamentos.html"><i class="bi bi-file-medical"></i><span style="font-size:0.9rem">Meus Agendamentos</span></a>
         </li>
         <li class="nav-item mb-2">
         <a class="nav-link" href="index.html"><i class="bi bi-box-arrow-right"></i><span style="font-size:0.9rem">Sair</span></a>
@@ -84,30 +83,80 @@
 
     <!-- Conteúdo principal -->
     <div id="content">
-      <div class="alert alert-secondary" role="alert">
+      <div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">
         <h4 id="home-info" style="font-weight:800"></h4>
         <span>Gerencie suas consultas e agendamentos na Dermaclínica</span>
+    </div>
+
+    <!-- Central de Agendamento Online -->
+    <section class="container my-5 border rounded">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title text-uppercase fw-bold mb-4">Central de Agendamento Online</h5>
+          
+          <p class="mb-4">
+            Agende sua consulta médica com autonomia e praticidade!
+          </p>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <p class="mb-1">
+                <i class="fa-solid fa-location-dot text-color-padrao me-2"></i>
+                <strong>Atendimento:</strong>
+              </p>
+              <p class="mb-0">Unidades Higienópolis e Perdizes</p>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1">
+                <i class="fa-solid fa-calendar-days text-color-padrao me-2"></i>
+                <strong>Horários:</strong>
+              </p>
+              <p class="mb-0">Segunda a Sexta: 08h às 20h<br>Sábados: 08h às 12h</p>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1">
+                <i class="fa-solid fa-phone text-color-padrao me-2"></i>
+                <strong>WhatsApp:</strong>
+              </p>
+              <p class="mb-0">11 3660-4850</p>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <p class="mb-1">
+                <i class="fa-brands fa-instagram text-color-padrao me-2"></i>
+                <strong>Instagram:</strong>
+              </p>
+              <p class="mb-0">@dermaclinicasp</p>
+            </div>
+          </div>
+
+          <p class="mt-4 mb-0 fw-medium">
+            Dermaclínica – Cuidando de você com excelência.
+          </p>
+        </div>
       </div>
+    </section>
+
+
 
 </main>
 
 <!-- Rodapé -->
-<footer>
-  <div class="container">
-    <div>
-      © 2025 Dermaclínica. Todos os direitos reservados.
-    </div>
-  </div>
-</footer>
+<div id="footer-placeholder"></div>
+
 
 <!-- Scripts -->
   <script src="assets/jquery/jquery-3.7.1.js"></script>   
   <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
   <script src="assets/jquery/jquery.inputmask.min.js"></script>
   <script src="assets/sweetalert/sweetalert2@11.js"></script> 
-  <script src="assets/js/funcoes.js?v=3.0.1"></script>
-  <script src="assets/js/lista-proximas-consultas.js?v=3.0.1"></script>
-  <script src="assets/js/menu.js?v=3.0.1"></script>
+  <script src="assets/js/footer.js?v=3.0.4"></script>
+  <script src="assets/js/funcoes.js?v=3.0.4"></script>
+  <script src="assets/js/lista-consultas.js?v=3.0.4"></script>
+  <script src="assets/js/menu.js?v=3.0.4"></script>
   
+
 </body>
 </html>

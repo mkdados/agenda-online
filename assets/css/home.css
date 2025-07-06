@@ -19,6 +19,11 @@ main {
   overflow-y: visible; /* deixa o conteúdo rolar se crescer */
 }
 
+/* Estilo Texto */
+.text-color-padrao{
+    color:#d47d48;
+}
+
 /* Botão Padrão */
 .btn-padrao {
     background-color: #d47d48;

@@ -20,6 +20,7 @@ $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
 $id_organizacao = isset($input['id_organizacao']) ? intval($input['id_organizacao']) : null;
 $id_paciente = isset($input['id_paciente']) ? intval($input['id_paciente']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
+$condicional_data = isset($input['condicional_data']) ? $input['condicional_data'] : null;
 $data_inicio = date("Y-m-d");
 $expand      = isset($input['expand']) ? $input['expand'] : 'profissional($select=id,nome), clinica($select=id,nomeCompleto)';
 $orderby     = isset($input['orderby']) ? $input['orderby'] : "dataInicio";
@@ -76,7 +77,7 @@ $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params = [ 
     '$select'  => "id, organizacaoId, filialId, profissionalId, dataInicio, horaInicio, agendaConfigId, pacienteId",
-    '$filter'  => "agendaStatusId eq 2 and datainicio gt $data_inicio",
+    '$filter'  => "agendaStatusId eq 2",
     '$expand'  =>  $expand,
     '$orderby' =>  $orderby
 ];
@@ -85,6 +86,10 @@ $filtro = "";
 
 if($id_paciente>0){
     $filtro .= " and pacienteId eq $id_paciente";
+}
+
+if($condicional_data!=""){
+    $filtro .= " and datainicio $condicional_data $data_inicio"; 
 }
 
 $params['$filter'] .= $filtro;

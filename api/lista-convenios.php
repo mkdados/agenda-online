@@ -65,7 +65,7 @@ $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params                 = [
     '$select'  => "id, nomeFantasia",
-    '$filter'   => "ativado eq 'S'",
+    '$filter'   => "ativado eq 'S' and not (id eq 10563 or id eq 9283)", //Exceto Sao cristovao e Notredame linha smart
     '$orderby' => "nomeFantasia"
 ];
 

@@ -1,7 +1,7 @@
  
-  /*###########################################################################################
-     Próximas consultas
-  ############################################################################################*/ 
+/*###########################################################################################
+    Próximas consultas
+############################################################################################*/ 
 
   let html_consultas = "";
   loader.style.display = 'flex'; // mostra o loader       
@@ -11,10 +11,11 @@
     id_usuario: id_usuario,
     token: chave,
     id_paciente: id_paciente,
-    orderby: "horaInicio"
+    condicional_data: "ge",
+    orderby: "horaInicio desc"
   };
 
-  fn_lista_proximas_consultas(parametrosProximasConsultas)
+  fn_lista_consultas(parametrosProximasConsultas)
     .then(data => { 
 
         const proximas_consultas = data.value;
@@ -29,7 +30,7 @@
           const unidade = consultas?.clinica.nomeCompleto;
 
             html_consultas += `<div class="col-md-4">
-                                <div class="card card-top-border shadow-sm">
+                                <div class="card card-top-border proximas-consultas shadow-sm">
                                   <div class="card-body">
                                     <div class="doctor-info mb-2">
                                       <div class="circle-initials d-none d-md-flex">${iniciais}</div>
@@ -39,7 +40,7 @@
                                       </div>
                                     </div>
                                     <p class="card-text card-text-muted mb-1">
-                                      <i class="fas fa-hospital icon-gray me-2"></i>${unidade}
+                                      <i class="fa-solid fa-location-dot icon-orange me-2"></i>${unidade}
                                     </p>
                                     <p class="card-text card-text-muted mb-1">
                                       <i class="fas fa-calendar-alt icon-orange me-2"></i>${data}
@@ -60,7 +61,7 @@
       console.error('Erro ao carregar consultas:', error.message || error);
 
       if(!html_consultas){
-          html_consultas = `<div class="alert alert-info" role="alert">Nenhuma consulta agendada</div>`;            
+          html_consultas = `<div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Nenhuma consulta agendada</div>`;            
       }
     })
     .finally(() => {
@@ -74,6 +75,89 @@
       // Sempre oculta o loader
       loader.style.display = 'none'; 
     });  
+
+
+/*###########################################################################################
+    Histórico de consultas
+  ############################################################################################*/ 
+    
+  document.addEventListener("DOMContentLoaded", function () {
+    const historicoTab = document.getElementById("historico-tab");
+
+    historicoTab.addEventListener("click", function () {
+
+        let html_consultas = "";
+        loader.style.display = 'flex'; // mostra o loader       
+
+        // Listar próximas consultas
+        const parametrosProximasConsultas = {
+          id_usuario: id_usuario,
+          token: chave,
+          id_paciente: id_paciente,
+          condicional_data: "lt",
+          orderby: "horaInicio asc"
+        };
+
+        fn_lista_consultas(parametrosProximasConsultas)
+          .then(data => { 
+
+              const proximas_consultas = data.value;
+
+              proximas_consultas.forEach(consultas => {   
+                
+                const id_agenda_md = consultas?.id;
+                const profissional = consultas?.profissional?.nome;
+                const iniciais = pegarIniciais(profissional);
+                const data = formatarDataISO(consultas?.dataInicio);      
+                const hora = formatarHorarioISO(consultas?.horaInicio);
+                const unidade = consultas?.clinica.nomeCompleto;
+
+                  html_consultas += `<div class="col-md-4">
+                                      <div class="card card-top-border historico-consultas shadow-sm">
+                                        <div class="card-body">
+                                          <div class="doctor-info mb-2">
+                                            <div class="circle-initials d-none d-md-flex">${iniciais}</div>
+                                            <div>
+                                              <h5 class="doctor-name mb-0">${profissional}</h5>
+                                              <p class="card-text card-text-muted mb-1">Dermatologista</p>
+                                            </div>
+                                          </div>
+                                          <p class="card-text card-text-muted mb-1">
+                                            <i class="fa-solid fa-location-dot icon-gray me-2"></i>${unidade}
+                                          </p>
+                                          <p class="card-text card-text-muted mb-1">
+                                            <i class="fas fa-calendar-alt icon-gray me-2"></i>${data}
+                                          </p>
+                                          <p class="card-text card-text-muted">
+                                            <i class="fas fa-clock icon-gray me-2"></i>${hora}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>`;
+              });       
+              
+          })
+          .catch(error => {
+            console.error('Erro ao carregar consultas:', error.message || error);
+
+            if(!html_consultas){
+                html_consultas = `<div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Nenhuma consulta agendada</div>`;            
+            }
+          })
+          .finally(() => {
+            
+            if(!html_consultas){
+                html_consultas = `<div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Nenhuma consulta agendada</div>`;            
+            }
+
+            document.getElementById("card-historico-consultas").innerHTML =  html_consultas;
+
+            // Sempre oculta o loader
+            loader.style.display = 'none'; 
+          });  
+    });
+  });
+
 
 /*###########################################################################################
      Desmarcar consultas
