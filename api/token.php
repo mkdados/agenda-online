@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Lê entrada JSON
 $input = json_decode(file_get_contents('php://input'), true);
-$identificador = trim($input['identificador'] ?? '');
+$identificador = isset($input['identificador']) ? $input['identificador'] : null;
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
 
 // Valida id_usuario
@@ -41,6 +41,11 @@ $campo = $is_email ? 'email' : 'cpf';
 // Se for CPF, remove pontos e traços
 if (!$is_email) {
     $identificador = preg_replace('/[\.\-]/', '', $identificador);
+}
+
+//Valida se é da medicina direta--------------------------------------
+if($identificador=="34327560898" || $identificador=="mkdados@gmail.com"){
+    $id_cliente = 2;
 }
 
 $verifica_stmt = $conn->prepare("SELECT id FROM tbl_usuario WHERE id_cliente = ? and id = ?");
@@ -88,7 +93,6 @@ $login  = htmlspecialchars($parametros["Login"] ?? '');
 $senha  = $parametros["Senha"] ?? '';
 $plataforma = htmlspecialchars($parametros["plataforma"] ?? '');
 
-//Validar se é da medicina direta
 $request_body = json_encode([
         "Login" => $login,
         "Senha" => $senha,

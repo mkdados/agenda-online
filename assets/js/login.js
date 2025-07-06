@@ -33,8 +33,8 @@ async function realizarLogin() {
       
       //Resgata o token===============
       fn_gera_token(parametrosToken)
-        .then(data => {  
-          
+        .then(data => {
+
           const id_organizacao = data.id_organizacao;
           const chave = data.chave;
           const duracao = data.duracao;          

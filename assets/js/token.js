@@ -1,8 +1,6 @@
-function fn_gera_token(id_usuario) {
+function fn_gera_token(parametros) {
   const url = 'api/token.php';
-  const body = {
-    id_usuario: id_usuario
-  };
+  const body = parametros;
 
   const options = {
     method: 'POST',
@@ -14,9 +12,6 @@ function fn_gera_token(id_usuario) {
 
   return fetch(url, options)
     .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro na requisição: ' + response.status);
-      }
       return response.json(); // retorna o JSON da resposta
     })
     .catch(error => {
