@@ -210,6 +210,16 @@ footer a:hover {
     animation: spin 1s linear infinite;
   }
 
+  /* Animação do spinner */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
   /*Cards consultas======================================*/
 
     .card-top-border {
@@ -266,15 +276,73 @@ footer a:hover {
       color: #6c757d;
     }
 
-  /* Animação do spinner */
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
+
+    /* Carousel planos============================================ */
+    .carousel-wrapper {
+      position: relative;
     }
-    100% {
-      transform: rotate(360deg);
+
+    .carousel-container {
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      gap: 1rem;
+      padding: 1rem 2rem;
     }
-  }
+
+    .carousel-container::-webkit-scrollbar {
+      display: none; /* esconde a barra de rolagem */
+    }
+
+    .carousel-item {
+      flex: 0 0 auto;
+      width: 100px;
+      margin: 0px;
+    }
+
+    .carousel-container .carousel-item {
+      display: block !important;
+    }
+
+    .carousel-item img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #d47d48;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      width: 40px;          /* largura fixa */
+      height: 40px;         /* altura fixa */
+      display: flex;        /* para centralizar o ícone */
+      align-items: center;  /* vertical */
+      justify-content: center; /* horizontal */
+      border-radius: 50%;   /* bolinha */
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.2s;
+      padding: 0;           /* remove padding para não alterar o tamanho */
+    }
+
+    .carousel-arrow:hover {
+      background-color: #b8683d;
+    }
+
+    .carousel-arrow.left {
+      left: 0;
+    }
+
+    .carousel-arrow.right {
+      right: 0;
+    }
+    
+  
 
 @media (max-width: 767.98px) {
     #sidebar {
