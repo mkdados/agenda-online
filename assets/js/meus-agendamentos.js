@@ -12,7 +12,7 @@
     token: chave,
     id_paciente: id_paciente,
     condicional_data: "ge",
-    orderby: "horaInicio desc"
+    orderby: "dataInicio asc, horaInicio asc"
   };
 
   fn_lista_consultas(parametrosProximasConsultas)
@@ -29,7 +29,7 @@
           const hora = formatarHorarioISO(consultas?.horaInicio);
           const unidade = consultas?.clinica.nomeCompleto;
 
-            html_consultas += `<div class="col-md-4">
+            html_consultas += `<div class="col-12 col-md-6">
                                 <div class="card card-top-border proximas-consultas shadow-sm">
                                   <div class="card-body">
                                     <div class="doctor-info mb-2">
@@ -53,7 +53,8 @@
                                     <button class="btn btn-sm btn-padrao w-100 mb-2 btn-desmarcar" id="${id_agenda_md}">Cancelar Consulta</button>
                                   </div>
                                 </div>
-                              </div>`;
+                              </div>
+                              <div class="col-md-6 col-0"></div>`;
         });       
         
     })
@@ -95,7 +96,7 @@
           token: chave,
           id_paciente: id_paciente,
           condicional_data: "lt",
-          orderby: "horaInicio asc"
+          orderby: "dataInicio desc, horaInicio desc"
         };
 
         fn_lista_consultas(parametrosProximasConsultas)
@@ -112,7 +113,7 @@
                 const hora = formatarHorarioISO(consultas?.horaInicio);
                 const unidade = consultas?.clinica.nomeCompleto;
 
-                  html_consultas += `<div class="col-md-4">
+                  html_consultas += `<div class="col-12 col-md-6">
                                       <div class="card card-top-border historico-consultas shadow-sm">
                                         <div class="card-body">
                                           <div class="doctor-info mb-2">
@@ -133,7 +134,8 @@
                                           </p>
                                         </div>
                                       </div>
-                                    </div>`;
+                                    </div>
+                                    <div class="col-md-6 col-0"></div>`;
               });       
               
           })

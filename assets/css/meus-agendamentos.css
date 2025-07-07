@@ -287,7 +287,11 @@ footer a:hover {
 
  /*Abas============================================================*/
 
- .custom-border {
+    #consultaTabsContent{
+      padding: 20px 0px !important;
+    }
+
+    .custom-border {
       border-top: none;
       padding: 20px;
       border-radius: 0 0 5px 5px;
