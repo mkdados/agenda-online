@@ -20,7 +20,7 @@
 
         const proximas_consultas = data.value;
 
-        proximas_consultas.forEach(consultas => {   
+        proximas_consultas.forEach(consultas => {  
           
           const id_agenda_md = consultas?.id;
           const profissional = consultas?.profissional?.nome;
@@ -28,6 +28,21 @@
           const data = formatarDataISO(consultas?.dataInicio);      
           const hora = formatarHorarioISO(consultas?.horaInicio);
           const unidade = consultas?.clinica.nomeCompleto;
+          var status = consultas?.agendaStatus?.descricao;
+          var classeStatus = "";
+
+          // Verifica o status da consulta e define a classe CSS
+          if(status == "DESMARCADO" || status == "CANCELADO"){
+              status = "DESMARCADO";
+              classeStatus = "bg-danger";
+          }
+          else if(status == "ATENDIDO"){
+              classeStatus = "bg-success";
+          }
+          else{
+              status = "AGENDADO";
+              classeStatus = "bg-primary";
+          }
 
             html_consultas += `<div class="col-12 col-md-6">
                                 <div class="card card-top-border proximas-consultas shadow-sm">
@@ -47,6 +62,9 @@
                                     </p>
                                     <p class="card-text card-text-muted">
                                       <i class="fas fa-clock icon-orange me-2"></i>${hora}
+                                    </p>
+                                    <p class="card-text card-text-muted mt-2">
+                                      <span class="badge ${classeStatus}">${status}</span>
                                     </p>
                                   </div>
                                   <div class="card-footer bg-transparent border-top-0">

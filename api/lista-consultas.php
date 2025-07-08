@@ -85,15 +85,20 @@ $params = [
 $filtro = "";
 
 if($condicional_data!=""){
-    $filtro .= " datainicio $condicional_data $data_inicio"; 
+    $filtro .= " datainicio $condicional_data $data_inicio";     
 }
 
-if($id_agenda_status=="2"){// Consulta agendada
-    $filtro .= " and agendaStatusId eq $id_agenda_status";
+if($condicional_data=="ge"){
+    $filtro .= " and agendaStatusId ne 4 and agendaStatusId ne 11";
 }
-else{
-    $filtro .= " and agendaStatusId ne 2"; 
-}
+
+
+// if($id_agenda_status=="2"){// Consulta agendada
+//     $filtro .= " and agendaStatusId eq $id_agenda_status";
+// }
+// else{
+//     $filtro .= " and agendaStatusId ne 2"; 
+// }
 
 $params['$filter'] = $filtro;
 
@@ -120,6 +125,7 @@ $response    = $curl_result['response']    ?? '';
 $http_status = $curl_result['http_status'] ?? 0;
 $curl_error  = $curl_result['erro']        ?? '';
 $data        = $curl_result['data']        ?? [];
+
 
 if(!empty($data)){
     http_response_code($http_status);
