@@ -11,7 +11,6 @@
     id_usuario: id_usuario,
     token: chave,
     id_paciente: id_paciente,
-    id_agenda_status: 2,//Agendado
     condicional_data: "ge",
     orderby: "dataInicio asc, horaInicio asc"
   };
@@ -96,7 +95,6 @@
           id_usuario: id_usuario,
           token: chave,
           id_paciente: id_paciente,
-          id_agenda_status: '4,8,11',//Agendado
           condicional_data: "lt",
           orderby: "dataInicio desc, horaInicio desc"
         };
@@ -124,6 +122,10 @@
                 }
                 else if(status == "ATENDIDO"){
                     classeStatus = "bg-success";
+                }
+                else{
+                    status = "AGENDADO";
+                    classeStatus = "bg-primary";
                 }
                 
                   html_consultas += `<div class="col-12 col-md-6">

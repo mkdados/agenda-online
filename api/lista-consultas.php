@@ -88,8 +88,11 @@ if($condicional_data!=""){
     $filtro .= " datainicio $condicional_data $data_inicio"; 
 }
 
-if($id_agenda_status!=""){// Consulta agendada
-    $filtro .= " and agendaStatusId in ($id_agenda_status)";
+if($id_agenda_status=="2"){// Consulta agendada
+    $filtro .= " and agendaStatusId eq $id_agenda_status";
+}
+else{
+    $filtro .= " and agendaStatusId ne 2"; 
 }
 
 $params['$filter'] = $filtro;

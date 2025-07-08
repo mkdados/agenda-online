@@ -11,7 +11,7 @@
 
   <!-- Bibliotecas -->
   <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/css/style.css?v=3.0.6" rel="stylesheet">
+  <link href="assets/css/style.css?v=3.0.8" rel="stylesheet">
   <link href="assets/fonts/font-lato.css" rel="stylesheet">
   <link href="assets/fonts/montserrat.css" rel="stylesheet"> 
   <link href="assets/font-awesome/6.7.2/css/all.css" rel="stylesheet">
@@ -20,16 +20,16 @@
 </head>
 <body>
 
-  <!-- Loadr -->
+  <!-- Loader -->
   <div id="loader">
     <div class="spinner"></div>
   </div>
 
-  <div class="container-fluid d-flex flex-column flex-md-row">
+  <div class="container-fluid d-flex flex-column flex-md-row h-100">
 
     <!-- Login -->
-    <div class="col-12 col-md-6 d-flex align-items-start justify-content-center">
-      <div class="login-box w-100">
+     <div class="col-12 col-md-6 d-flex justify-content-center overflow-auto" style="min-height: 100%;">
+      <div class="login-box w-100" style="height:880px">
         <form id="loginForm" class="w-100">
 
           <!-- Logo -->
@@ -114,7 +114,7 @@
       </div>
     </div>
 
-    <!-- Carrossel -->
+  <!-- Carrossel -->
   <div id="carouselLogin" class="carousel slide d-none d-md-block" data-bs-ride="carousel" data-bs-interval="2500" data-bs-pause="hover">
     <div class="carousel-indicators">
       <button type="button" data-bs-target="#carouselLogin" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -124,33 +124,33 @@
     <div class="carousel-inner">
       <div class="carousel-item h-100 active">
         <img src="assets/images/slide-01.jpg?v=3.0.4" class="d-block w-100" alt="slide-01.jpg">
-          <!-- Texto sobreposto com fundo semi-transparente -->
-          <div style="position: absolute; top: 0%; left: 0; z-index: 10; width: 100%; height: 100%;">
-            <!-- Fundo com opacidade -->
-            <div style="background-color: #000000; opacity: 0.6; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
-            
-            <!-- Texto por cima com opacidade total -->
-            <div style="position: relative; z-index: 2; color: #ffffff;text-align: center; padding: 51% 10%;">
-              <p style="margin-bottom: 15px; font-weight: 800;font-size: 40px;line-height: 50px;  ">
+          <!-- Container Carrosel -->
+          <div class="carousel-container">
+            <!-- Container Fundo -->
+            <div class="carousel-container-fundo"></div>
+            <!-- Container Texto -->
+            <div class="carousel-container-texto">
+              <p class="carousel-container-texto-titulo">
                 Cuidado com a sua pele é a nossa prioridade
               </p>
-              <p class="text-xl mb-8 text-center" style="font-size: 20px; padding: 0% 10%; ">Agende sua consulta de forma rápida e segura com os melhores dermatologistas</p>
-               <!-- Ícones sociais -->
-              <div style="margin-top: 20px;">
-                <a href="https://www.instagram.com/dermaclinicasp/" target="_blank" style="color: white; margin: 0 10px; font-size: 28px;text-decoration: none;">
+              <p class="carousel-container-texto-mensagem">
+                Agende sua consulta de forma rápida e segura com os melhores dermatologistas
+              </p>
+              <!-- Redes sociais -->
+              <div class="carousel-container-rede-sociais" style="margin-top: 20px;">
+                <a href="https://www.instagram.com/dermaclinicasp/" target="_blank">
                   <i class="fab fa-instagram"></i>
                 </a>
-                <a href="https://www.facebook.com/dermaclinicasp/?locale=pt_BR" target="_blank" style="color: white; margin: 0 10px; font-size: 28px;text-decoration: none;">
+                <a href="https://www.facebook.com/dermaclinicasp/?locale=pt_BR" target="_blank">
                   <i class="fab fa-facebook-f"></i>
-                </a>                
+                </a>
               </div>
             </div>
           </div>
       </div>
       <div class="carousel-item h-100 position-relative">
         <img src="assets/images/slide-02.jpg?v=3.0.4" class="d-block w-100" alt="slide-02.jpg">
-        <div class="position-absolute bottom-0 start-0 w-100 text-white text-center p-3" 
-     style="background-color: rgba(0, 0, 0, 0.5) !important;transform: translateY(-50px);">
+        <div class="carousel-container-footer position-absolute bottom-0 start-0 w-100 text-white text-center p-3">
           <div class="container">
             <small>
               <h5><strong>Rua Pará, 50, 12º andar – São Paulo - SP CEP 01243-020</strong></h5> 
@@ -160,8 +160,7 @@
       </div>
       <div class="carousel-item h-100 position-relative">
         <img src="assets/images/slide-03.jpg?v=3.0.4" class="d-block w-100" alt="slide-03.jpg">
-        <div class="position-absolute bottom-0 start-0 w-100 text-white text-center  p-3" 
-     style="background-color: rgba(0, 0, 0, 0.5) !important;transform: translateY(-50px);">
+        <div class="carousel-container-footer position-absolute bottom-0 start-0 w-100 text-white text-center  p-3">
           <div class="container">
             <small>
               <h5><strong>Rua Turiassú, 519, 5º andar – São Paulo - SP CEP 05005-001</strong></h5>

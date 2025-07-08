@@ -73,7 +73,7 @@ body {
     font-weight: bold;
   }
 
- /* Carrossel */
+ /* Carrossel =============================================================*/
  .carousel { 
     flex: auto;
     align-items: stretch;
@@ -94,7 +94,63 @@ body {
     z-index: 20; /* Garante que fiquem acima do overlay e textos */
   }
 
- /* Estilo do loader */
+  .carousel-container{
+    position: absolute; 
+    top: 0; 
+    bottom: 0; 
+    left: 0; 
+    right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .carousel-container-fundo{
+     background-color: #000000; 
+     opacity: 0.6; 
+     position: absolute; 
+     top: 0; 
+     bottom: 0; 
+     left: 0; 
+     right: 0; 
+     z-index: 1;
+  }
+
+  .carousel-container-texto{
+    z-index: 2;
+    color: #ffffff; 
+    text-align: center; 
+    padding: 0 10%; 
+    transform: translateY(40%);
+  }
+
+  .carousel-container-texto-titulo{
+    margin-bottom: 15px; 
+    font-weight: 800; 
+    font-size: 40px; 
+    line-height: 50px;
+  }
+
+  .carousel-container-texto-mensagem{
+    font-size: 20px; 
+    padding: 0 10%;
+  }
+
+  .carousel-container-rede-sociais a{
+    color: white; 
+    margin: 0 10px; 
+    font-size: 28px; 
+    text-decoration: none;
+  }
+
+  .carousel-container-footer{
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    transform: translateY(-50px);
+  }
+
+
+ /* Estilo do loader ======================================================*/
  #loader {
     position: fixed;
     top: 0;
@@ -127,6 +183,7 @@ body {
       transform: rotate(360deg);
     }
   }
+
 
 /* Ajustes para telas pequenas */
 @media (max-width: 768px) {
