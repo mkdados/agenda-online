@@ -310,6 +310,8 @@ footer a:hover {
       border-width: 1px 1px 0 1px;
     }
 
+
+/* Media=============================================== */
 @media (max-width: 767.98px) {
     #sidebar {
     transform: translateX(-100%);        

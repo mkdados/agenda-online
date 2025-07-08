@@ -22,6 +22,7 @@ $id_paciente = isset($input['id_paciente']) ? intval($input['id_paciente']) : nu
 $token = isset($input['token']) ? $input['token'] : null;
 $condicional_data = isset($input['condicional_data']) ? $input['condicional_data'] : null;
 $data_inicio = date("Y-m-d");
+$id_agenda_status = isset($input['id_agenda_status']) ? $input['id_agenda_status'] : null;
 $expand      = isset($input['expand']) ? $input['expand'] : 'profissional($select=id,nome), clinica($select=id,nomeCompleto)';
 $orderby     = isset($input['orderby']) ? $input['orderby'] : "dataInicio";
 
@@ -76,23 +77,22 @@ $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params = [ 
-    '$select'  => "id, organizacaoId, filialId, profissionalId, dataInicio, horaInicio, agendaConfigId, pacienteId",
-    '$filter'  => "agendaStatusId eq 2",
+    '$select'  => "id, organizacaoId, filialId, profissionalId, dataInicio, horaInicio, agendaConfigId, pacienteId, agendaStatus/descricao",
     '$expand'  =>  $expand,
     '$orderby' =>  $orderby
 ];
 
 $filtro = "";
 
-if($id_paciente>0){
-    $filtro .= " and pacienteId eq $id_paciente";
-}
-
 if($condicional_data!=""){
-    $filtro .= " and datainicio $condicional_data $data_inicio"; 
+    $filtro .= " datainicio $condicional_data $data_inicio"; 
 }
 
-$params['$filter'] .= $filtro;
+if($id_agenda_status!=""){// Consulta agendada
+    $filtro .= " and agendaStatusId in ($id_agenda_status)";
+}
+
+$params['$filter'] = $filtro;
 
 // Constrói a query string com URL encoding apropriado
 $queryString = http_build_query($params);

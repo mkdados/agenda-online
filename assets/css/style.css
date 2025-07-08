@@ -88,6 +88,12 @@ body {
     }
 }
 
+  #carouselLogin .carousel-control-prev,
+  #carouselLogin .carousel-control-next,
+  #carouselLogin .carousel-indicators {
+    z-index: 20; /* Garante que fiquem acima do overlay e textos */
+  }
+
  /* Estilo do loader */
  #loader {
     position: fixed;
