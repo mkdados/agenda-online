@@ -763,271 +763,414 @@ function fn_selecionar_datas(evento,data_inicio){
 
 /*###########################################################################################
     Agendar Paciente
-############################################################################################*/ 
-document.addEventListener('DOMContentLoaded', function () {
-    const btnConfirmar = document.getElementById('btnConfirmarAgendamento');
+############################################################################################*/
+document.addEventListener('DOMContentLoaded', () => {
+  const btnConfirmar = document.getElementById('btnConfirmarAgendamento');
+  const loader = document.getElementById('loader');
 
-    btnConfirmar.addEventListener('click', function () {
+  btnConfirmar.addEventListener('click', async () => {
+    const confirm = await Swal.fire({
+      title: "Confirma o agendamento?",
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Sim"
+    });
 
-        Swal.fire({
-          title: "Confirma o agendamento?",
+    if (!confirm.isConfirmed) return;
+
+    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    const token = JSON.parse(sessionStorage.getItem('token'));
+    const paciente = JSON.parse(sessionStorage.getItem('paciente'));
+    const id_usuario = usuario?.id_usuario;
+    const chave = token?.chave;
+    const id_organizacao = token?.id_organizacao;
+    const id_paciente = paciente?.id_paciente;
+    const botaoSelecionado = document.querySelector('.horario-btn.selected');
+    const id_agenda_md = botaoSelecionado?.getAttribute('data-id-agenda-md');
+    const tipoAtendimento = document.querySelector('input[name="tipoAtendimento"]:checked')?.value;
+
+    if (!id_agenda_md || !id_usuario || !id_paciente || !chave) {
+      return exibirErro("Dados obrigatórios ausentes para realizar o agendamento.");
+    }
+
+    loader.style.display = 'flex';
+
+    try {
+      const proximasConsultas = await fn_lista_consultas({
+        id_usuario,
+        token: chave,
+        id_paciente,
+        id_agenda_status: 2,
+        orderby: "dataInicio asc, horaInicio asc"
+      });
+
+      const consultaExistente = proximasConsultas.value?.[0];
+
+      if (consultaExistente) {
+        const dataConsulta = formatarDataISO(consultaExistente.dataInicio);
+        const horaConsulta = formatarHorarioISO(consultaExistente.horaInicio);
+        const id_agenda_md_agendado = consultaExistente.id;
+
+        loader.style.display = 'none';
+
+        const desejaCancelar = await Swal.fire({
           icon: "info",
-          showDenyButton: false,
+          html: `Você já possui um agendamento para o dia ${dataConsulta} às ${horaConsulta}.<br>Deseja cancelar o agendamento?`,
           showCancelButton: true,
-          confirmButtonText: "Sim",
-        }).then((result) => {
-          if (result.isConfirmed) {
+          confirmButtonText: "Sim, cancelar",
+          cancelButtonText: "Não, manter"
+        });
 
-            // Dados do storage            
-            const usuario = JSON.parse(sessionStorage.getItem('usuario'));
-            const token = JSON.parse(sessionStorage.getItem('token'));              
-            const id_organizacao = token.id_organizacao;
-            const paciente = JSON.parse(sessionStorage?.getItem('paciente'));
-            const id_usuario = usuario.id_usuario;
-            const chave = token.chave;  
-            const id_paciente = paciente?.id_paciente;
-            const botaoSelecionado = document.querySelector('.horario-btn.selected');
-            const id_agenda_md = botaoSelecionado ? botaoSelecionado.getAttribute('data-id-agenda-md') : null;
-            var tipoAtendimento = document.querySelector('input[name="tipoAtendimento"]:checked').value; 
-            var paciente_possui_consulta = "N";
-            var consultas_agendadas = "";
-            var id_agenda_md_agendado = "";
+        if (!desejaCancelar.isConfirmed) return;
 
-             //Carrega loader=============
-              loader.style.display = 'flex'; 
+        loader.style.display = 'flex';
 
-              // Valida se o paciente tem agendamentos futuros
-              const parametrosProximasConsultas = {
-                id_usuario: id_usuario,
-                token: chave,
-                id_paciente: id_paciente,
-                id_agenda_status: 2,
-                orderby: "dataInicio asc, horaInicio asc"
-              };
+        const cancelamento = await fn_desmarcar_paciente({
+          id_usuario,
+          token: chave,
+          id: id_agenda_md_agendado,
+          data: {
+            desmarcar: {
+              justificativa: "DESMARCADO PELO PACIENTE VIA AGENDAMENTO ONLINE"
+            }
+          }
+        });
 
-              fn_lista_consultas(parametrosProximasConsultas)
-                .then(data => {
+        if (cancelamento?.status !== 200) {
+          return exibirErro(cancelamento?.mensagem || cancelamento?.erro);
+        }
+      }
 
-                  const proximas_consultas = data.value;
+      // Agendamento final
+      await agendarPaciente({ id_usuario, id_organizacao, chave, id_agenda_md, id_paciente, tipoAtendimento });
+    } catch (error) {
+      exibirErro("Ocorreu um erro ao processar o agendamento.");
+      console.error(error);
+    } finally {
+      loader.style.display = 'none';
+    }
+  });
 
-                  proximas_consultas.forEach(consultas => {
+  function exibirErro(mensagem) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: mensagem
+    });
+  }
 
-                    id_agenda_md_agendado = consultas?.id;
-                    const data = formatarDataISO(consultas?.dataInicio);      
-                    const hora = formatarHorarioISO(consultas?.horaInicio);
+  async function agendarPaciente({ id_usuario, id_organizacao, chave, id_agenda_md, id_paciente, tipoAtendimento }) {
+    const parametrosAgendamento = {
+      id_usuario,
+      id_organizacao,
+      token: chave,
+      data: {
+        id: id_agenda_md,
+        titulo: "AGENDAMENTO ONLINE",
+        pacienteId: id_paciente,
+        observacoes: "AGENDAMENTO ONLINE",
+        agendaStatusId: 2,
+        online: "S",
+        tipoAtendimento: tipoAtendimento === "particular" ? "1" : "2"
+      }
+    };
 
-                      if(data){
-                          paciente_possui_consulta = "S";
-                          consultas_agendadas = `${data} às ${hora}`;
-                      } 
-                  });                   
+    if (tipoAtendimento === "convenio") {
+      const convenioId = document.getElementById('convenioSelect')?.value;
+      if (!convenioId) {
+        return exibirErro("Por favor, selecione um convênio.");
+      }
+      parametrosAgendamento.data.convenioId = convenioId;
+    }
 
-                })
-                .catch(error => {     
+    const resposta = await fn_agendar_paciente(parametrosAgendamento);
 
-                    loader.style.display = 'none';
+    if (resposta?.status === 200) {
 
-                })
-                .finally(() => {
+       loader.style.display = 'none';
+       
+      await Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Agendamento realizado com sucesso!",
+        showConfirmButton: false,
+        timer: 1500
+      });     
 
-                   if(paciente_possui_consulta=="S"){
+      //Redireciona para a página de agendamentos
+      window.location.href = 'meus-agendamentos.html', 1500;
+    } else {
+      exibirErro(resposta?.mensagem || resposta?.erro);
+    }
+  }
+});
 
-                       //Esconde o loader----------------------------------
-                       loader.style.display = 'none'; // esconde o loader
 
-                       Swal.fire({
-                          icon: "info",
-                          html: `Você já possui um agendamento para o dia ${consultas_agendadas}. <br> Deseja cancelar o agendamento?`,
-                          showDenyButton: false,
-                          showCancelButton: true,
-                          confirmButtonText: "Sim, cancelar",
-                          cancelButtonText: "Não, manter",
-                        }).then((result) => {
-                          if (result.isConfirmed) {
 
-                                loader.style.display = 'flex'; // mostra o loader  
+// document.addEventListener('DOMContentLoaded', function () {
+//     const btnConfirmar = document.getElementById('btnConfirmarAgendamento');
 
-                                // Desmarcar consulta
-                                const paramentrosDesmarcarConsultas = {
-                                  id_usuario: id_usuario,
-                                  token: chave,
-                                  id: id_agenda_md_agendado,
-                                  data: {
-                                    "desmarcar": {
-                                        "justificativa": "DESMARCADO PELO PACIENTE VIA AGENDAMENTO ONLINE"
-                                    }
-                                  }
-                                };
+//     btnConfirmar.addEventListener('click', function () {
 
-                                fn_desmarcar_paciente(paramentrosDesmarcarConsultas)
-                                  .then(data => { 
-                                      const status = data?.status;
-                                      const mensagem = data?.mensagem ?? data?.erro;
+//         Swal.fire({
+//           title: "Confirma o agendamento?",
+//           icon: "info",
+//           showDenyButton: false,
+//           showCancelButton: true,
+//           confirmButtonText: "Sim",
+//         }).then((result) => {
+//           if (result.isConfirmed) {
 
-                                      if(status==200){
+//             // Dados do storage            
+//             const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+//             const token = JSON.parse(sessionStorage.getItem('token'));              
+//             const id_organizacao = token.id_organizacao;
+//             const paciente = JSON.parse(sessionStorage?.getItem('paciente'));
+//             const id_usuario = usuario.id_usuario;
+//             const chave = token.chave;  
+//             const id_paciente = paciente?.id_paciente;
+//             const botaoSelecionado = document.querySelector('.horario-btn.selected');
+//             const id_agenda_md = botaoSelecionado ? botaoSelecionado.getAttribute('data-id-agenda-md') : null;
+//             var tipoAtendimento = document.querySelector('input[name="tipoAtendimento"]:checked').value; 
+//             var paciente_possui_consulta = "N";
+//             var consultas_agendadas = "";
+//             var id_agenda_md_agendado = "";
 
-                                          // Agendar paciente---------------------
-                                            const parametrosAgendamento = {
-                                              id_usuario: id_usuario,
-                                              id_organizacao: id_organizacao,
-                                              token: chave,
-                                              data: {
-                                                "id": id_agenda_md,
-                                                "titulo": "AGENDAMENTO ONLINE",
-                                                "pacienteId": id_paciente,
-                                                "observacoes": "AGENDAMENTO ONLINE",
-                                                "agendaStatusId": 2,
-                                                "online": "S"
-                                              }
-                                            };
+//              //Carrega loader=============
+//               loader.style.display = 'flex'; 
 
-                                            //Tipo atendimento==========================
-                                            if (tipoAtendimento === "particular") {
-                                              parametrosAgendamento["data"]["tipoAtendimento"] = "1";
-                                            }
-                                            else if (tipoAtendimento === "convenio") {
-                                              parametrosAgendamento["data"]["tipoAtendimento"] = "2";
-                                              const convenioId = document.getElementById('convenioSelect').value;
-                                              parametrosAgendamento["data"]["convenioId"] = convenioId;
-                                            }
+//               // Valida se o paciente tem agendamentos futuros
+//               const parametrosProximasConsultas = {
+//                 id_usuario: id_usuario,
+//                 token: chave,
+//                 id_paciente: id_paciente,
+//                 id_agenda_status: 2,
+//                 orderby: "dataInicio asc, horaInicio asc"
+//               };
 
-                                            fn_agendar_paciente(parametrosAgendamento)
-                                              .then(data => {
+//               fn_lista_consultas(parametrosProximasConsultas)
+//                 .then(data => {
 
-                                                const status = data?.status;
-                                                const mensagem = data?.mensagem ?? data?.erro;
+//                   const proximas_consultas = data.value;
 
-                                                  if(status==200){
+//                   proximas_consultas.forEach(consultas => {
 
-                                                      Swal.fire({
-                                                          position: "center",
-                                                          icon: "success",
-                                                          title: "Agendamento realizado com sucesso!",
-                                                          showConfirmButton: false,
-                                                          timer: 1500
-                                                      });                                 
+//                     id_agenda_md_agendado = consultas?.id;
+//                     const data = formatarDataISO(consultas?.dataInicio);      
+//                     const hora = formatarHorarioISO(consultas?.horaInicio);
+
+//                       if(data){
+//                           paciente_possui_consulta = "S";
+//                           consultas_agendadas = `${data} às ${hora}`;
+//                       } 
+//                   });                   
+
+//                 })
+//                 .catch(error => {     
+
+//                     loader.style.display = 'none';
+
+//                 })
+//                 .finally(() => {
+
+//                    if(paciente_possui_consulta=="S"){
+
+//                        //Esconde o loader----------------------------------
+//                        loader.style.display = 'none'; // esconde o loader
+
+//                        Swal.fire({
+//                           icon: "info",
+//                           html: `Você já possui um agendamento para o dia ${consultas_agendadas}. <br> Deseja cancelar o agendamento?`,
+//                           showDenyButton: false,
+//                           showCancelButton: true,
+//                           confirmButtonText: "Sim, cancelar",
+//                           cancelButtonText: "Não, manter",
+//                         }).then((result) => {
+//                           if (result.isConfirmed) {
+
+//                                 loader.style.display = 'flex'; // mostra o loader  
+
+//                                 // Desmarcar consulta
+//                                 const paramentrosDesmarcarConsultas = {
+//                                   id_usuario: id_usuario,
+//                                   token: chave,
+//                                   id: id_agenda_md_agendado,
+//                                   data: {
+//                                     "desmarcar": {
+//                                         "justificativa": "DESMARCADO PELO PACIENTE VIA AGENDAMENTO ONLINE"
+//                                     }
+//                                   }
+//                                 };
+
+//                                 fn_desmarcar_paciente(paramentrosDesmarcarConsultas)
+//                                   .then(data => { 
+//                                       const status = data?.status;
+//                                       const mensagem = data?.mensagem ?? data?.erro;
+
+//                                       if(status==200){
+
+//                                           // Agendar paciente---------------------
+//                                             const parametrosAgendamento = {
+//                                               id_usuario: id_usuario,
+//                                               id_organizacao: id_organizacao,
+//                                               token: chave,
+//                                               data: {
+//                                                 "id": id_agenda_md,
+//                                                 "titulo": "AGENDAMENTO ONLINE",
+//                                                 "pacienteId": id_paciente,
+//                                                 "observacoes": "AGENDAMENTO ONLINE",
+//                                                 "agendaStatusId": 2,
+//                                                 "online": "S"
+//                                               }
+//                                             };
+
+//                                             //Tipo atendimento==========================
+//                                             if (tipoAtendimento === "particular") {
+//                                               parametrosAgendamento["data"]["tipoAtendimento"] = "1";
+//                                             }
+//                                             else if (tipoAtendimento === "convenio") {
+//                                               parametrosAgendamento["data"]["tipoAtendimento"] = "2";
+//                                               const convenioId = document.getElementById('convenioSelect').value;
+//                                               parametrosAgendamento["data"]["convenioId"] = convenioId;
+//                                             }
+
+//                                             fn_agendar_paciente(parametrosAgendamento)
+//                                               .then(data => {
+
+//                                                 const status = data?.status;
+//                                                 const mensagem = data?.mensagem ?? data?.erro;
+
+//                                                   if(status==200){
+
+//                                                       Swal.fire({
+//                                                           position: "center",
+//                                                           icon: "success",
+//                                                           title: "Agendamento realizado com sucesso!",
+//                                                           showConfirmButton: false,
+//                                                           timer: 1500
+//                                                       });                                 
                                                       
-                                                      //Redireciona para a página meus-agendamentos
-                                                        setTimeout(function(){
-                                                            window.location.href = 'meus-agendamentos.html';
-                                                        }, 1500);
+//                                                       //Redireciona para a página meus-agendamentos
+//                                                         setTimeout(function(){
+//                                                             window.location.href = 'meus-agendamentos.html';
+//                                                         }, 1500);
 
                                                         
                                                 
-                                                    //Esconde o loader----------------------------------
-                                                    loader.style.display = 'none'; // esconde o loader
+//                                                     //Esconde o loader----------------------------------
+//                                                     loader.style.display = 'none'; // esconde o loader
                                                       
 
-                                                  }else{
+//                                                   }else{
 
-                                                    Swal.fire({
-                                                        icon: 'error',
-                                                        title: 'Erro',
-                                                        text: mensagem
-                                                      });                          
-                                                  }                  
+//                                                     Swal.fire({
+//                                                         icon: 'error',
+//                                                         title: 'Erro',
+//                                                         text: mensagem
+//                                                       });                          
+//                                                   }                  
                                               
-                                              })
-                                              .catch(error => {
-                                                //console.error('Erro ao agendar o paciente:', error.message);
-                                                loader.style.display = 'none';
-                                              }); 
+//                                               })
+//                                               .catch(error => {
+//                                                 //console.error('Erro ao agendar o paciente:', error.message);
+//                                                 loader.style.display = 'none';
+//                                               }); 
                                           
 
-                                      }else{
+//                                       }else{
 
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Erro',
-                                            text: mensagem
-                                          });                          
-                                      }  
-                                  })
-                                  .catch(error => {
-                                    console.error('Erro ao desmarcar consultas:', error.message || error);
-                                  })
-                                  .finally(() => {
-                                    loader.style.display = 'none'; // Sempre oculta o loader
-                                  });
+//                                         Swal.fire({
+//                                             icon: 'error',
+//                                             title: 'Erro',
+//                                             text: mensagem
+//                                           });                          
+//                                       }  
+//                                   })
+//                                   .catch(error => {
+//                                     console.error('Erro ao desmarcar consultas:', error.message || error);
+//                                   })
+//                                   .finally(() => {
+//                                     loader.style.display = 'none'; // Sempre oculta o loader
+//                                   });
 
 
 
-                          } 
-                      });
+//                           } 
+//                       });
 
-                   }else{
+//                    }else{
 
-                          // Agendar paciente---------------------
-                          const parametrosAgendamento = {
-                            id_usuario: id_usuario,
-                            id_organizacao: id_organizacao,
-                            token: chave,
-                            data: {
-                              "id": id_agenda_md,
-                              "titulo": "AGENDAMENTO ONLINE",
-                              "pacienteId": id_paciente,
-                              "observacoes": "AGENDAMENTO ONLINE",
-                              "agendaStatusId": 2,
-                              "online": "S"
-                            }
-                          };
+//                           // Agendar paciente---------------------
+//                           const parametrosAgendamento = {
+//                             id_usuario: id_usuario,
+//                             id_organizacao: id_organizacao,
+//                             token: chave,
+//                             data: {
+//                               "id": id_agenda_md,
+//                               "titulo": "AGENDAMENTO ONLINE",
+//                               "pacienteId": id_paciente,
+//                               "observacoes": "AGENDAMENTO ONLINE",
+//                               "agendaStatusId": 2,
+//                               "online": "S"
+//                             }
+//                           };
 
-                          //Tipo atendimento==========================
-                          if (tipoAtendimento === "particular") {
-                            parametrosAgendamento["data"]["tipoAtendimento"] = "1";
-                          }
-                          else if (tipoAtendimento === "convenio") {
-                            parametrosAgendamento["data"]["tipoAtendimento"] = "2";
-                            const convenioId = document.getElementById('convenioSelect').value;
-                            parametrosAgendamento["data"]["convenioId"] = convenioId;
-                          }
+//                           //Tipo atendimento==========================
+//                           if (tipoAtendimento === "particular") {
+//                             parametrosAgendamento["data"]["tipoAtendimento"] = "1";
+//                           }
+//                           else if (tipoAtendimento === "convenio") {
+//                             parametrosAgendamento["data"]["tipoAtendimento"] = "2";
+//                             const convenioId = document.getElementById('convenioSelect').value;
+//                             parametrosAgendamento["data"]["convenioId"] = convenioId;
+//                           }
 
-                          fn_agendar_paciente(parametrosAgendamento)
-                            .then(data => {
+//                           fn_agendar_paciente(parametrosAgendamento)
+//                             .then(data => {
 
-                              const status = data?.status;
-                              const mensagem = data?.mensagem ?? data?.erro;
+//                               const status = data?.status;
+//                               const mensagem = data?.mensagem ?? data?.erro;
 
-                                if(status==200){
+//                                 if(status==200){
 
-                                    Swal.fire({
-                                        position: "center",
-                                        icon: "success",
-                                        title: "Agendamento realizado com sucesso!",
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    });                                 
+//                                     Swal.fire({
+//                                         position: "center",
+//                                         icon: "success",
+//                                         title: "Agendamento realizado com sucesso!",
+//                                         showConfirmButton: false,
+//                                         timer: 1500
+//                                     });                                 
                                     
-                                    //Redireciona para a página meus-agendamentos
-                                      setTimeout(function(){
-                                          window.location.href = 'meus-agendamentos.html';
-                                      }, 1500);
+//                                     //Redireciona para a página meus-agendamentos
+//                                       setTimeout(function(){
+//                                           window.location.href = 'meus-agendamentos.html';
+//                                       }, 1500);
                                     
 
-                                }else{
+//                                 }else{
 
-                                  Swal.fire({
-                                      icon: 'error',
-                                      title: 'Erro',
-                                      text: mensagem
-                                    });                          
-                                }                  
+//                                   Swal.fire({
+//                                       icon: 'error',
+//                                       title: 'Erro',
+//                                       text: mensagem
+//                                     });                          
+//                                 }                  
                               
-                              //Esconde o loader----------------------------------
-                              loader.style.display = 'none'; // esconde o loader
+//                               //Esconde o loader----------------------------------
+//                               loader.style.display = 'none'; // esconde o loader
                             
-                            })
-                            .catch(error => {
-                              //console.error('Erro ao agendar o paciente:', error.message);
-                              loader.style.display = 'none';
-                            }); 
+//                             })
+//                             .catch(error => {
+//                               //console.error('Erro ao agendar o paciente:', error.message);
+//                               loader.style.display = 'none';
+//                             }); 
                         
-                   }                  
+//                    }                  
       
                     
-                }); 
+//                 }); 
                 
-          } 
-        });
-    });
-  });
+//           } 
+//         });
+//     });
+//   });
