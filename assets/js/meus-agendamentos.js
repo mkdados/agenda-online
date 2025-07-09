@@ -11,7 +11,7 @@
     id_usuario: id_usuario,
     token: chave,
     id_paciente: id_paciente,
-    condicional_data: "ge",
+    condicional_data: "maior_igual",
     orderby: "dataInicio asc, horaInicio asc"
   };
 
@@ -29,19 +29,18 @@
           const hora = formatarHorarioISO(consultas?.horaInicio);
           const unidade = consultas?.clinica.nomeCompleto;
           var status = consultas?.agendaStatus?.descricao;
-          var classeStatus = "";
+          var btnCancelar = "";
 
-          // Verifica o status da consulta e define a classe CSS
-          if(status == "DESMARCADO" || status == "CANCELADO"){
-              status = "DESMARCADO";
-              classeStatus = "bg-danger";
-          }
-          else if(status == "ATENDIDO"){
-              classeStatus = "bg-success";
+          // Verifica o status
+          if(status == "ATENDIDO"){
+              btnCancelar = `<p class="card-text card-text-muted mt-2">
+                                           <span class="badge bg-success">${status}</span>
+                                          </p>`;
           }
           else{
-              status = "AGENDADO";
-              classeStatus = "bg-primary";
+              btnCancelar = `<div class="card-footer bg-transparent border-top-0">
+                                    <button class="btn btn-sm btn-padrao w-100 mb-2 btn-desmarcar" id="${id_agenda_md}">Cancelar Consulta</button>
+                                  </div>`;
           }
 
             html_consultas += `<div class="col-12 col-md-6">
@@ -63,13 +62,8 @@
                                     <p class="card-text card-text-muted">
                                       <i class="fas fa-clock icon-orange me-2"></i>${hora}
                                     </p>
-                                    <p class="card-text card-text-muted mt-2">
-                                      <span class="badge ${classeStatus}">${status}</span>
-                                    </p>
-                                  </div>
-                                  <div class="card-footer bg-transparent border-top-0">
-                                    <button class="btn btn-sm btn-padrao w-100 mb-2 btn-desmarcar" id="${id_agenda_md}">Cancelar Consulta</button>
-                                  </div>
+                                    ${btnCancelar}
+                                  </div>                                  
                                 </div>
                               </div>
                               <div class="col-md-6 col-0"></div>`;
@@ -113,7 +107,7 @@
           id_usuario: id_usuario,
           token: chave,
           id_paciente: id_paciente,
-          condicional_data: "lt",
+          condicional_data: "menor_que", 
           orderby: "dataInicio desc, horaInicio desc"
         };
 
