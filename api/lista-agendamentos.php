@@ -22,35 +22,52 @@ $token = isset($input['token']) ? $input['token'] : null;
 $id_filial = isset($input['id_filial']) ? intval($input['id_filial']) : null;
 $id_agenda_config = isset($input['id_agenda_config']) ? $input['id_agenda_config'] : null;
 $id_profissional = isset($input['id_profissional']) ? $input['id_profissional'] : null;
-$qtd_dias    = 7;
+$qtd_dias    = 6;
 $data_atual  = date("Y-m-d");
 $hora_atual  = date('H');
 $minuto_atual  = date('i');
-$data_inicio = isset($input['data_inicio']) ?  $input['data_inicio'] : date("Y-m-d", strtotime(date("Y-m-d") . " +1 days"));
+$diaSemana     = date('w'); 
+$data_atual_limite = "";
+$evento      = isset($input['evento']) ? $input['evento'] : "";
+$data_inicio = isset($input['data_inicio']) ?  $input['data_inicio'] : date("Y-m-d", strtotime($data_atual . " +1 days"));
 $data_fim    = isset($input['data_fim']) ? $input['data_fim'] : date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
 $turno       = isset($input['turno']) ? $input['turno'] : "";
 $expand      = isset($input['expand']) ? $input['expand'] : 'profissional($select=id,nome)';
 $orderby     = isset($input['orderby']) ? $input['orderby'] : "dataInicio";
 
-//Trata datas======================================================
-if(isset($input['evento'])){     
-    if($input['evento']=="menosDatas"){
-        
-        $hoje = date("Y-m-d");
-        $data_inicio_anterior = date("Y-m-d", strtotime($data_inicio . " -$qtd_dias days"));
-
-        if ($data_inicio_anterior > $hoje) {
-            $data_inicio = date("Y-m-d", strtotime($data_inicio . " -$qtd_dias days"));
-            $data_fim    = date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
-        }else{
-            $data_inicio = date("Y-m-d");
-            $data_fim    = date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
-        }
-    }
-    elseif($input['evento']=="maisDatas"){
+//Tratamento se é sexta feira ou final de semana
+if($evento=="carrega_datas"){
+    if ($diaSemana == 5) {
         $data_inicio = date("Y-m-d", strtotime($data_inicio . " +1 days"));
-        $data_fim = date("Y-m-d", strtotime($data_fim . " +1 days"));
+        $data_fim  = date("Y-m-d", strtotime($data_fim . " +1 days"));
+        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +1 days"));
     }
+    elseif ($diaSemana == 6 || $diaSemana == 0) {
+        $data_inicio = date("Y-m-d", strtotime($data_inicio . " +2 days"));
+        $data_fim  = date("Y-m-d", strtotime($data_fim . " +2 days"));
+        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +2 days"));
+    }
+}
+
+//Trata datas selecionadas======================================================
+if($evento=="menosDatas"){
+
+    $data_inicio_anterior = date("Y-m-d", strtotime($data_inicio . " -$qtd_dias days"));
+
+    //Decrementa a data de início se for maior que a data atual limite
+    if ($data_inicio_anterior >= $data_atual) {
+        $qtd_dias += 1;
+        $data_inicio = date("Y-m-d", strtotime($data_inicio . " -$qtd_dias days"));
+        $qtd_dias -= 1;
+        $data_fim    = date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
+    }else{
+        $data_inicio = $data_inicio;
+        $data_fim    = date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
+    }
+}
+elseif($evento=="maisDatas"){        
+    $data_inicio = date("Y-m-d", strtotime($data_inicio . " +1 days"));
+    $data_fim = date("Y-m-d", strtotime($data_fim . " +1 days"));
 }
 
 // Valida usuário

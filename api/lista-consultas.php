@@ -88,10 +88,10 @@ if($id_agenda_status=="2"){// Consulta agendada
     $filtro .= " datainicio ge $data_inicio and agendaStatusId eq 2"; 
 }
 elseif($condicional_data=="maior_igual"){
-    $filtro .= " datainicio ge $data_inicio and (agendaStatusId ne 4 and agendaStatusId ne 11 )"; 
+    $filtro .= " datainicio ge $data_inicio and agendaStatusId eq 2"; 
 }
 elseif($condicional_data=="menor_que"){
-     $filtro .= " datainicio lt $data_inicio or (agendaStatusId eq 4 or agendaStatusId eq 11)"; 
+     $filtro .= " (datainicio lt $data_inicio) or (datainicio ge $data_inicio and agendaStatusId ne 2)";
 }   
 
 $params['$filter'] = $filtro;

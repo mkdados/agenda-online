@@ -315,6 +315,16 @@ footer a:hover {
     animation: spin 1s linear infinite;
   }
 
+ /* Animação do spinner */
+@keyframes spin {
+0% {
+    transform: rotate(0deg);
+}
+100% {
+    transform: rotate(360deg);
+}
+} 
+
 #datasAgendamento {
   display: flex;
   gap: 10px;
@@ -335,14 +345,29 @@ footer a:hover {
   padding-right: 2rem;
 }
 
-/* Animação do spinner */
-@keyframes spin {
-0% {
-    transform: rotate(0deg);
-}
-100% {
-    transform: rotate(360deg);
-}
+.btn-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #d47d48;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      width: 40px;          /* largura fixa */
+      height: 40px;         /* altura fixa */
+      display: flex;        /* para centralizar o ícone */
+      align-items: center;  /* vertical */
+      justify-content: center; /* horizontal */
+      border-radius: 50%;   /* bolinha */
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.2s;
+      padding: 0;           /* remove padding para não alterar o tamanho */
+    }
+
+.btn-arrow:hover {
+    background-color: #b8683d;
 }
 
 /* Inicio Periodo da agenda================= */
