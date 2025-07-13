@@ -114,11 +114,18 @@ if(!empty($data)){
 
     //Envia e-mail de confirmação=====================================================
 
+    // Busca config de e-mail
+    $stmt = $conn->prepare("SELECT * FROM tbl_parametro_email WHERE id_cliente = ? AND ativo = 'S' LIMIT 1");
+    $stmt->bind_param("i", $id_cliente);
+    $stmt->execute();
+    $config = $stmt->get_result()->fetch_assoc();
+    $stmt->close();  
+
+    // Busca usuário
     if ($id_organizacao == 7) {
         $id_cliente = 2; // Medicina Direta
     }
 
-    // Busca usuário
     $stmt = $conn->prepare("SELECT id, nome, email FROM tbl_usuario WHERE id_cliente = ? AND id = ? LIMIT 1");
 
     $stmt->bind_param("is", $id_cliente, $id_usuario);
@@ -135,13 +142,6 @@ if(!empty($data)){
     $id_usuario = $usuario['id'];
     $nome_usuario = $usuario['nome'];
     $email_usuario = $usuario['email'];
-    $stmt->close();
-
-    // Busca config de e-mail
-    $stmt = $conn->prepare("SELECT * FROM tbl_parametro_email WHERE id_cliente = ? AND ativo = 'S' LIMIT 1");
-    $stmt->bind_param("i", $id_cliente);
-    $stmt->execute();
-    $config = $stmt->get_result()->fetch_assoc();
     $stmt->close();
 
     // E-mail==================================
