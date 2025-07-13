@@ -1,12 +1,10 @@
 <?php
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-include_once '../../../config/config.php'; // deve conter $conn (MySQLi)
-include_once '../../../config/vendor/autoload.php';
-
-header('Content-Type: application/json');
+include_once '../../../config/config.php';
+include_once 'funcoes.php';
+include_once 'init.php';
+include_once 'email.php';
+include_once 'log-integracao.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -23,7 +21,6 @@ if (!is_array($input)) {
 }
 
 $id_cliente = $_ENV['ID_CLIENTE'] ?? null;
-
 if (!$id_cliente) {
     http_response_code(400);
     echo json_encode(['erro' => 'Cliente não identificado']);
@@ -44,6 +41,11 @@ if (!empty($input['email'])) {
     http_response_code(400);
     echo json_encode(['erro' => 'Informe o e-mail ou CPF']);
     exit;
+}
+
+//Valida se é da medicina direta--------------------------------------
+if($identificador=="34327560898" || $identificador=="mkdados@gmail.com"){
+    $id_cliente = 2;
 }
 
 // Busca usuário
@@ -95,65 +97,44 @@ if (!$config) {
 }
 
 // Prepara envio do e-mail
-$mail = new PHPMailer(true);
-$mail->CharSet = 'UTF-8';
-$mail->Encoding = 'base64';
+// Gera o link de redefinição
+$protocolo = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+$dominio = $_SERVER['HTTP_HOST'];
+$caminho = "/agendaonline/redefinir-senha.html";
+$link = $protocolo . $dominio . $caminho . "?token=$token";
 
-try {
-    $mail->isSMTP();
-    $mail->Host       = $config['servidor_smtp'];
-    $mail->SMTPAuth   = true;
-    $mail->Username   = $config['usuario'];
-    $mail->Password   = $config['senha'];
-    $mail->Port       = $config['porta'] ?? 587;
+// Conteúdo do e-mail
+$assunto = 'Recuperação de Senha - Dermaclinica';
+$corpoHtml = "
+    <html>
+    <body style='font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 10px;'>
+        <div style='max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 6px;'>
+            <h2 style='color: #d47d48;'>Recuperação de Senha - Dermaclinica</h2>
+            <p>Olá <strong>{$nome_usuario}</strong>,</p>
+            <p>Identificamos seu pedido de recuperação de senha!</p>
+            <p>Utilize o link abaixo para redefinir sua senha:</p>
+            <p><a href='{$link}' style='background: #d47d48; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;'>🔗 Clique aqui para alterar sua senha</a></p>
+            <hr>
+            <p><strong>Telefone:</strong> 11 3660-4850<br>
+               <strong>WhatsApp:</strong> 11 3660-4850<br>
+               <strong>Instagram:</strong> @dermaclinicasp</p>
+            <hr>
+            <p style='font-size: 12px; color: #777;'>Essa é uma mensagem automática. Por favor, não responda.</p>
+        </div>
+    </body>
+    </html>";
 
-    $tipoSeguranca = strtolower(trim($config['tipo_seguranca']));
-    if ($tipoSeguranca === 'ssl') {
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-    } elseif ($tipoSeguranca === 'tls') {
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    }
+$corpoTexto = "Olá {$nome_usuario},\nAcesse o link para redefinir sua senha: {$link}";
 
-    $mail->setFrom($config['email_remetente'], $config['nome_remetente']);
-    $mail->addAddress($email_usuario, $nome_usuario);
+// Envio
+$retornoEmail = fn_envia_email($config, $nome_usuario, $email_usuario, $assunto, $corpoHtml, $corpoTexto);
 
-    //Link de redefinição de senha
-    $protocolo = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
-    $dominio = $_SERVER['HTTP_HOST']; // Ex: localhost, meusite.com
-    $caminho = "/agendaonline/redefinir-senha.html"; // Caminho que você quer fixo
-    $link = $protocolo . $dominio . $caminho . "?token=$token";
-
-    //Corpo do e-mail
-    $mail->isHTML(true);
-    $mail->Subject = 'Recuperação de Senha - Dermaclinica';
-    $mail->Body = "
-        <html>
-        <body style='font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 10px;'>
-            <div style='max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 6px;'>
-                <h2 style='color: #d47d48;'>Recuperação de Senha - Dermaclinica</h2>
-                <p>Olá <strong>{$nome_usuario}</strong>,</p>
-                <p>Identificamos seu pedido de recuperação de senha!</p>
-                <p>Utilize o link abaixo para redefinir sua senha:</p>
-                <p><a href='{$link}' style='background: #d47d48; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px;'>🔗 Clique aqui para alterar sua senha</a></p>
-                <hr>
-                <p><strong>Telefone:</strong> 11 3660-4850<br>
-                   <strong>WhatsApp:</strong> 11 3660-4850<br>
-                   <strong>Instagram:</strong> @dermaclinicasp</p>
-                <hr>
-                <p style='font-size: 12px; color: #777;'>Essa é uma mensagem automática. Por favor, não responda.</p>
-            </div>
-        </body>
-        </html>";
-
-    $mail->AltBody = "Olá {$nome_usuario}, acesse o link para redefinir sua senha: {$link}";
-
-    $mail->send();
-
+if ($retornoEmail === true) {
     echo json_encode(['mensagem' => 'E-mail de recuperação enviado com sucesso']);
-
-} catch (Exception $e) {
+} else {
     http_response_code(500);
-    echo json_encode(['erro' => 'Falha ao enviar o e-mail', 'detalhe' => $mail->ErrorInfo]);
+    echo json_encode(['erro' => 'Falha ao enviar o e-mail', 'detalhe' => $retornoEmail]);
 }
+
 
 ?>

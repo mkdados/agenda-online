@@ -26,10 +26,10 @@ $qtd_dias    = 6;
 $data_atual  = date("Y-m-d");
 $hora_atual  = date('H');
 $minuto_atual  = date('i');
-$diaSemana     = date('w'); 
+$dia_semana    = date('w'); 
 $data_atual_limite = "";
 $evento      = isset($input['evento']) ? $input['evento'] : "";
-$data_inicio = isset($input['data_inicio']) ?  $input['data_inicio'] : date("Y-m-d", strtotime($data_atual . " +1 days"));
+$data_inicio = isset($input['data_inicio']) ?  $input['data_inicio'] : $data_atual;
 $data_fim    = isset($input['data_fim']) ? $input['data_fim'] : date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
 $turno       = isset($input['turno']) ? $input['turno'] : "";
 $expand      = isset($input['expand']) ? $input['expand'] : 'profissional($select=id,nome)';
@@ -37,12 +37,17 @@ $orderby     = isset($input['orderby']) ? $input['orderby'] : "dataInicio";
 
 //Tratamento se é sexta feira ou final de semana
 if($evento=="carrega_datas"){
-    if ($diaSemana == 5) {
-        $data_inicio = date("Y-m-d", strtotime($data_inicio . " +1 days"));
-        $data_fim  = date("Y-m-d", strtotime($data_fim . " +1 days"));
-        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +1 days"));
+    if ($dia_semana==5) { //Sexta
+        $data_inicio = date("Y-m-d", strtotime($data_inicio . " +3 days"));
+        $data_fim  = date("Y-m-d", strtotime($data_fim . " +3 days"));
+        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +3 days"));
     }
-    elseif ($diaSemana == 6 || $diaSemana == 0) {
+    elseif ($dia_semana==6) { //Sábado
+        $data_inicio = date("Y-m-d", strtotime($data_inicio . " +3 days"));
+        $data_fim  = date("Y-m-d", strtotime($data_fim . " +3 days"));
+        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +3 days"));
+    }
+    elseif ($dia_semana==0) { //Domingo
         $data_inicio = date("Y-m-d", strtotime($data_inicio . " +2 days"));
         $data_fim  = date("Y-m-d", strtotime($data_fim . " +2 days"));
         $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +2 days"));

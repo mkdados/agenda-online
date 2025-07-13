@@ -791,6 +791,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const id_agenda_md = botaoSelecionado?.getAttribute('data-id-agenda-md');
     const tipoAtendimento = document.querySelector('input[name="tipoAtendimento"]:checked')?.value;
 
+    // Dados do agendamento=============================================================================
+    const horarioDiv = botaoSelecionado.closest('.horario-div');
+    // Data da agenda
+    const dataAgenda = horarioDiv.querySelector('h6')?.textContent.replace('Data da agenda:', '').trim();
+    // Hora selecionada
+    const horaSelecionada = botaoSelecionado.textContent.trim();
+    // Profissional
+    const nomeProfissional = horarioDiv.querySelector('h3')?.textContent.trim();
+    //Unidade
+    const unidadeSelect = document.getElementById('unidadeSelect');
+    const unidade = unidadeSelect.options[unidadeSelect.selectedIndex].text;
+    const unidadeEndereco = unidadeSelect.options[unidadeSelect.selectedIndex].getAttribute('data-endereco-unidade');
+    // Seta dados do agendamento
+    const dados_agendamento = {data_agendamento: dataAgenda, 
+                               hora_agendamento: horaSelecionada,
+                               nome_profissional: nomeProfissional,
+                               endereco_unidade: unidadeEndereco
+                              };
+
     if (!id_agenda_md || !id_usuario || !id_paciente || !chave) {
       return exibirErro("Dados obrigatórios ausentes para realizar o agendamento.");
     }
@@ -844,7 +863,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Agendamento final
-      await agendarPaciente({ id_usuario, id_organizacao, chave, id_agenda_md, id_paciente, tipoAtendimento });
+      await agendarPaciente({ id_usuario, id_organizacao, chave, id_agenda_md, id_paciente, tipoAtendimento, dados_agendamento });
     } catch (error) {
       exibirErro("Ocorreu um erro ao processar o agendamento.");
       console.error(error);
@@ -861,7 +880,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  async function agendarPaciente({ id_usuario, id_organizacao, chave, id_agenda_md, id_paciente, tipoAtendimento }) {
+  async function agendarPaciente({ id_usuario, id_organizacao, chave, id_agenda_md, id_paciente, tipoAtendimento, dados_agendamento }) {
     const parametrosAgendamento = {
       id_usuario,
       id_organizacao,
@@ -874,7 +893,8 @@ document.addEventListener('DOMContentLoaded', () => {
         agendaStatusId: 2,
         online: "S",
         tipoAtendimento: tipoAtendimento === "particular" ? "1" : "2"
-      }
+      },
+      dados_agendamento: dados_agendamento
     };
 
     if (tipoAtendimento === "convenio") {
