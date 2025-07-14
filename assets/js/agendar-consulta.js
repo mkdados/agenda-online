@@ -82,7 +82,7 @@ function fn_carrega_agendamentos(btn) {
     data_inicio: dataSelecionada,
     data_fim: dataSelecionada,
     turno: turnoSelecionado,
-    expand: 'profissional($select=id,nome,conselhoNumero,especialidadeId)',
+    expand: 'profissional($select=id,nome,conselhoNumero,especialidadeId,foto)',
     orderby: 'profissionalId, horaInicio'
   };
 
@@ -200,18 +200,18 @@ function fn_carrega_agendamentos(btn) {
       
 
       // Carregar fotos base64
-      // setTimeout(() => {
-      //   document.querySelectorAll('.lazy-foto').forEach(imgEl => {
-      //     const fotoBase64 = imgEl.getAttribute('data-foto-base64');
-      //     if (fotoBase64) {
-      //       const novaImg = new Image();
-      //       novaImg.onload = () => {
-      //         imgEl.src = `data:image/png;base64,${fotoBase64}`;
-      //       };
-      //       novaImg.src = `data:image/png;base64,${fotoBase64}`;
-      //     }
-      //   });
-      // }, 100);
+      setTimeout(() => {
+        document.querySelectorAll('.lazy-foto').forEach(imgEl => {
+          const fotoBase64 = imgEl.getAttribute('data-foto-base64');
+          if (fotoBase64) {
+            const novaImg = new Image();
+            novaImg.onload = () => {
+              imgEl.src = `data:image/png;base64,${fotoBase64}`;
+            };
+            novaImg.src = `data:image/png;base64,${fotoBase64}`;
+          }
+        });
+      }, 100);
 
       loader.style.display = 'none';
     })
