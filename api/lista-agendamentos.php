@@ -52,6 +52,11 @@ if($evento=="carrega_datas"){
         $data_fim  = date("Y-m-d", strtotime($data_fim . " +2 days"));
         $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +2 days"));
     }
+    else{
+        $data_inicio = date("Y-m-d", strtotime($data_inicio . " +1 days"));
+        $data_fim  = date("Y-m-d", strtotime($data_fim . " +1 days"));
+        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +1 days"));
+    }
 }
 
 //Trata datas selecionadas======================================================
