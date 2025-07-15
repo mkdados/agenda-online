@@ -45,6 +45,27 @@ document.querySelectorAll('input[name="turno"]').forEach(radio => {
 
 
 // === Função reutilizável para carregar agendamentos com base na data selecionada ===
+
+ // Carregar fotos base64
+function encontrarFotoPorValue(value) {
+  const select = document.getElementById('medicoSelect');
+  if (!select || !select.options || select.options.length === 0) {
+    console.warn('Select ainda não carregado!');
+    return 'assets/images/foto-medico.png';
+  }
+
+  const option = Array.from(select.options).find(opt => opt.value.toString() === value.toString());
+
+  if (option) {
+    const fotoBase64 = option.getAttribute('data-foto');
+    if (fotoBase64 && isBase64(fotoBase64)) {
+      return 'data:image/png;base64,' + fotoBase64;
+    }
+  }
+
+  return 'assets/images/foto-medico.png'; // Fallback
+}
+
 function fn_carrega_agendamentos(btn) {
   // Se o botão não for passado, pega o atualmente selecionado
   if (!btn) {
@@ -156,28 +177,30 @@ function fn_carrega_agendamentos(btn) {
         if (i > 1) {
           html += '</div>';
           i = 1;
-        }
+        }      
 
-        
 
-        // Carregar fotos base64
-        function encontrarFotoPorValue(value) {
-          const select = document.getElementById('medicoSelect');
-          const option = Array.from(select.options).find(opt => opt.value.toString() === value.toString());
+        //Carrega foto do profissional
+        let foto_profissional = "";
+        const parametrosProfissionais = {
+          id_usuario: id_usuario,
+          token: chave,
+          id_profissional: prof.profissionalId
+        };
 
-          if (option) {
-            const fotoBase64 = option.getAttribute('data-foto');
+        // Chama a função que lista os profissionais
+        // fn_lista_profissionais(parametrosProfissionais)
+        // .then((data) => {
+        //     console.log("Profissional encontrado:", data);
+        //       foto_profissional = 'data:image/png;base64,' + data.foto;
+        // })
+        // .catch((erro) => {
+        //   //console.error("Erro ao buscar profissionais:", erro);
+        // });
 
-            if (isBase64(fotoBase64)) {
-              return 'data:image/png;base64,' + fotoBase64;
-            }
-          }
 
-          // Se não for base64 ou não encontrado
-          return 'assets/images/foto-medico.png';
-        }
 
-        const foto_profissional = encontrarFotoPorValue(prof.profissionalId);
+        //const foto_profissional = encontrarFotoPorValue(prof.profissionalId);
 
         html += `
           <div class="my-3 align-items-start border rounded horario-div" data-profissional-id="${prof.profissionalId}">
@@ -630,24 +653,7 @@ function fn_selecionar_datas(evento,data_inicio){
 
                   if (idProfissionalSelecionado && profissional.id == idProfissionalSelecionado) {
                     option.selected = true;
-                  }
-
-                  // Parâmetros para a função de listagem
-                    const parametrosProfissionais = {
-                      id_usuario: id_usuario,
-                      token: chave,
-                      id_profissional: profissional.id
-                    };
-
-                    // Chama a função que lista os profissionais
-                    fn_lista_profissionais(parametrosProfissionais)
-                    .then((data) => {
-                         option.dataset.foto = data.foto;
-                    })
-                    .catch((erro) => {
-                      //console.error("Erro ao buscar profissionais:", erro);
-                    });
-
+                  }                 
 
                   selectMedico.appendChild(option);
                 });
