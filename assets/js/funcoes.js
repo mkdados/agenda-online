@@ -120,3 +120,17 @@ function pegarIniciais(nomeCompleto) {
   const iniciais = palavras.slice(0, 2).map(p => p[0].toUpperCase()).join('');
   return iniciais;
 }
+
+
+function isBase64(str) {
+  if (typeof str !== 'string') return false;
+
+  str = str.trim();
+
+  // Protege contra string "null"
+  if (!str || str.toLowerCase() === 'null') return false;
+
+  const base64Regex = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+
+  return base64Regex.test(str);
+}

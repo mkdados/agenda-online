@@ -71,17 +71,17 @@ $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params                 = [
-    '$select'  => "id,organizacaoId,nome,conselhoNumero",
-    '$expand'  => "especialidade",
-    '$filter'  => "id in ($id_profissional)"
+    '$select'  => "id,organizacaoId,nome,foto,conselhoNumero",
+    //'$expand'  => "especialidade",
+    //'$filter'  => "id in ($id_profissional)"
 ];
 
 // Constrói a query string com URL encoding apropriado
 $queryString = http_build_query($params);
 
 // Concatena URL com query string
-//$url_integracao  = $url_integracao . "/$id_profissional?" . $queryString;
-$url_integracao  = $url_integracao . '?' . $queryString;
+$url_integracao  = $url_integracao . "/$id_profissional?" . $queryString;
+//$url_integracao  = $url_integracao . '?' . $queryString;
 
 // Inicializa cURL
 $curl_result = fn_curl_request([
