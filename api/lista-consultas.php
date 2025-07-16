@@ -21,6 +21,7 @@ $id_organizacao = isset($input['id_organizacao']) ? intval($input['id_organizaca
 $id_paciente = isset($input['id_paciente']) ? intval($input['id_paciente']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
 $data_inicio = date("Y-m-d");
+$data_hora_inicio = date('Y-m-d\TH:i:s\Z');
 $id_agenda_status = isset($input['id_agenda_status']) ? $input['id_agenda_status'] : null;
 $condicional_data = isset($input['condicional_data']) ? $input['condicional_data'] : null;
 $expand      = isset($input['expand']) ? $input['expand'] : 'profissional($select=id,nome), clinica($select=id,nomeCompleto)';
@@ -85,10 +86,10 @@ $params = [
 $filtro = "";
 
 if($id_agenda_status=="2"){// Consulta agendada
-    $filtro .= " datainicio ge $data_inicio and agendaStatusId eq 2"; 
+    $filtro .= " datainicio ge $data_hora_inicio and agendaStatusId eq 2"; 
 }
 elseif($condicional_data=="maior_igual"){
-    $filtro .= " datainicio ge $data_inicio and agendaStatusId eq 2"; 
+    $filtro .= " datainicio ge $data_hora_inicio and agendaStatusId eq 2"; 
 }
 elseif($condicional_data=="menor_que"){
      $filtro .= " (datainicio lt $data_inicio) or (datainicio ge $data_inicio and agendaStatusId ne 2)";
