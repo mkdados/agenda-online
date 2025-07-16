@@ -21,6 +21,7 @@ $token = isset($input['token']) ? $input['token'] : null;
 $id_filial = isset($input['id_filial']) ? intval($input['id_filial']) : null;
 $id_profissional = isset($input['id_profissional']) ? intval($input['id_profissional']) : null;
 
+
 // Valida usuário
 if (!$id_usuario) {
     http_response_code(400);
@@ -65,8 +66,8 @@ $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params = [ 
-    '$select' => "id, filialId, profissionalId",
-    '$expand' => "profissional",
+    '$select' => 'id, filialId, profissionalId',
+    '$expand' => 'profissional($select=id,foto)',
     '$filter' => "ativado eq 'S'"
 ];
 

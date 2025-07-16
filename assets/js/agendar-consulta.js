@@ -45,27 +45,6 @@ document.querySelectorAll('input[name="turno"]').forEach(radio => {
 
 
 // === Função reutilizável para carregar agendamentos com base na data selecionada ===
-
- // Carregar fotos base64
-function encontrarFotoPorValue(value) {
-  const select = document.getElementById('medicoSelect');
-  if (!select || !select.options || select.options.length === 0) {
-    console.warn('Select ainda não carregado!');
-    return 'assets/images/foto-medico.png';
-  }
-
-  const option = Array.from(select.options).find(opt => opt.value.toString() === value.toString());
-
-  if (option) {
-    const fotoBase64 = option.getAttribute('data-foto');
-    if (fotoBase64 && isBase64(fotoBase64)) {
-      return 'data:image/png;base64,' + fotoBase64;
-    }
-  }
-
-  return 'assets/images/foto-medico.png'; // Fallback
-}
-
 function fn_carrega_agendamentos(btn) {
   // Se o botão não for passado, pega o atualmente selecionado
   if (!btn) {
@@ -94,6 +73,7 @@ function fn_carrega_agendamentos(btn) {
   document.getElementById("agendasMedicos").innerHTML = "";
   loader.style.display = 'flex';
 
+  // Parâmetros para listar agendamentos
   const parametrosAgendamentos = {
     id_usuario,
     id_organizacao: id_organizacao,
@@ -177,37 +157,35 @@ function fn_carrega_agendamentos(btn) {
         if (i > 1) {
           html += '</div>';
           i = 1;
-        }      
+        }   
+        
 
+          // //Carrega foto do profissional
+          //       let foto_profissional = "";
+          //       const parametrosProfissionais = {
+          //         id_usuario: id_usuario,
+          //         token: chave,
+          //         id_profissional: 14581
+          //       };
 
-        //Carrega foto do profissional
-        let foto_profissional = "";
-        const parametrosProfissionais = {
-          id_usuario: id_usuario,
-          token: chave,
-          id_profissional: prof.profissionalId
-        };
+          // // Chama a função que lista os profissionais
+          // fn_lista_profissionais(parametrosProfissionais)
+          // .then((data) => {
+          //     console.log("Profissional encontrado:", data.foto);
+          //       //foto_profissional = 'data:image/png;base64,' + data.foto;
+          // })
+          // .catch((erro) => {
+          //   //console.error("Erro ao buscar profissionais:", erro);
+          // });
 
-        // Chama a função que lista os profissionais
-        // fn_lista_profissionais(parametrosProfissionais)
-        // .then((data) => {
-        //     console.log("Profissional encontrado:", data);
-        //       foto_profissional = 'data:image/png;base64,' + data.foto;
-        // })
-        // .catch((erro) => {
-        //   //console.error("Erro ao buscar profissionais:", erro);
-        // });
-
-
-
-        //const foto_profissional = encontrarFotoPorValue(prof.profissionalId);
+        
 
         html += `
           <div class="my-3 align-items-start border rounded horario-div" data-profissional-id="${prof.profissionalId}">
             <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">              
                 <img 
                   data-profissional-id="${prof.profissionalId}"
-                  src="${foto_profissional}" 
+                  src="assets/images/foto-medico.png" 
                   class="img-fluid rounded border foto-medico lazy-foto mx-auto mx-md-0 d-block" 
                   alt="Foto do médico" 
                   style="max-width: 90px; border: 1px solid #ccc !important;">
@@ -238,10 +216,7 @@ function fn_carrega_agendamentos(btn) {
         document.getElementById("agendasMedicos").innerHTML = html;
       }else{        
         document.getElementById("agendasMedicos").innerHTML = '<div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Nenhuma agenda disponível para agendamento</div>';
-      }     
-      
-
-      
+      }        
 
       loader.style.display = 'none';
     })
