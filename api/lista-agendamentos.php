@@ -22,7 +22,7 @@ $token = isset($input['token']) ? $input['token'] : null;
 $id_filial = isset($input['id_filial']) ? intval($input['id_filial']) : null;
 $id_agenda_config = isset($input['id_agenda_config']) ? $input['id_agenda_config'] : null;
 $id_profissional = isset($input['id_profissional']) ? $input['id_profissional'] : null;
-$qtd_dias    = 6;
+$qtd_dias    = ($id_profissional>0) ? 15 : 7;
 $data_atual  = date("Y-m-d");
 $hora_atual  = date('H');
 $minuto_atual  = date('i');
@@ -126,17 +126,25 @@ $request_body           = json_encode([]);
 $params = [ 
     '$select'  => "id, organizacaoId, filialId, profissionalId, dataInicio, horaInicio, agendaConfigId",
     '$filter'  => "profissionalId gt 0 and agendaConfig/online eq 'S'",
-    '$expand'  =>  $expand,
+    //'$expand'  =>  $expand,
     '$orderby' =>  $orderby
 ];
 
+//Expand==============================================
+if($expand!=""){
+    $params['$expand'] = $expand;
+}
+
+//Filtro de pesquisa==============================================
 $filtro = "";
 
 if($id_filial>0){
-    $filtro .= "and filialId eq $id_filial";
+    //$filtro .= "and filialId eq $id_filial";
+    $filtro .= "and agendaConfig/filialId eq $id_filial";
 } 
 if($id_agenda_config!=""){
-    $filtro .= "and agendaConfigId eq $id_agenda_config";
+    //$filtro .= "and agendaConfigId eq $id_agenda_config";
+    $filtro .= "and agendaConfigId in ($id_agenda_config)";
 } 
 if($id_profissional!=""){
     $filtro .= "and profissionalId eq $id_profissional";

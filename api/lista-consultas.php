@@ -86,15 +86,16 @@ $params = [
 
 $filtro = "";
 
-if($id_agenda_status=="2"){// Consulta agendada
-    $filtro .= " datainicio ge $data_inicio and (horaInicio gt duration'PT{$hora_atual}H{$minuto_atual}M') and agendaStatusId eq 2";
+if ($id_agenda_status == "2") { // Consulta agendada
+    $filtro .= " (datainicio gt $data_inicio  or datainicio ge $data_inicio and horaInicio ge duration'PT{$hora_atual}H{$minuto_atual}M') and agendaStatusId eq 2";
 }
-elseif($condicional_data=="maior_igual"){
-    $filtro .= " datainicio ge $data_inicio and (horaInicio gt duration'PT{$hora_atual}H{$minuto_atual}M') and agendaStatusId eq 2"; 
+elseif ($condicional_data == "maior_igual") {
+    $filtro .= " (datainicio gt $data_inicio  or datainicio ge $data_inicio and horaInicio ge duration'PT{$hora_atual}H{$minuto_atual}M') and agendaStatusId eq 2";
 }
-elseif($condicional_data=="menor_que"){
-     $filtro .= " (datainicio lt $data_inicio) or (datainicio ge $data_inicio and agendaStatusId ne 2)";
-}   
+elseif ($condicional_data == "menor_que") {
+    $filtro .= " (datainicio lt $data_inicio) or (datainicio ge $data_inicio and agendaStatusId ne 2)";
+}
+
 
 $params['$filter'] = $filtro;
 

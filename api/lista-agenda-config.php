@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Lê entrada JSON
 $input = json_decode(file_get_contents('php://input'), true);
+$id_organizacao = isset($input['id_organizacao']) ? intval($input['id_organizacao']) : null;
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
 $id_filial = isset($input['id_filial']) ? intval($input['id_filial']) : null;
@@ -67,7 +68,7 @@ $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params = [ 
     '$select' => 'id, filialId, profissionalId',
-    '$expand' => 'profissional($select=id,foto)',
+    '$expand' => 'profissional($select=id,nome)',
     '$filter' => "ativado eq 'S'"
 ];
 
@@ -78,6 +79,12 @@ if($id_filial>0){
 if($id_profissional>0){
     $params['$filter'] .= "and profissionalId eq $id_profissional";
 } 
+
+//Fixar agenda LUIZ GUILHERME MARTINS CASTRO
+if($id_organizacao==2911){
+    $params['$filter'] .= "and (profissionalId eq 24014 or profissionalId eq 20857 or profissionalId eq 20856)";
+}
+
 
 // Constrói a query string com URL encoding apropriado
 $queryString = http_build_query($params);

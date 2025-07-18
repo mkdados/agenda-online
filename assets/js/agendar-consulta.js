@@ -83,7 +83,7 @@ function fn_carrega_agendamentos(btn) {
     data_inicio: dataSelecionada,
     data_fim: dataSelecionada,
     turno: turnoSelecionado,
-    expand: 'profissional($select=id,nome,conselhoNumero,especialidadeId)',
+    expand: 'profissional($select=id,nome,conselhoNumero,especialidadeId),agendaconfig($select=filialId)',
     orderby: 'profissionalId, horaInicio'
   };
 
@@ -513,7 +513,7 @@ $('#scrollLeft').on('click', function () {
 });
 
 
-function fn_selecionar_datas(evento,data_inicio){  
+async function fn_selecionar_datas(evento,data_inicio){  
 
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
     const token = JSON.parse(sessionStorage.getItem('token'));
@@ -533,13 +533,47 @@ function fn_selecionar_datas(evento,data_inicio){
     // document.getElementById('datasAgendamento').innerHTML = "";  
     document.getElementById("agendasMedicos").innerHTML = "";  
 
+    //Agenda config================================================
+    const parametrosAgendaConfig = {
+      id_usuario: id_usuario,
+      id_organizacao: id_organizacao,
+      id_filial: idFilialSelecionada,
+      token: chave    
+    };
+
+    let id_agenda_config = ""; 
+    let profissionaisAgendaConfig = []; // Lista de { id, nome }
+
+    try {
+      const dataAgendaConfig = await fn_lista_agenda_config(parametrosAgendaConfig);
+
+      if (dataAgendaConfig?.value?.length > 0) {
+        // Extrai os IDs e junta por vírgula
+        id_agenda_config = dataAgendaConfig.value.map(item => item.id).join(",");
+
+        // Pega o ID do profissional e o nome
+        profissionaisAgendaConfig = dataAgendaConfig.value.map(item => ({
+          id: item.profissional?.id,
+          nome: item.profissional?.nome
+        }));
+
+        //console.log("IDs da agendaConfig:", agendaConfigId);
+      } else {
+        //console.warn("Nenhuma agenda config encontrada");
+      }
+    } catch (err) {
+      console.error("Erro ao listar agendamentos:", err);
+    }
+
+
     //Lista agendamentos=====================================================================
     const parametrosAgendamentos = {
         id_usuario: id_usuario,
         id_organizacao: id_organizacao,
         id_filial: idFilialSelecionada,
         token: chave,
-        expand: 'profissional($select=id,nome)'        
+        id_agenda_config: id_agenda_config//, 
+        //expand: 'profissional($select=id,nome),agendaconfig($select=filialId)'        
     };
 
     if(idProfissionalSelecionado){
@@ -615,13 +649,16 @@ function fn_selecionar_datas(evento,data_inicio){
             //Carrega profissionais============================================================================ 
             if(evento=="selectUnidade"){           
                 // Ordena por nome (alfabético)
-                lista_profissionais.sort((a, b) => a.nome.localeCompare(b.nome));
+                //lista_profissionais.sort((a, b) => a.nome.localeCompare(b.nome));
+                profissionaisAgendaConfig.sort((a, b) => a.nome.localeCompare(b.nome));
 
                 // Preenche o select
                 const selectMedico = document.getElementById('medicoSelect');
                 selectMedico.innerHTML = '<option value="">Todos os Médicos</option>';
 
-                lista_profissionais.forEach(profissional => {
+                //lista_profissionais.forEach(profissional => {
+                  profissionaisAgendaConfig.forEach(profissional => {
+                  
                   const option = document.createElement('option');
                   option.value = profissional.id;
                   option.textContent = profissional.nome;
