@@ -552,10 +552,18 @@ async function fn_selecionar_datas(evento,data_inicio){
         id_agenda_config = dataAgendaConfig.value.map(item => item.id).join(",");
 
         // Pega o ID do profissional e o nome
-        profissionaisAgendaConfig = dataAgendaConfig.value.map(item => ({
-          id: item.profissional?.id,
-          nome: item.profissional?.nome
-        }));
+        dataAgendaConfig.value.forEach(item => {
+          const profissional = item.profissional;
+          if (profissional?.id && profissional?.nome) {
+            const jaExiste = profissionaisAgendaConfig.some(p => p.id === profissional.id);
+            if (!jaExiste) {
+              profissionaisAgendaConfig.push({
+                id: profissional.id,
+                nome: profissional.nome
+              });
+            }
+          }
+        });
 
         //console.log("IDs da agendaConfig:", agendaConfigId);
       } else {
@@ -602,12 +610,12 @@ async function fn_selecionar_datas(evento,data_inicio){
                         }
                     }                      
                     //Lista profissionais=====================================================
-                    if (agendamento.profissional) {
-                      const jaExiste = lista_profissionais.some(p => p.id === agendamento.profissional.id);
-                      if (!jaExiste) {
-                        lista_profissionais.push(agendamento.profissional);
-                      }
-                    }                   
+                    // if (agendamento.profissional) {
+                    //   const jaExiste = lista_profissionais.some(p => p.id === agendamento.profissional.id);
+                    //   if (!jaExiste) {
+                    //     lista_profissionais.push(agendamento.profissional);
+                    //   }
+                    // }                   
                 });
             }
         })
