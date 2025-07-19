@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="shortcut icon" href="assets/images/fave-icon.png" type="image/x-icon">
+  <title>Agenda Online - Menu</title>
+
+  <!-- Bibliotecas --> 
+  <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/home.css?v=4.0.1" rel="stylesheet">
+  <link href="assets/fonts/font-lato.css" rel="stylesheet">
+  <link href="assets/fonts/montserrat.css" rel="stylesheet"> 
+  <link href="assets/font-awesome/6.7.2/css/all.css" rel="stylesheet">
+  <link href="assets/bootstrap-icons/1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+
+</head>
+<body>
+
+ <!-- Loader --> 
+<div id="loader"><div class="spinner"></div></div> 
+
+<!-- Overlay de fundo escurecido -->
+<div id="overlay"></div>
+
+<!-- Navbar principal -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white p-0 m-0">
+  <div class="container-fluid d-flex align-items-center justify-content-between" style="padding-left: 2rem;">
+    <button class="btn d-lg-none" onclick="toggleMobileSidebar()">
+      <i class="bi bi-list fs-3"></i>
+    </button>
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img src="assets/images/logo-dermaclinica-menu.png" alt="Logo" width="180" class="d-inline-block align-text-top">
+    </a>
+  </div>
+</nav>
+
+<!-- Barra de data e conta -->
+<div class="border-top border-bottom" style="background-color: #d47d48;padding-top:.75rem; padding-bottom:.75rem;">
+  <div class="container-fluid d-flex justify-content-between align-items-center" style="padding-left: 2rem;">
+    <div class="small text-white" id="data-hora"></div>
+    <a href="minha-conta.html" class="text-white text-decoration-none small">
+      <i class="fa fa-user me-1"></i> Minha Conta
+    </a>
+  </div>
+</div>
+
+<!-- Menu lateral -->
+<main class="d-flex flex-grow-1">
+    <div id="sidebar">
+        <div id="user-section">
+            <div class="d-flex justify-content-between align-items-center w-100">
+            <div class="user-info d-flex align-items-center">
+                <div class="avatar-circle me-3"></div>
+                <div>
+                <p class="name mb-0"></p>
+                <p class="email mb-0"></p>
+                </div>
+            </div>
+            <button onclick="toggleSidebar()">
+                <i class="bi bi-chevron-left h-4 w-4"></i>
+            </button>
+            </div>
+        </div>
+
+    <ul class="nav flex-column p-2">     
+        <li class="nav-item mb-2">
+            <a class="nav-link" href="home.html"><i class="bi bi-house-door"></i><span style="font-size:0.9rem">Home</span></a>
+        </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link" href="agendar-consulta.html"><i class="bi bi-calendar"></i><span style="font-size:0.9rem">Agendar Consulta</span></a>
+        </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link" href="meus-agendamentos.html"><i class="bi bi-file-medical"></i><span style="font-size:0.9rem">Meus Agendamentos</span></a>
+        </li>
+        <li class="nav-item mb-2">
+            <a class="nav-link active" href="minha-conta.html"><i class="bi bi-person"></i><span style="font-size:0.9rem">Minha Conta</span></a>
+        </li>
+        <li class="nav-item mb-2">
+        <a class="nav-link" href="index.html"><i class="bi bi-box-arrow-right"></i><span style="font-size:0.9rem">Sair</span></a>
+        </li>
+    </ul>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div id="content" class="container-fluid">
+
+        <!-- Não esqueça de incluir o CSS do Font Awesome no <head> da sua página: -->
+        <form id="minhaContaForm" class="row g-3 mt-4 p-4 rounded shadow-sm bg-white border">
+
+          <!-- Título opcional -->
+          <div class="col-12">
+            <h4 class="fw-bold text-secondary mb-3"> Minha Conta</h4>
+          </div>
+
+          <!-- CPF -->
+          <div class="col-md-6">
+            <label for="cpf" class="form-label fw-bold text-secondary">
+              <i class="fa-solid fa-id-card me-2" style="color: #d47d48;"></i>CPF
+            </label><br>
+            <span id="cpfLabel">123.456.789-00</span>
+            <input type="text" id="cpf" name="cpf" inputmode="numeric" class="form-control d-none" placeholder="Digite seu CPF" required>
+          </div>
+
+          <!-- Nome Completo -->
+          <div class="col-md-6">
+            <label for="nome" class="form-label fw-bold text-secondary">
+              <i class="fa-solid fa-user me-2" style="color: #d47d48;"></i>Nome Completo
+            </label><br>
+            <span id="nomeLabel">PACIENTE DE TESTE</span>            
+            <input type="text" id="nome" name="nome" class="form-control d-none" placeholder="Nome completo" required>
+          </div>
+
+          <!-- Data de Nascimento -->
+          <div class="col-md-6">
+            <label for="dataNascimento" class="form-label fw-bold text-secondary">
+              <i class="fa-solid fa-calendar-days me-2" style="color: #d47d48;"></i>Data de Nascimento
+            </label><br>
+            <span id="dataNascimentoLabel">11/05/1986</span>            
+            <input type="text" id="dataNascimento" name="dataNascimento" class="form-control d-none" placeholder="__/__/____" required>
+          </div>
+
+          <!-- Celular -->
+          <div class="col-md-6">
+            <label for="celular" class="form-label fw-bold text-secondary">
+              <i class="fa-solid fa-mobile-screen-button me-2" style="color: #d47d48;"></i>Celular
+            </label><br>
+            <span id="celularLabel">(11) 91234-8576</span>
+            <input type="text" id="celular" name="celular" class="form-control d-none" placeholder="(00) 00000-0000" required>
+          </div>
+
+          <!-- Email -->
+          <div class="col-md-6">
+            <label for="email" class="form-label fw-bold text-secondary">
+              <i class="fa-solid fa-envelope me-2" style="color: #d47d48;"></i>E-mail
+            </label><br>
+            <span id="emailLabel">mkdados@gmail.com</span>
+            <input type="email" id="email" name="email" class="form-control d-none" placeholder="seu@e-mail.com" required>
+          </div>
+
+          <!-- Espaço -->
+          <div class="col-md-6"></div>
+
+          <!-- Senha (oculto) -->
+          <div class="col-md-6 d-none">
+            <label for="senha" class="form-label fw-bold text-secondary">
+              <i class="fa-solid fa-lock me-2" style="color: #d47d48;"></i>Senha
+            </label>
+            <input type="password" id="senha" name="senha" class="form-control d-none" placeholder="*****" required>
+          </div>
+
+          <!-- Confirmar Senha (oculto) -->
+          <div class="col-md-6 d-none">
+            <label for="confirmarSenha" class="form-label fw-bold text-secondary">
+              <i class="fa-solid fa-lock me-2" style="color: #d47d48;"></i>Confirmar Senha
+            </label>
+            <input type="password" id="confirmarSenha" name="confirmarSenha" class="form-control" placeholder="*****" required>
+          </div>
+
+          <!-- Botão -->
+          <div class="col-4 d-flex gap-2">
+            <button type="button" id="btnEditar" class="btn btn-sm btn-padrao py-2 col" style="max-width:180px;">
+              <i class="fa fa-pen me-2"></i> Editar
+            </button>
+            <button type="button" id="btnCancelar" class="btn btn-sm btn-padrao btn-secondary py-2 col d-none" style="max-width:180px;">
+              <i class="fa fa-times me-2"></i> Cancelar
+            </button>
+          </div>
+
+        </form>
+
+
+
+
+    </div> 
+
+</main>
+
+<!-- Rodapé -->
+<div id="footer-placeholder"></div>
+
+
+<!-- Scripts -->
+  <script src="assets/jquery/jquery-3.7.1.js"></script>   
+  <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/jquery/jquery.inputmask.min.js"></script>
+  <script src="assets/sweetalert/sweetalert2@11.js"></script> 
+  <script src="assets/js/footer.js?v=4.0.1"></script>
+  <script src="assets/js/funcoes.js?v=4.0.1"></script>
+  <script src="assets/js/menu.js?v=4.0.1"></script>
+  <script src="assets/js/minha-conta-js?v=4.0.1"></script>
+  
+</body>
+</html>

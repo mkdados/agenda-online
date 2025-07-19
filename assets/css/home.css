@@ -38,6 +38,19 @@ main {
     }
 }
 
+.btn-padrao.btn-secondary {
+  background-color: var(--bs-secondary);
+  border-color: var(--bs-secondary);
+  color: #fff;
+
+  &:hover {
+      background-color: #a9a9a9; /* cor mais escura para o hover */
+      border-color: #8c8c8c;
+      color: white; /* garante que o texto continue visível */
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+}
+
 /* Menu lateral */
 #sidebar {
     width: 300px;

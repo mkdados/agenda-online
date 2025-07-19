@@ -613,6 +613,9 @@ async function fn_selecionar_datas(evento,data_inicio){
 
     //Carrega loader=============
     loader.style.display = 'flex'; 
+
+    //esconde datas disponíveis
+    document.getElementById('proximaDataDisponivelDiv').style.display = "none";
     
     //Setar dom=================================================
     // document.getElementById('datasAgendamento').innerHTML = "";  
@@ -711,8 +714,6 @@ async function fn_selecionar_datas(evento,data_inicio){
 
             let contador = 1;
 
-            let ultimoBotaoInserido = null;
-
             lista_datas.forEach(dataStr => {   
               
               if (contador > 7) return; // Limita a 7 datas
@@ -769,7 +770,12 @@ async function fn_selecionar_datas(evento,data_inicio){
 
         }
         else{
-          //console.log("Nenhuma data disponível para agendamento");
+
+          //Seta div            
+          document.getElementById("proximaDataDisponivelDiv").innerHTML = '<div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Nenhuma agenda disponível para agendamento</div>';
+          document.getElementById('proximaDataDisponivelDiv').style.display = "block";
+
+          //======
           Swal.fire({
             toast: true,
             icon: 'info',
