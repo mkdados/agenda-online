@@ -38,6 +38,14 @@ main {
     }
 }
 
+.foto-redonda {
+  border-radius: 50%;
+  object-fit: cover;
+  width: 90px;
+  height: 90px;
+}
+
+
 /* Datas agenda*/
 .data-btn {
     border: 2px solid #d47d48;

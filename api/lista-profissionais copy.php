@@ -148,7 +148,7 @@ foreach ($ids_profissionais as $id) {
                 $caminho_arquivo = $diretorio_fotos . $data['id'] . '.png';
 
                 if (file_exists($caminho_arquivo)) {
-                    $conteudo_atual = file_get_contents($caminho_arquivo);
+                    echo $conteudo_atual = file_get_contents($caminho_arquivo);
 
                     // Só atualiza se for diferente
                     if ($conteudo_atual !== $foto_decodificada) {

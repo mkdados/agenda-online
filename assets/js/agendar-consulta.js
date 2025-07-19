@@ -158,18 +158,25 @@ function fn_carrega_agendamentos(btn) {
         if (i > 1) {
           html += '</div>';
           i = 1;
-        }   
+        }
+        
+        //Versao da foto================================================
+        const agora = new Date();
+        const horas = agora.getHours().toString().padStart(2, '0');
+        const minutos = agora.getMinutes().toString().padStart(2, '0');
+        const segundos = agora.getSeconds().toString().padStart(2, '0');
+        const timestampHora = horas + minutos + segundos;
+        const versao = timestampHora;
 
         html += `
           <div class="my-3 align-items-start border rounded horario-div" data-profissional-id="${prof.profissionalId}">
             <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">              
                 <img 
                 data-profissional-id="${prof.profissionalId}"
-                src="assets/images/medicos/${prof.profissionalId}.png" 
+                src="assets/images/medicos/${prof.profissionalId}.png?v=${versao}" 
                 onerror="this.onerror=null;this.src='assets/images/medicos/foto-medico.png';"
-                class="img-fluid rounded border foto-medico lazy-foto mx-auto mx-md-0 d-block" 
-                alt="Foto do médico" 
-                style="max-width: 90px; border: 1px solid #ccc !important;">
+                class="foto-redonda img-fluid border lazy-foto mx-auto mx-md-0 d-block" 
+                alt="Foto do médico">
               <div class="flex-grow-1">
                 <h3 class="mb-1">${prof.nome}</h3>
                 <small class="text-muted d-block"><strong>CRM:</strong> ${prof.numeroConselho}</small>
