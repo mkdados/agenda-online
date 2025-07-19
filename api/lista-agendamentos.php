@@ -22,7 +22,7 @@ $token = isset($input['token']) ? $input['token'] : null;
 $id_filial = isset($input['id_filial']) ? intval($input['id_filial']) : null;
 $id_agenda_config = isset($input['id_agenda_config']) ? $input['id_agenda_config'] : null;
 $id_profissional = isset($input['id_profissional']) ? $input['id_profissional'] : null;
-$qtd_dias    = ($id_profissional>0) ? 15 : 6;
+$qtd_dias    = 30;
 $data_atual  = date("Y-m-d");
 $hora_atual  = date('H');
 $minuto_atual  = date('i');
@@ -32,8 +32,9 @@ $evento      = isset($input['evento']) ? $input['evento'] : "";
 $data_inicio = isset($input['data_inicio']) ?  $input['data_inicio'] : $data_atual;
 $data_fim    = isset($input['data_fim']) ? $input['data_fim'] : date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
 $turno       = isset($input['turno']) ? $input['turno'] : "";
-$expand      = isset($input['expand']) ? $input['expand'] : 'profissional($select=id,nome)';
-$orderby     = isset($input['orderby']) ? $input['orderby'] : "dataInicio";
+$select      = isset($input['select']) ? $input['select'] : '';
+$expand      = isset($input['expand']) ? $input['expand'] : '';
+$orderby     = isset($input['orderby']) ? $input['orderby'] : '';
 
 //Tratamento se é sexta feira ou final de semana
 if($evento=="carrega_datas"){
@@ -124,15 +125,22 @@ $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params = [ 
-    '$select'  => "id, organizacaoId, filialId, profissionalId, dataInicio, horaInicio, agendaConfigId",
-    '$filter'  => "profissionalId gt 0 and agendaConfig/online eq 'S'",
-    //'$expand'  =>  $expand,
-    '$orderby' =>  $orderby
+    '$filter'  => "profissionalId gt 0 and agendaConfig/online eq 'S'"
 ];
+
+//Select==============================================
+if($select!=""){
+    $params['$select'] = $select;
+}
 
 //Expand==============================================
 if($expand!=""){
     $params['$expand'] = $expand;
+}
+
+//Orderby==============================================
+if($orderby!=""){
+    $params['$orderby'] = $orderby;
 }
 
 //Filtro de pesquisa==============================================
@@ -147,7 +155,7 @@ if($id_agenda_config!=""){
     $filtro .= "and agendaConfigId in ($id_agenda_config)";
 } 
 if($id_profissional!=""){
-    $filtro .= "and profissionalId eq $id_profissional";
+    $filtro .= "and profissionalId in ($id_profissional)";
 } 
 if($turno!=""){
     if($turno=="manha"){

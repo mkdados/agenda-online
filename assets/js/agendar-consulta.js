@@ -83,6 +83,7 @@ function fn_carrega_agendamentos(btn) {
     data_inicio: dataSelecionada,
     data_fim: dataSelecionada,
     turno: turnoSelecionado,
+    select: 'id, organizacaoId, filialId, profissionalId, dataInicio, horaInicio, agendaConfigId',
     expand: 'profissional($select=id,nome,conselhoNumero,especialidadeId),agendaconfig($select=filialId)',
     orderby: 'profissionalId, horaInicio'
   };
@@ -158,37 +159,17 @@ function fn_carrega_agendamentos(btn) {
           html += '</div>';
           i = 1;
         }   
-        
-
-          // //Carrega foto do profissional
-          //       let foto_profissional = "";
-          //       const parametrosProfissionais = {
-          //         id_usuario: id_usuario,
-          //         token: chave,
-          //         id_profissional: 14581
-          //       };
-
-          // // Chama a função que lista os profissionais
-          // fn_lista_profissionais(parametrosProfissionais)
-          // .then((data) => {
-          //     console.log("Profissional encontrado:", data.foto);
-          //       //foto_profissional = 'data:image/png;base64,' + data.foto;
-          // })
-          // .catch((erro) => {
-          //   //console.error("Erro ao buscar profissionais:", erro);
-          // });
-
-        
 
         html += `
           <div class="my-3 align-items-start border rounded horario-div" data-profissional-id="${prof.profissionalId}">
             <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">              
                 <img 
-                  data-profissional-id="${prof.profissionalId}"
-                  src="assets/images/foto-medico.png" 
-                  class="img-fluid rounded border foto-medico lazy-foto mx-auto mx-md-0 d-block" 
-                  alt="Foto do médico" 
-                  style="max-width: 90px; border: 1px solid #ccc !important;">
+                data-profissional-id="${prof.profissionalId}"
+                src="assets/images/medicos/${prof.profissionalId}.png" 
+                onerror="this.onerror=null;this.src='assets/images/medicos/foto-medico.png';"
+                class="img-fluid rounded border foto-medico lazy-foto mx-auto mx-md-0 d-block" 
+                alt="Foto do médico" 
+                style="max-width: 90px; border: 1px solid #ccc !important;">
               <div class="flex-grow-1">
                 <h3 class="mb-1">${prof.nome}</h3>
                 <small class="text-muted d-block"><strong>CRM:</strong> ${prof.numeroConselho}</small>
@@ -428,7 +409,7 @@ function selecionaTipoAtendimento() {
 /*###########################################################################################
     Selecionar datas agendamentos
 ############################################################################################*/ 
-$('#unidadeSelect').on('select2:select', function () {
+$('#unidadeSelect').on('select2:select', async function () {
 
   // Zera select medico======================================
   const selectMedico = document.getElementById('medicoSelect');
@@ -436,12 +417,141 @@ $('#unidadeSelect').on('select2:select', function () {
 
   const idFilialSelecionada = document.getElementById('unidadeSelect').value;
 
+  //Limpar datas selecionadas========================================
+  const containerDatas = document.getElementById('datasAgendamento');
+  containerDatas.innerHTML = '';   
+
   if(idFilialSelecionada){
-    fn_selecionar_datas("selectUnidade","");   
+
+       //Carrega loader=============
+      loader.style.display = 'flex'; 
+
+      //Agenda config================================================
+      const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+      const token = JSON.parse(sessionStorage.getItem('token'));
+      const id_usuario = usuario.id_usuario;
+      const id_organizacao = token?.id_organizacao;
+      const chave = token.chave;
+
+      const parametrosAgendaConfig = {
+        id_usuario: id_usuario,
+        id_organizacao: id_organizacao,
+        id_filial: idFilialSelecionada,
+        token: chave    
+      };
+
+      let id_agenda_config = ""; 
+      let profissional_id = ""; 
+      let profissionaisAgendaConfig = []; // Lista de { id, nome }
+
+      try {
+        const dataAgendaConfig = await fn_lista_agenda_config(parametrosAgendaConfig);
+
+        if (dataAgendaConfig?.value?.length > 0) {
+          // Extrai os IDs e junta por vírgula
+          id_agenda_config = dataAgendaConfig.value.map(item => item.id).join(",");
+          profissional_id = dataAgendaConfig.value.map(item => item.profissionalId).join(",");
+
+          // Pega o ID do profissional e o nome
+          dataAgendaConfig.value.forEach(item => {
+            const profissional = item.profissional;
+            if (profissional?.id && profissional?.nome) {
+              const jaExiste = profissionaisAgendaConfig.some(p => p.id === profissional.id);
+              if (!jaExiste) {
+                profissionaisAgendaConfig.push({
+                  id: profissional.id,
+                  nome: profissional.nome
+                });
+
+              }
+            }
+          });
+
+          //Carrega foto do profissional
+          const parametros = {
+            id_usuario: id_usuario,
+            token: chave,
+            id_profissional: profissional_id
+          };
+
+          try {
+            const data = fn_lista_profissionais(parametros);
+          } catch (erro) {
+            //console.warn("Erro ao carregar foto:", erro);
+          }
+
+
+          //Salvar dados no banco IndexedDB
+          await salvarAgendaConfigIndexedDB(id_agenda_config, profissional_id, profissionaisAgendaConfig);  
+          
+          //Selecionar datas
+          fn_selecionar_datas("selectUnidade",""); 
+
+        } else {
+          //console.warn("Nenhuma agenda config encontrada");
+          //Carrega loader=============
+          loader.style.display = 'none'; 
+
+          Swal.fire({
+            toast: true,
+            icon: 'info',
+            title: 'Sem datas disponíveis para agendamento',
+            position: 'bottom-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          });
+          
+        }
+      } catch (err) {
+        //console.error("Erro ao listar agendamentos:", err);
+         //Carrega loader=============
+         loader.style.display = 'none'; 
+      }     
+      
+
+        // Função para salvar os dados
+        async function salvarAgendaConfigIndexedDB(id_agenda_config, profissional_id, profissionaisAgendaConfig) {
+          try {
+            const db = await openIndexedDB();
+            const tx = db.transaction('agendaConfig', 'readwrite');
+            const store = tx.objectStore('agendaConfig');
+
+            const dados = {
+              id: 'config1', // Chave primária fixa ou pode ser dinâmica
+              id_agenda_config,
+              profissional_id,
+              profissionaisAgendaConfig
+            };
+
+            store.put(dados);
+
+            tx.oncomplete = () => {
+              //console.log('Dados salvos com sucesso no IndexedDB.');
+              db.close();
+            };
+
+            tx.onerror = () => {
+              console.error('Erro ao salvar no IndexedDB:', tx.error);
+            };
+          } catch (error) {
+            console.error('Erro ao abrir IndexedDB:', error);
+          }
+        }
+       
   } 
 });
 
 $('#medicoSelect').on('select2:select', function () {
+
+  //Limpar datas selecionadas========================================
+  const containerDatas = document.getElementById('datasAgendamento');
+  containerDatas.innerHTML = ''; 
+
   fn_selecionar_datas("selectMedico","");    
 });
 
@@ -482,37 +592,6 @@ $('#scrollRight').on('click', function () {
     
 });
 
-//Selecionar datas anterior========================================
-$('#scrollLeft').on('click', function () {
-  const scrollContainer = document.getElementById('dataScroll');
-  const hasHorizontalScroll = scrollContainer.scrollWidth > scrollContainer.clientWidth;
-  let carrega_datas = "N";
-
-  if (hasHorizontalScroll) {
-    const scrollLeft = scrollContainer.scrollLeft;
-
-    // Verifica se está no início do scroll (com margem de 20px)
-    if (scrollLeft <= 20) {
-      carrega_datas = "S";
-    }
-  } else {
-    carrega_datas = "S";
-  }
-
-  if (carrega_datas === "S") {
-    const container = document.getElementById("datasAgendamento");
-    const botoes = container.querySelectorAll(".data-btn");
-    const primeiroBotao = botoes[0];
-    const ultimoBotao = botoes[botoes.length - 1]; 
-
-    const data_inicio = primeiroBotao.getAttribute("data-data-agenda");
-    const data_fim = ultimoBotao.getAttribute("data-data-agenda");
-
-    fn_selecionar_datas("menosDatas", data_inicio);  
-  }
-});
-
-
 async function fn_selecionar_datas(evento,data_inicio){  
 
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
@@ -521,8 +600,7 @@ async function fn_selecionar_datas(evento,data_inicio){
     const id_organizacao = token?.id_organizacao;
     const chave = token.chave;
     const idFilialSelecionada = document.getElementById('unidadeSelect').value;
-    const idProfissionalSelecionado = document.getElementById('medicoSelect').value;   
-    const lista_profissionais = []; // Opcional se precisar preencher select
+    const idProfissionalSelecionado = document.getElementById('medicoSelect').value; 
     const lista_datas = [];
     const promises = [];
 
@@ -533,45 +611,42 @@ async function fn_selecionar_datas(evento,data_inicio){
     // document.getElementById('datasAgendamento').innerHTML = "";  
     document.getElementById("agendasMedicos").innerHTML = "";  
 
-    //Agenda config================================================
-    const parametrosAgendaConfig = {
-      id_usuario: id_usuario,
-      id_organizacao: id_organizacao,
-      id_filial: idFilialSelecionada,
-      token: chave    
-    };
+    //Buscar dados AgendaConfig no banco indexedDB=====================
+      async function lerAgendaConfig() {
+        const db = await openIndexedDB();
+        const tx = db.transaction('agendaConfig', 'readonly');
+        const store = tx.objectStore('agendaConfig');
 
-    let id_agenda_config = ""; 
-    let profissionaisAgendaConfig = []; // Lista de { id, nome }
-
-    try {
-      const dataAgendaConfig = await fn_lista_agenda_config(parametrosAgendaConfig);
-
-      if (dataAgendaConfig?.value?.length > 0) {
-        // Extrai os IDs e junta por vírgula
-        id_agenda_config = dataAgendaConfig.value.map(item => item.id).join(",");
-
-        // Pega o ID do profissional e o nome
-        dataAgendaConfig.value.forEach(item => {
-          const profissional = item.profissional;
-          if (profissional?.id && profissional?.nome) {
-            const jaExiste = profissionaisAgendaConfig.some(p => p.id === profissional.id);
-            if (!jaExiste) {
-              profissionaisAgendaConfig.push({
-                id: profissional.id,
-                nome: profissional.nome
-              });
-            }
-          }
+        const dados = await new Promise((resolve, reject) => {
+          const req = store.get('config1');
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
         });
 
-        //console.log("IDs da agendaConfig:", agendaConfigId);
-      } else {
-        //console.warn("Nenhuma agenda config encontrada");
+        db.close();
+        return dados;
       }
-    } catch (err) {
-      console.error("Erro ao listar agendamentos:", err);
-    }
+
+      let id_agenda_config = "";
+      let profissional_id = "";
+      let profissionaisAgendaConfig = []; // Lista de { id, nome }
+
+      
+      try {
+        const dados = await lerAgendaConfig();
+
+        if (dados) {
+          id_agenda_config = dados.id_agenda_config || "";
+          profissional_id = dados.profissional_id || "";
+          profissionaisAgendaConfig = dados.profissionaisAgendaConfig || [];
+        } else {
+          // Se não tiver dados salvos, mantém os valores padrão
+          console.log('Nenhuma configuração de agenda encontrada no IndexedDB.');
+        }
+
+      } catch (error) {
+        console.error('Erro ao carregar dados da agenda:', error);
+      }
 
 
     //Lista agendamentos=====================================================================
@@ -580,8 +655,10 @@ async function fn_selecionar_datas(evento,data_inicio){
         id_organizacao: id_organizacao,
         id_filial: idFilialSelecionada,
         token: chave,
-        id_agenda_config: id_agenda_config//, 
-        //expand: 'profissional($select=id,nome),agendaconfig($select=filialId)'        
+        id_agenda_config: id_agenda_config,
+        id_profissional: profissional_id,
+        select: 'dataInicio',
+        orderby: 'dataInicio'      
     };
 
     if(idProfissionalSelecionado){
@@ -609,13 +686,6 @@ async function fn_selecionar_datas(evento,data_inicio){
                             lista_datas.push(somenteData);
                         }
                     }                      
-                    //Lista profissionais=====================================================
-                    // if (agendamento.profissional) {
-                    //   const jaExiste = lista_profissionais.some(p => p.id === agendamento.profissional.id);
-                    //   if (!jaExiste) {
-                    //     lista_profissionais.push(agendamento.profissional);
-                    //   }
-                    // }                   
                 });
             }
         })
@@ -627,13 +697,19 @@ async function fn_selecionar_datas(evento,data_inicio){
 
     Promise.all(promises).then(() => {
         if (lista_datas.length > 0) {
-            const containerDatas = document.getElementById('datasAgendamento');
-            containerDatas.innerHTML = '';
+            const containerDatas = document.getElementById('datasAgendamento');        
 
             const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
             const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
-            lista_datas.forEach(dataStr => {
+            let contador = 1;
+
+            let ultimoBotaoInserido = null;
+
+            lista_datas.forEach(dataStr => {   
+              
+              if (contador > 7) return; // Limita a 7 datas
+
                 const [ano, mes, dia] = dataStr.split('-');
                 const dataObj = new Date(ano, mes - 1, dia);
 
@@ -648,24 +724,25 @@ async function fn_selecionar_datas(evento,data_inicio){
                     <span class="small d-block">${mesNome}</span>
                 </button>`;
 
-                containerDatas.insertAdjacentHTML('beforeend', html);
+                containerDatas.insertAdjacentHTML('beforeend', html);                   
+
+                contador++;
 
             });
 
+            //Mostra datas disponíveis
             document.getElementById('proximaDataDisponivelDiv').style.display = "block";
 
             //Carrega profissionais============================================================================ 
             if(evento=="selectUnidade"){           
                 // Ordena por nome (alfabético)
-                //lista_profissionais.sort((a, b) => a.nome.localeCompare(b.nome));
                 profissionaisAgendaConfig.sort((a, b) => a.nome.localeCompare(b.nome));
 
                 // Preenche o select
                 const selectMedico = document.getElementById('medicoSelect');
                 selectMedico.innerHTML = '<option value="">Todos os Médicos</option>';
 
-                //lista_profissionais.forEach(profissional => {
-                  profissionaisAgendaConfig.forEach(profissional => {
+                profissionaisAgendaConfig.forEach(profissional => {
                   
                   const option = document.createElement('option');
                   option.value = profissional.id;
@@ -684,10 +761,38 @@ async function fn_selecionar_datas(evento,data_inicio){
             }      
 
         }
+        else{
+          //console.log("Nenhuma data disponível para agendamento");
+          Swal.fire({
+            toast: true,
+            icon: 'info',
+            title: 'Sem datas disponíveis para agendamento',
+            position: 'bottom-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          });
+        }
 
-        // Volta scroll suavemente para o início
-        const scrollContainer = document.getElementById('dataScroll');
-        scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
+        // scroll suavemente para o final da lista de datas
+        if (evento == "maisDatas") {
+            const scrollContainer = document.getElementById('dataScroll');
+
+            setTimeout(() => {
+                //console.log("Rolando para a direita");
+
+                scrollContainer.scrollTo({
+                    left: scrollContainer.scrollLeft + 180, // rola mais visivelmente
+                    behavior: 'smooth'
+                });
+
+            }, 50);
+        }
+       
 
         //Fecha loader===============
         loader.style.display = 'none';

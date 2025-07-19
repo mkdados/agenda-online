@@ -69,7 +69,7 @@ $request_body           = json_encode([]);
 $params = [ 
     '$select' => 'id, filialId, profissionalId',
     '$expand' => 'profissional($select=id,nome)',
-    '$filter' => "ativado eq 'S'"
+    '$filter' => "ativado eq 'S' and online eq 'S'",
 ];
 
 if($id_filial>0){

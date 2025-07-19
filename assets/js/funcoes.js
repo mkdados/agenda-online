@@ -134,3 +134,25 @@ function isBase64(str) {
 
   return base64Regex.test(str);
 }
+
+
+// Função auxiliar para abrir o banco de dados e garantir a store
+function openIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('AgendaDB', 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+
+      // Cria o objectStore se não existir
+      if (!db.objectStoreNames.contains('agendaConfig')) {
+        db.createObjectStore('agendaConfig', { keyPath: 'id' });
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+
