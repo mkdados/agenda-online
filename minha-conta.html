@@ -118,7 +118,7 @@
               <i class="fa-solid fa-user me-2" style="color: #d47d48;"></i>Nome
             </label><br>
             <span id="nomeLabel"></span>            
-            <input type="text" id="nome" name="nome" class="form-control d-none" placeholder="Nome completo" required>
+            <input type="text" id="nome" name="nome" class="form-control d-none" placeholder="Nome completo" autocomplete="off" required>
           </div>
 
           <!-- Data de Nascimento -->
@@ -127,7 +127,7 @@
               <i class="fa-solid fa-calendar-days me-2" style="color: #d47d48;"></i>Data de Nascimento
             </label><br>
             <span id="dataNascimentoLabel"></span>            
-            <input type="text" id="dataNascimento" name="dataNascimento" class="form-control d-none" placeholder="__/__/____" required>
+            <input type="text" id="dataNascimento" name="dataNascimento" inputmode="numeric" class="form-control d-none" placeholder="__/__/____" autocomplete="off" required>
           </div>
 
           <!-- Celular -->
@@ -136,7 +136,7 @@
               <i class="fa-solid fa-mobile-screen-button me-2" style="color: #d47d48;"></i>Celular
             </label><br>
             <span id="celularLabel"></span>
-            <input type="text" id="celular" name="celular" class="form-control d-none" placeholder="(00) 00000-0000" required>
+            <input type="text" id="celular" name="celular" inputmode="numeric" class="form-control d-none" placeholder="(00) 0000-0000" autocomplete="off" required>
           </div>
 
           <!-- Email -->
