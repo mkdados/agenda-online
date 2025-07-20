@@ -51,6 +51,21 @@ main {
   }
 }
 
+/* Formulário */
+.form-control{
+    padding: 0.6rem;
+    border-radius: 1rem;
+}
+
+.input-group-text{
+    border-radius: 1rem;
+}
+
+.form-control:focus {
+    border-color: #f1b49c;
+    box-shadow: 0 0 0 0.25rem rgba(244, 180, 156, 0.5);
+}
+
 /* Menu lateral */
 #sidebar {
     width: 300px;

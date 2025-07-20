@@ -1,8 +1,10 @@
 <?php
 
-include_once '../../../config/config.php'; // contém $conn (MySQLi)
-
-header('Content-Type: application/json');
+include_once '../../../config/config.php'; 
+include_once 'funcoes.php';
+include_once 'init.php';
+include_once 'curl.php';
+include_once 'log-integracao.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);

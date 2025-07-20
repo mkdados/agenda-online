@@ -1,9 +1,9 @@
-function fn_lista_agendamentos(parametros) {
-  const url = 'api/lista-agendamentos.php';
+function fn_atualizar_usuario(parametros) {
+  const url = 'api/atualizar-usuario.php';
   const body = parametros;
 
   const options = {
-    method: 'POST',
+    method: 'PATCH',
     headers: {
       'Content-Type': 'application/json'
     },

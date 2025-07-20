@@ -89,29 +89,35 @@
     <!-- Conteúdo principal -->
     <div id="content" class="container-fluid">
 
-        <!-- Não esqueça de incluir o CSS do Font Awesome no <head> da sua página: -->
-        <form id="minhaContaForm" class="row g-3 mt-4 p-4 rounded shadow-sm bg-white border">
+       <!-- Título-->
+      <div class="col-12">
+        <h4 class="fw-bold my-3"> Minha Conta</h4>
+      </div>
 
-          <!-- Título opcional -->
-          <div class="col-12">
-            <h4 class="fw-bold mb-3"> Minha Conta</h4>
-          </div>
+        <!-- Não esqueça de incluir o CSS do Font Awesome no <head> da sua página: -->
+        <form id="minhaContaForm" class="row g-3 mt-4 p-4 rounded shadow-sm bg-white border">        
+
+           <div class="col-12">
+            <h5 class="fw-bold text-secondary mb-3"> 
+              <i class="fa-solid fa-user me-2" style="color: #d47d48;"></i>Dados da Conta
+            </h5><hr>
+          </div> 
 
           <!-- CPF -->
           <div class="col-md-6">
             <label for="cpf" class="form-label fw-bold text-secondary">
               <i class="fa-solid fa-id-card me-2" style="color: #d47d48;"></i>CPF
             </label><br>
-            <span id="cpfLabel">123.456.789-00</span>
-            <input type="text" id="cpf" name="cpf" inputmode="numeric" class="form-control d-none" placeholder="Digite seu CPF" required>
+            <span id="cpfLabel"></span>
+            <input type="text" id="cpf" name="cpf" inputmode="numeric" class="form-control d-none" style="background-color: #e1dede;" placeholder="Digite seu CPF" required disabled>
           </div>
 
           <!-- Nome Completo -->
           <div class="col-md-6">
             <label for="nome" class="form-label fw-bold text-secondary">
-              <i class="fa-solid fa-user me-2" style="color: #d47d48;"></i>Nome Completo
+              <i class="fa-solid fa-user me-2" style="color: #d47d48;"></i>Nome
             </label><br>
-            <span id="nomeLabel">PACIENTE DE TESTE</span>            
+            <span id="nomeLabel"></span>            
             <input type="text" id="nome" name="nome" class="form-control d-none" placeholder="Nome completo" required>
           </div>
 
@@ -120,7 +126,7 @@
             <label for="dataNascimento" class="form-label fw-bold text-secondary">
               <i class="fa-solid fa-calendar-days me-2" style="color: #d47d48;"></i>Data de Nascimento
             </label><br>
-            <span id="dataNascimentoLabel">11/05/1986</span>            
+            <span id="dataNascimentoLabel"></span>            
             <input type="text" id="dataNascimento" name="dataNascimento" class="form-control d-none" placeholder="__/__/____" required>
           </div>
 
@@ -129,7 +135,7 @@
             <label for="celular" class="form-label fw-bold text-secondary">
               <i class="fa-solid fa-mobile-screen-button me-2" style="color: #d47d48;"></i>Celular
             </label><br>
-            <span id="celularLabel">(11) 91234-8576</span>
+            <span id="celularLabel"></span>
             <input type="text" id="celular" name="celular" class="form-control d-none" placeholder="(00) 00000-0000" required>
           </div>
 
@@ -138,40 +144,60 @@
             <label for="email" class="form-label fw-bold text-secondary">
               <i class="fa-solid fa-envelope me-2" style="color: #d47d48;"></i>E-mail
             </label><br>
-            <span id="emailLabel">mkdados@gmail.com</span>
+            <span id="emailLabel"></span>
             <input type="email" id="email" name="email" class="form-control d-none" placeholder="seu@e-mail.com" required>
           </div>
 
           <!-- Espaço -->
           <div class="col-md-6"></div>
 
-          <!-- Senha (oculto) -->
-          <div class="col-md-6 d-none">
-            <label for="senha" class="form-label fw-bold text-secondary">
-              <i class="fa-solid fa-lock me-2" style="color: #d47d48;"></i>Senha
-            </label>
-            <input type="password" id="senha" name="senha" class="form-control d-none" placeholder="*****" required>
-          </div>
-
-          <!-- Confirmar Senha (oculto) -->
-          <div class="col-md-6 d-none">
-            <label for="confirmarSenha" class="form-label fw-bold text-secondary">
-              <i class="fa-solid fa-lock me-2" style="color: #d47d48;"></i>Confirmar Senha
-            </label>
-            <input type="password" id="confirmarSenha" name="confirmarSenha" class="form-control" placeholder="*****" required>
-          </div>
-
           <!-- Botão -->
           <div class="col-12 d-flex gap-2">
-            <button type="button" id="btnEditar" class="btn btn-sm btn-padrao py-2">
+            <button type="button" id="btnEditar" class="btn btn-padrao">
               <i class="fa fa-pen me-2"></i> Editar
             </button>
-            <button type="button" id="btnCancelar" class="btn btn-sm btn-padrao btn-secondary py-2 d-none">
+            <button type="button" id="btnCancelar" class="btn btn-padrao btn-secondary d-none">
               <i class="fa fa-times me-2"></i> Cancelar
             </button>
           </div>
 
         </form>
+
+        <!-- Alteração de Senha -->
+        <form id="alteracaoSenhaForm" class="row g-3 mt-4 p-4 rounded shadow-sm bg-white border"> 
+          <div class="col-12">
+            <h5 class="fw-bold text-secondary mb-3">
+              <i class="fa-solid fa-lock me-2" style="color: #d47d48;"></i>Alterar Senha
+            </h5><hr>
+          </div>
+
+          <!-- Senha Atual -->
+          <div class="col-md-6">
+            <label for="senhaAtual" class="form-label fw-bold text-secondary">Senha Atual</label>
+            <input type="password" class="form-control" id="senhaAtual" name="senhaAtual" placeholder="Digite sua senha atual" required>
+          </div>
+
+          <!-- Nova Senha -->
+          <div class="col-md-6">
+            <label for="novaSenha" class="form-label fw-bold text-secondary">Nova Senha</label>
+            <input type="password" class="form-control" id="novaSenha" name="novaSenha" placeholder="Digite a nova senha" required>
+          </div>
+
+          <!-- Confirmar Nova Senha -->
+          <div class="col-md-6">
+            <label for="confirmarNovaSenha" class="form-label fw-bold text-secondary">Confirmar Nova Senha</label>
+            <input type="password" class="form-control" id="confirmarNovaSenha" name="confirmarNovaSenha" placeholder="Confirme a nova senha" required>
+          </div>
+
+          <!-- Botão -->
+          <div class="col-12 d-flex gap-3">
+            <button type="button" id="btnSalvarNovaSenha" class="btn btn-padrao">
+              <i class="fa fa-save me-2"></i> Salvar
+            </button>
+          </div>
+
+        </form>
+
 
 
 
@@ -192,7 +218,10 @@
   <script src="assets/js/footer.js?v=4.0.1"></script>
   <script src="assets/js/funcoes.js?v=4.0.1"></script>
   <script src="assets/js/menu.js?v=4.0.1"></script>
+  <script src="assets/js/lista-usuario.js?v=4.0.1"></script>
+  <script src="assets/js/atualizar-usuario.js?v=4.0.1"></script>
   <script src="assets/js/minha-conta.js?v=4.0.1"></script>
-  
+
+
 </body>
 </html>

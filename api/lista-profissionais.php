@@ -20,21 +20,19 @@ $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
 $id_profissional = isset($input['id_profissional']) ? $input['id_profissional'] : null;
 
-// Valida usuário
+// Valida usuário e token
 if (!$id_usuario) {
     http_response_code(400);
     echo json_encode(['erro' => 'id_usuario inválido ou não enviado']);
     exit;
 }
-
-// Valida token
 if (!$token) {
     http_response_code(400);
     echo json_encode(['erro' => 'token inválido ou não enviado']);
     exit;
 }
 
-// Valida id_profissional (aceita string "1,2,3" ou array [1,2,3])
+// Valida id_profissional
 if (!$id_profissional) {
     http_response_code(400);
     echo json_encode(['erro' => 'id_profissional inválido ou não enviado']);
@@ -51,7 +49,7 @@ if (is_string($id_profissional)) {
     exit;
 }
 
-// Diretório das fotos - ajuste para seu caminho local
+// Diretórios
 $diretorio_fotos = '../assets/images/medicos/';
 $url_base_fotos = '../assets/images/medicos/';
 
@@ -60,7 +58,6 @@ if (!file_exists($diretorio_fotos)) {
     mkdir($diretorio_fotos, 0755, true);
 }
 
-// Caminho da imagem padrão
 $caminho_foto_padrao = $diretorio_fotos . 'foto-medico.png';
 
 // Busca dados da integração
@@ -95,26 +92,6 @@ $request_body = json_encode([]);
 $dados_profissionais = [];
 $erros = [];
 
-// Separamos os ids para consultar na API (só os que não têm foto salva)
-$ids_para_consultar = [];
-$ids_ja_existentes = [];
-
-// foreach ($ids_profissionais as $id) {
-//     $caminho_foto = $diretorio_fotos . $id . '.png';
-//     if (file_exists($caminho_foto)) {
-//         // Foto já existe: retorna info básica
-//         $dados_profissionais[] = [
-//             'id' => $id,
-//             'foto_url' => $url_base_fotos . $id . '.png'
-//         ];
-//         $ids_ja_existentes[] = $id;
-//     } else {
-//         // Foto não existe, vamos buscar na API
-//         $ids_para_consultar[] = $id;
-//     }
-// }
-
-// Agora busca só os profissionais que precisam
 foreach ($ids_profissionais as $id) {
     $params = [
         '$select' => "id,organizacaoId,nome,foto,conselhoNumero"
@@ -139,39 +116,55 @@ foreach ($ids_profissionais as $id) {
     $response    = $curl_result['response'] ?? '';
 
     if ($sucesso === 'S' && $data) {
-        // Salva imagem da foto, se existir e diferente
+        $caminho_arquivo = $diretorio_fotos . $data['id'] . '.png';
+
         if (!empty($data['foto'])) {
             $foto_base64 = $data['foto'];
             $foto_decodificada = base64_decode($foto_base64);
 
             if ($foto_decodificada !== false) {
-                $caminho_arquivo = $diretorio_fotos . $data['id'] . '.png';
+                $image = imagecreatefromstring($foto_decodificada);
 
-                if (file_exists($caminho_arquivo)) {
-                    $conteudo_atual = file_get_contents($caminho_arquivo);
+                if ($image !== false) {
+                    // Cria nova imagem 90x90 com fundo transparente
+                    $width = 90;
+                    $height = 90;
+                    $image_resized = imagecreatetruecolor($width, $height);
 
-                    // Só atualiza se for diferente
-                    if ($conteudo_atual !== $foto_decodificada) {
-                        file_put_contents($caminho_arquivo, $foto_decodificada);
-                    }
+                    // Preserve transparência
+                    imagealphablending($image_resized, false);
+                    imagesavealpha($image_resized, true);
+                    $transparent = imagecolorallocatealpha($image_resized, 0, 0, 0, 127);
+                    imagefilledrectangle($image_resized, 0, 0, $width, $height, $transparent);
+
+                    // Redimensiona mantendo transparência
+                    imagecopyresampled(
+                        $image_resized, $image,
+                        0, 0, 0, 0,
+                        $width, $height,
+                        imagesx($image), imagesy($image)
+                    );
+
+                    // Salva imagem redimensionada
+                    imagepng($image_resized, $caminho_arquivo);
+
+                    imagedestroy($image_resized);
+                    imagedestroy($image);
                 } else {
-                    // Arquivo não existe, grava pela primeira vez
-                    file_put_contents($caminho_arquivo, $foto_decodificada);
+                    // Falha ao criar imagem da string: usa padrão
+                    copy($caminho_foto_padrao, $caminho_arquivo);
                 }
-
-                $data['foto_url'] = $url_base_fotos . $data['id'] . '.png';
             } else {
-                // Base64 inválido — copia imagem padrão
-                $caminho_arquivo = $diretorio_fotos . $data['id'] . '.png';
+                // Base64 inválido: copia padrão
                 copy($caminho_foto_padrao, $caminho_arquivo);
-                $data['foto_url'] = $url_base_fotos . $data['id'] . '.png';
             }
         } else {
-            // Foto não existe na API — grava imagem padrão
-            $caminho_arquivo = $diretorio_fotos . $data['id'] . '.png';
+            // Sem foto na API: copia padrão
             copy($caminho_foto_padrao, $caminho_arquivo);
-            $data['foto_url'] = $url_base_fotos . $data['id'] . '.png';
         }
+
+        // Atualiza a URL para evitar cache
+        $data['foto_url'] = $url_base_fotos . $data['id'] . '.png?v=' . time();
 
         $dados_profissionais[] = $data;
     } else {
@@ -182,7 +175,7 @@ foreach ($ids_profissionais as $id) {
         ];
     }
 
-    // Grava log
+    // Log da integração
     fn_log_integracao([
         'id_cliente' => $id_cliente,
         'id_integracao' => $id_integracao,

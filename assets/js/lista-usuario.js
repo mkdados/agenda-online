@@ -1,5 +1,5 @@
-function fn_lista_agendamentos(parametros) {
-  const url = 'api/lista-agendamentos.php';
+function fn_lista_usuario(parametros) {
+  const url = 'api/lista-usuario.php';
   const body = parametros;
 
   const options = {

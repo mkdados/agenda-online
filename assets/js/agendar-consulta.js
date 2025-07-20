@@ -159,21 +159,13 @@ function fn_carrega_agendamentos(btn) {
           html += '</div>';
           i = 1;
         }
-        
-        //Versao da foto================================================
-        const agora = new Date();
-        const horas = agora.getHours().toString().padStart(2, '0');
-        const minutos = agora.getMinutes().toString().padStart(2, '0');
-        const segundos = agora.getSeconds().toString().padStart(2, '0');
-        const timestampHora = horas + minutos + segundos;
-        const versao = timestampHora;
 
         html += `
           <div class="my-3 align-items-start border rounded horario-div" data-profissional-id="${prof.profissionalId}">
             <div class="d-flex align-items-start gap-4 mt-3 px-3 flex-wrap flex-md-nowrap">              
                 <img 
                 data-profissional-id="${prof.profissionalId}"
-                src="assets/images/medicos/${prof.profissionalId}.png?v=${versao}" 
+                src="assets/images/medicos/${prof.profissionalId}.png?v=${new Date().getTime()}" 
                 onerror="this.onerror=null;this.src='assets/images/medicos/foto-medico.png';"
                 class="foto-redonda img-fluid border lazy-foto mx-auto mx-md-0 d-block" 
                 alt="Foto do médico">
@@ -340,74 +332,82 @@ function selecionaTipoAtendimento() {
       }
       else{
 
-          // Dados do storage
+        // Dados do storage
         const usuario = JSON.parse(sessionStorage.getItem('usuario'));
         const token = JSON.parse(sessionStorage.getItem('token'));
         const id_usuario = usuario.id_usuario;
-        const chave = token.chave;  
+        const chave = token.chave; 
+        const selectFilial = document.getElementById('unidadeSelect'); 
 
-        loader.style.display = 'flex'; // mostra o loader       
+        if (!selectFilial.value) {
 
-        // Listar filiais
-        const parametrosFiliais = {
-          id_usuario: id_usuario,
-          token: chave
-        };
-        fn_lista_filiais(parametrosFiliais)
-           .then(data => {
-              const listaFilials = data.value;
-              const selectFilial = document.getElementById('unidadeSelect');
-              selectFilial.innerHTML = '<option value="">Selecione uma unidade</option>';
+          loader.style.display = 'flex'; // mostra o loader       
 
-              if (Array.isArray(listaFilials)) {
+          // Listar filiais
+          const parametrosFiliais = {
+            id_usuario: id_usuario,
+            token: chave
+          };
+          fn_lista_filiais(parametrosFiliais)
+            .then(data => {
+                const listaFilials = data.value;
+                selectFilial.innerHTML = '<option value="">Selecione uma unidade</option>';
 
-                //Filiais
-                listaFilials.forEach(filial => {
-                  const option = document.createElement('option');
+                if (Array.isArray(listaFilials)) {
 
-                  //Endereço------------------------
-                  let endereco = "";
-                  let endereco_logradouro = (filial.endereco) ? filial?.endereco?.logradouro : "";
-                  let endereco_numero =  (filial.endereco) ? filial?.endereco?.numero : "";
-                  let endereco_complemento =  (filial.endereco) ? filial?.endereco?.complemento : "";
-                  let endereco_bairro =  (filial.endereco) ? filial?.endereco?.bairro : "";
-                  let endereco_municipio =  (filial.endereco) ? filial?.endereco?.municipio : "";
-                  let endereco_uf =  (filial.endereco) ? filial?.endereco?.uf : "";
-                  let endereco_maps = "";
-                  let endereco_link = "";
+                  //Filiais
+                  listaFilials.forEach(filial => {
+                    const option = document.createElement('option');
 
-                  endereco += (endereco_logradouro) ? endereco_logradouro : "";
-                  endereco += (endereco_numero) ? ", "+endereco_numero : "";
-                  endereco += (endereco_complemento) ? ", "+endereco_complemento : "";
-                  endereco += (endereco_bairro) ? ", "+endereco_bairro : "";
-                  endereco += (endereco_municipio) ? ", "+endereco_municipio : "";
-                  endereco += (endereco_uf) ? " - "+endereco_uf : "";
+                    //Endereço------------------------
+                    let endereco = "";
+                    let endereco_logradouro = (filial.endereco) ? filial?.endereco?.logradouro : "";
+                    let endereco_numero =  (filial.endereco) ? filial?.endereco?.numero : "";
+                    let endereco_complemento =  (filial.endereco) ? filial?.endereco?.complemento : "";
+                    let endereco_bairro =  (filial.endereco) ? filial?.endereco?.bairro : "";
+                    let endereco_municipio =  (filial.endereco) ? filial?.endereco?.municipio : "";
+                    let endereco_uf =  (filial.endereco) ? filial?.endereco?.uf : "";
+                    let endereco_maps = "";
+                    let endereco_link = "";
 
-                  if(endereco){
-                    endereco_maps = `https://www.google.com/maps/search/?api=1&query=${endereco_logradouro},+${endereco_numero},+${endereco_municipio},+${endereco_uf}`;
-                    endereco_link = `<a href="${endereco_maps}" target="_blank" rel="noopener" style="color:#000000;">${endereco}</a>`;
-                  }             
+                    endereco += (endereco_logradouro) ? endereco_logradouro : "";
+                    endereco += (endereco_numero) ? ", "+endereco_numero : "";
+                    endereco += (endereco_complemento) ? ", "+endereco_complemento : "";
+                    endereco += (endereco_bairro) ? ", "+endereco_bairro : "";
+                    endereco += (endereco_municipio) ? ", "+endereco_municipio : "";
+                    endereco += (endereco_uf) ? " - "+endereco_uf : "";
 
-                  //Option----------------------------------------------
-                  option.value = filial.id;
-                  option.textContent = filial.nomeCompleto;
-                  option.setAttribute('data-endereco-unidade', endereco_link);
-                  selectFilial.appendChild(option);
-                });
+                    if(endereco){
+                      endereco_maps = `https://www.google.com/maps/search/?api=1&query=${endereco_logradouro},+${endereco_numero},+${endereco_municipio},+${endereco_uf}`;
+                      endereco_link = `<a href="${endereco_maps}" target="_blank" rel="noopener" style="color:#000000;">${endereco}</a>`;
+                    }             
 
-                loader.style.display = 'none'; // esconde o loader
-              } else {
-                console.warn('Formato de resposta inesperado:', data);
-                loader.style.display = 'none'; // esconde o loader
-              }
+                    //Option----------------------------------------------
+                    option.value = filial.id;
+                    option.textContent = filial.nomeCompleto;
+                    option.setAttribute('data-endereco-unidade', endereco_link);
+                    selectFilial.appendChild(option);
+                  });
 
-              //Avança a etapa
-              goToStep(2);
-          })
-          .catch(error => {
-            console.error('Erro ao carregar filiais:', error.message);
-            loader.style.display = 'none';
-          });
+                  loader.style.display = 'none'; // esconde o loader
+                } else {
+                  console.warn('Formato de resposta inesperado:', data);
+                  loader.style.display = 'none'; // esconde o loader
+                }
+
+                //Avança a etapa
+                goToStep(2);
+            })
+            .catch(error => {
+              console.error('Erro ao carregar filiais:', error.message);
+              loader.style.display = 'none';
+            });
+
+        }else{
+          //Avança a etapa
+          goToStep(2);
+        }
+      
       }        
         
     });
@@ -424,9 +424,17 @@ $('#unidadeSelect').on('select2:select', async function () {
 
   const idFilialSelecionada = document.getElementById('unidadeSelect').value;
 
+  //Esconde datas disponíveis=========================================
+  document.getElementById('proximaDataDisponivelDivErro').style.display = "none";
+  document.getElementById('proximaDataDisponivelDiv').style.display = "none"; 
+
   //Limpar datas selecionadas========================================
   const containerDatas = document.getElementById('datasAgendamento');
-  containerDatas.innerHTML = '';   
+
+  if(containerDatas){
+    containerDatas.innerHTML = '';
+  }    
+  
 
   if(idFilialSelecionada){
 
@@ -553,11 +561,19 @@ $('#unidadeSelect').on('select2:select', async function () {
   } 
 });
 
-$('#medicoSelect').on('select2:select', function () {
+$('#medicoSelect').on('select2:select', function () {  
+
+  //Esconde datas disponíveis=========================================
+  document.getElementById('proximaDataDisponivelDivErro').style.display = "none";
+  document.getElementById('proximaDataDisponivelDiv').style.display = "none";
 
   //Limpar datas selecionadas========================================
   const containerDatas = document.getElementById('datasAgendamento');
-  containerDatas.innerHTML = ''; 
+
+  if(containerDatas){
+    containerDatas.innerHTML = ''; 
+  }
+  
 
   fn_selecionar_datas("selectMedico","");    
 });
@@ -613,9 +629,6 @@ async function fn_selecionar_datas(evento,data_inicio){
 
     //Carrega loader=============
     loader.style.display = 'flex'; 
-
-    //esconde datas disponíveis
-    document.getElementById('proximaDataDisponivelDiv').style.display = "none";
     
     //Setar dom=================================================
     // document.getElementById('datasAgendamento').innerHTML = "";  
@@ -771,9 +784,10 @@ async function fn_selecionar_datas(evento,data_inicio){
         }
         else{
 
-          //Seta div            
-          document.getElementById("proximaDataDisponivelDiv").innerHTML = '<div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Nenhuma agenda disponível para agendamento</div>';
-          document.getElementById('proximaDataDisponivelDiv').style.display = "block";
+          //Seta div   
+          document.getElementById('proximaDataDisponivelDivErro').innerHTML = '<div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Nenhuma agenda disponível para agendamento</div>';
+          document.getElementById('proximaDataDisponivelDivErro').style.display = "block";
+          document.getElementById('proximaDataDisponivelDiv').style.display = "none";
 
           //======
           Swal.fire({
