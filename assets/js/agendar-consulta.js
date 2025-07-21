@@ -784,10 +784,13 @@ async function fn_selecionar_datas(evento,data_inicio){
         }
         else{
 
-          //Seta div   
-          document.getElementById('proximaDataDisponivelDivErro').innerHTML = '<div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Nenhuma agenda disponível para agendamento</div>';
-          document.getElementById('proximaDataDisponivelDivErro').style.display = "block";
-          document.getElementById('proximaDataDisponivelDiv').style.display = "none";
+          //Seta div  
+          if(evento!="maisDatas"){
+              document.getElementById('proximaDataDisponivelDivErro').innerHTML = '<div class="alert" role="alert" style="background-color:#f1e2df;color:#d47d48;">Nenhuma agenda disponível para agendamento</div>';
+              document.getElementById('proximaDataDisponivelDivErro').style.display = "block";
+              document.getElementById('proximaDataDisponivelDiv').style.display = "none";
+          } 
+          
 
           //======
           Swal.fire({
