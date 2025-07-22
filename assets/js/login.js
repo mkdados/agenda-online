@@ -91,6 +91,10 @@ async function realizarLogin() {
   }
 
   // Bloco 4 - Agenda Config
+  let id_agenda_config = "";
+  let profissional_id = "";
+  let profissionaisAgendaConfig = [];
+
   try {
 
     const parametrosAgendaConfig = {
@@ -98,10 +102,6 @@ async function realizarLogin() {
       id_organizacao,
       token: chave
     };
-
-    let id_agenda_config = "";
-    let profissional_id = "";
-    let profissionaisAgendaConfig = [];
 
     const dataAgendaConfig = await fn_lista_agenda_config(parametrosAgendaConfig);
 
@@ -124,18 +124,6 @@ async function realizarLogin() {
         }
       });
 
-      // Carrega foto do profissional (opcional)
-      try {
-        const parametros = {
-          id_usuario,
-          token: chave,
-          id_profissional: profissional_id
-        };
-        fn_lista_profissionais(parametros); // se necessário processar resultado, adicione lógica aqui
-      } catch (erro) {
-        // console.warn("Erro ao carregar foto:", erro);
-      }
-
       // Salvar no IndexedDB
       await salvarAgendaConfigIndexedDB(profissionaisAgendaConfig);
 
@@ -144,6 +132,18 @@ async function realizarLogin() {
   } catch (err) {
     loader.style.display = 'none';
     console.error("Erro ao listar agendamentos:", err);
+  }
+  
+  // Bloco 6 - Carrega foto do profissional    
+  try {
+    const parametros = {
+      id_usuario,
+      token: chave,
+      id_profissional: profissional_id
+    };
+    fn_lista_profissionais(parametros); // se necessário processar resultado, adicione lógica aqui
+  } catch (erro) {
+    // console.warn("Erro ao carregar foto:", erro);
   }
 
   // Redireciona após todas as etapas
