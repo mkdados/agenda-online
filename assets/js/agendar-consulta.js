@@ -438,125 +438,128 @@ $('#unidadeSelect').on('select2:select', async function () {
 
   if(idFilialSelecionada){
 
-       //Carrega loader=============
-      loader.style.display = 'flex'; 
+    //Selecionar datas
+    fn_selecionar_datas("selectUnidade",""); 
 
-      //Agenda config================================================
-      const usuario = JSON.parse(sessionStorage.getItem('usuario'));
-      const token = JSON.parse(sessionStorage.getItem('token'));
-      const id_usuario = usuario.id_usuario;
-      const id_organizacao = token?.id_organizacao;
-      const chave = token.chave;
+      //  //Carrega loader=============
+      // loader.style.display = 'flex'; 
 
-      const parametrosAgendaConfig = {
-        id_usuario: id_usuario,
-        id_organizacao: id_organizacao,
-        id_filial: idFilialSelecionada,
-        token: chave    
-      };
+      // //Agenda config================================================
+      // const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+      // const token = JSON.parse(sessionStorage.getItem('token'));
+      // const id_usuario = usuario.id_usuario;
+      // const id_organizacao = token?.id_organizacao;
+      // const chave = token.chave;
 
-      let id_agenda_config = ""; 
-      let profissional_id = ""; 
-      let profissionaisAgendaConfig = []; // Lista de { id, nome }
+      // const parametrosAgendaConfig = {
+      //   id_usuario: id_usuario,
+      //   id_organizacao: id_organizacao,
+      //   id_filial: idFilialSelecionada,
+      //   token: chave    
+      // };
 
-      try {
-        const dataAgendaConfig = await fn_lista_agenda_config(parametrosAgendaConfig);
+      // let id_agenda_config = ""; 
+      // let profissional_id = ""; 
+      // let profissionaisAgendaConfig = []; // Lista de { id, nome }
 
-        if (dataAgendaConfig?.value?.length > 0) {
-          // Extrai os IDs e junta por vírgula
-          id_agenda_config = dataAgendaConfig.value.map(item => item.id).join(",");
-          profissional_id = dataAgendaConfig.value.map(item => item.profissionalId).join(",");
+      // try {
+      //   const dataAgendaConfig = await fn_lista_agenda_config(parametrosAgendaConfig);
 
-          // Pega o ID do profissional e o nome
-          dataAgendaConfig.value.forEach(item => {
-            const profissional = item.profissional;
-            if (profissional?.id && profissional?.nome) {
-              const jaExiste = profissionaisAgendaConfig.some(p => p.id === profissional.id);
-              if (!jaExiste) {
-                profissionaisAgendaConfig.push({
-                  id: profissional.id,
-                  nome: profissional.nome
-                });
+      //   if (dataAgendaConfig?.value?.length > 0) {
+      //     // Extrai os IDs e junta por vírgula
+      //     id_agenda_config = dataAgendaConfig.value.map(item => item.id).join(",");
+      //     profissional_id = dataAgendaConfig.value.map(item => item.profissionalId).join(",");
 
-              }
-            }
-          });
+      //     // Pega o ID do profissional e o nome
+      //     dataAgendaConfig.value.forEach(item => {
+      //       const profissional = item.profissional;
+      //       if (profissional?.id && profissional?.nome) {
+      //         const jaExiste = profissionaisAgendaConfig.some(p => p.id === profissional.id);
+      //         if (!jaExiste) {
+      //           profissionaisAgendaConfig.push({
+      //             id: profissional.id,
+      //             nome: profissional.nome
+      //           });
 
-          //Carrega foto do profissional
-          const parametros = {
-            id_usuario: id_usuario,
-            token: chave,
-            id_profissional: profissional_id
-          };
+      //         }
+      //       }
+      //     });
 
-          try {
-            const data = fn_lista_profissionais(parametros);
-          } catch (erro) {
-            //console.warn("Erro ao carregar foto:", erro);
-          }
+      //     //Carrega foto do profissional
+      //     const parametros = {
+      //       id_usuario: id_usuario,
+      //       token: chave,
+      //       id_profissional: profissional_id
+      //     };
+
+      //     try {
+      //       const data = fn_lista_profissionais(parametros);
+      //     } catch (erro) {
+      //       //console.warn("Erro ao carregar foto:", erro);
+      //     }
 
 
-          //Salvar dados no banco IndexedDB
-          await salvarAgendaConfigIndexedDB(id_agenda_config, profissional_id, profissionaisAgendaConfig);  
+      //     //Salvar dados no banco IndexedDB
+      //     await salvarAgendaConfigIndexedDB(id_agenda_config, profissional_id, profissionaisAgendaConfig);  
           
-          //Selecionar datas
-          fn_selecionar_datas("selectUnidade",""); 
+      //     //Selecionar datas
+      //     fn_selecionar_datas("selectUnidade",""); 
 
-        } else {
-          //console.warn("Nenhuma agenda config encontrada");
-          //Carrega loader=============
-          loader.style.display = 'none'; 
+      //   } else {
+      //     //console.warn("Nenhuma agenda config encontrada");
+      //     //Carrega loader=============
+      //     loader.style.display = 'none'; 
 
-          Swal.fire({
-            toast: true,
-            icon: 'info',
-            title: 'Sem datas disponíveis para agendamento',
-            position: 'bottom-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-              toast.addEventListener('mouseenter', Swal.stopTimer)
-              toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-          });
+      //     Swal.fire({
+      //       toast: true,
+      //       icon: 'info',
+      //       title: 'Sem datas disponíveis para agendamento',
+      //       position: 'bottom-end',
+      //       showConfirmButton: false,
+      //       timer: 3000,
+      //       timerProgressBar: true,
+      //       didOpen: (toast) => {
+      //         toast.addEventListener('mouseenter', Swal.stopTimer)
+      //         toast.addEventListener('mouseleave', Swal.resumeTimer)
+      //       }
+      //     });
           
-        }
-      } catch (err) {
-        //console.error("Erro ao listar agendamentos:", err);
-         //Carrega loader=============
-         loader.style.display = 'none'; 
-      }     
+      //   }
+      // } catch (err) {
+      //   //console.error("Erro ao listar agendamentos:", err);
+      //    //Carrega loader=============
+      //    loader.style.display = 'none'; 
+      // }     
       
 
-        // Função para salvar os dados
-        async function salvarAgendaConfigIndexedDB(id_agenda_config, profissional_id, profissionaisAgendaConfig) {
-          try {
-            const db = await openIndexedDB();
-            const tx = db.transaction('agendaConfig', 'readwrite');
-            const store = tx.objectStore('agendaConfig');
+      //   // Função para salvar os dados
+      //   async function salvarAgendaConfigIndexedDB(id_agenda_config, profissional_id, profissionaisAgendaConfig) {
+      //     try {
+      //       const db = await openIndexedDB();
+      //       const tx = db.transaction('agendaConfig', 'readwrite');
+      //       const store = tx.objectStore('agendaConfig');
 
-            const dados = {
-              id: 'config1', // Chave primária fixa ou pode ser dinâmica
-              id_agenda_config,
-              profissional_id,
-              profissionaisAgendaConfig
-            };
+      //       const dados = {
+      //         id: 'config1', // Chave primária fixa ou pode ser dinâmica
+      //         id_agenda_config,
+      //         profissional_id,
+      //         profissionaisAgendaConfig
+      //       };
 
-            store.put(dados);
+      //       store.put(dados);
 
-            tx.oncomplete = () => {
-              //console.log('Dados salvos com sucesso no IndexedDB.');
-              db.close();
-            };
+      //       tx.oncomplete = () => {
+      //         //console.log('Dados salvos com sucesso no IndexedDB.');
+      //         db.close();
+      //       };
 
-            tx.onerror = () => {
-              console.error('Erro ao salvar no IndexedDB:', tx.error);
-            };
-          } catch (error) {
-            console.error('Erro ao abrir IndexedDB:', error);
-          }
-        }
+      //       tx.onerror = () => {
+      //         console.error('Erro ao salvar no IndexedDB:', tx.error);
+      //       };
+      //     } catch (error) {
+      //       console.error('Erro ao abrir IndexedDB:', error);
+      //     }
+      //   }
        
   } 
 });
@@ -609,6 +612,10 @@ $('#scrollRight').on('click', function () {
     const data_inicio = primeiroBotao.getAttribute("data-data-agenda");
     const data_fim = ultimoBotao.getAttribute("data-data-agenda"); 
 
+    //Remover justify-content-center
+    document.getElementById('dataScroll').classList.remove('justify-content-center');
+
+
     fn_selecionar_datas("maisDatas",data_fim);   
     
   }
@@ -655,21 +662,51 @@ async function fn_selecionar_datas(evento,data_inicio){
       let profissionaisAgendaConfig = []; // Lista de { id, nome }
 
       
+      // try {
+      //   const dados = await lerAgendaConfig();
+      //   console.log(dados);
+      //   if (dados) {
+      //     id_agenda_config = dados.id_agenda_config || "";
+      //     profissional_id = dados.profissional_id || "";
+      //     profissionaisAgendaConfig = dados.profissionaisAgendaConfig || [];
+      //   } else {
+      //     // Se não tiver dados salvos, mantém os valores padrão
+      //     console.log('Nenhuma configuração de agenda encontrada no IndexedDB.');
+      //   }
+
+      // } catch (error) {
+      //   console.error('Erro ao carregar dados da agenda:', error);
+      // }
+
       try {
         const dados = await lerAgendaConfig();
+        console.log(dados);
 
         if (dados) {
-          id_agenda_config = dados.id_agenda_config || "";
-          profissional_id = dados.profissional_id || "";
-          profissionaisAgendaConfig = dados.profissionaisAgendaConfig || [];
+          // Filtra os profissionais da filial selecionada dinamicamente
+          const profissionaisFilialSelecionada = (dados.profissionaisAgendaConfig || []).filter(
+            p => p.id_filial == idFilialSelecionada
+          );
+
+          profissionaisAgendaConfig = profissionaisFilialSelecionada;
+
+          // Junta os IDs e os agenda_config correspondentes
+          profissional_id = profissionaisFilialSelecionada.map(p => p.id).join(',');
+
+          id_agenda_config = [...new Set(
+            profissionaisFilialSelecionada
+              .flatMap(p => (p.id_agenda_config || '').split(','))
+              .filter(id => id !== '')
+          )].join(',');
+
         } else {
-          // Se não tiver dados salvos, mantém os valores padrão
           console.log('Nenhuma configuração de agenda encontrada no IndexedDB.');
         }
 
       } catch (error) {
         console.error('Erro ao carregar dados da agenda:', error);
       }
+
 
 
     //Lista agendamentos=====================================================================
