@@ -122,6 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Exibe loader
     loader.style.display = "flex";
 
+    //Cadastrar acesso do usuário=====================================================
     try {
       const response = await fetch("api/cadastrar-acesso.php", {
         method: "POST",
@@ -162,5 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
         html: "Não foi possível conectar ao servidor."
       });
     }
+
+
   });
 });

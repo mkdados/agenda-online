@@ -12,7 +12,7 @@ async function realizarLogin() {
 
   let id_usuario, cpf, chave, id_organizacao;
 
-  // Bloco 1 - Login
+  // Bloco 1 - Login=====================================================
   try {
     const response = await fetch('api/login.php', {
       method: 'POST',
@@ -41,7 +41,7 @@ async function realizarLogin() {
     });
   }
 
-  // Bloco 2 - Gerar Token
+  // Bloco 2 - Gerar Token=============================================
   try {
     const parametrosToken = { identificador, id_usuario };
     const tokenData = await fn_gera_token(parametrosToken);
@@ -61,36 +61,125 @@ async function realizarLogin() {
     });
   }
 
-  // Bloco 3 - Listar Pacientes
+  // Bloco 3 - Listar Pacientes==========================================
+  const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+  const token = JSON.parse(sessionStorage.getItem('token'));
+  id_usuario = usuario?.id_usuario;
+  chave = token?.chave;
+  id_organizacao = token?.id_organizacao;
+  cpf = usuario?.cpf;
+  nome_usuario = usuario?.nome;
+  dt_nascimento_usuario = usuario?.data_nascimento;
+  email_usuario = usuario?.email;
+  celular_usuario = usuario?.celular;
+
   try {
-    const parametros = { id_usuario, token: chave, cpf };
-    const pacientesData = await fn_lista_pacientes(parametros);
-    const listaPacientes = pacientesData.value;
+      const parametros = { id_usuario, token: chave, cpf };
+      const pacientesData = await fn_lista_pacientes(parametros);
+      const listaPacientes = pacientesData.value;
 
-    listaPacientes.forEach(paciente => {
-      const dados_paciente = {
-        id_paciente: paciente?.id,
-        id_convenio: paciente?.convenio?.id,
-        numero_carteirinha: paciente?.convenio?.numCarteira
-      };
+      // Verifica se algum paciente da lista tem o CPF buscado
+      const normalizarCPF = cpf => cpf?.replace(/\D/g, '');
 
-      const data_paciente = Object.fromEntries(
-        Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
+      const pacienteEncontrado = listaPacientes.find(
+        p => normalizarCPF(p.documento?.cpf) === normalizarCPF(cpf)
       );
 
-      sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
-    });
+      if (pacienteEncontrado) {
+        const dados_paciente = {
+          id_paciente: pacienteEncontrado?.id,
+          id_convenio: pacienteEncontrado?.convenio?.id,
+          numero_carteirinha: pacienteEncontrado?.convenio?.numCarteira
+        };
 
-  } catch (error) {
-    const dados_paciente = {
-      id_paciente: null,
-      id_convenio: null,
-      numero_carteirinha: null
-    };
-    sessionStorage.setItem('paciente', JSON.stringify(dados_paciente));
-  }
+        const data_paciente = Object.fromEntries(
+          Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
+        );
 
-  // Bloco 4 - Agenda Config
+        sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
+        //console.log("Paciente encontrado:", pacienteEncontrado);
+      } else {
+        throw new Error("Paciente não encontrado");
+      }
+    } catch (error) {
+      //console.warn("Paciente não encontrado. Iniciando cadastro...");
+
+      // Cadastra o paciente
+      const response = await fn_cadastrar_paciente({
+        token: chave,
+        data: {
+          organizacaoId: id_organizacao,
+          filialId: id_organizacao,
+          cpf: cpf,
+          nome: nome_usuario,
+          dataNascimento: dt_nascimento_usuario,
+          telefone: celular_usuario,
+          email: email_usuario
+        }
+      });
+
+      if (response.erro) {
+        //console.error("Erro ao cadastrar paciente:", response.erro);
+        return;
+      }
+
+      //console.log("Paciente cadastrado com sucesso:", response);
+
+      // Após cadastro, chama novamente a função para obter e salvar o paciente
+      const parametros = { id_usuario, token: chave, cpf };
+      const pacientesData = await fn_lista_pacientes(parametros);
+      const listaPacientes = pacientesData.value;
+
+      const pacienteNovo = listaPacientes.find(p => p.cpf === cpf);
+
+      if (pacienteNovo) {
+        const dados_paciente = {
+          id_paciente: pacienteNovo?.id,
+          id_convenio: pacienteNovo?.convenio?.id,
+          numero_carteirinha: pacienteNovo?.convenio?.numCarteira
+        };
+
+        const data_paciente = Object.fromEntries(
+          Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
+        );
+
+        sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
+        //console.log("Paciente gravado no sessionStorage após cadastro.");
+      } else {
+        //console.error("Paciente cadastrado mas não encontrado na nova listagem.");
+      }
+    }
+
+
+  // try {
+  //   const parametros = { id_usuario, token: chave, cpf };
+  //   const pacientesData = await fn_lista_pacientes(parametros);
+  //   const listaPacientes = pacientesData.value;
+
+  //   listaPacientes.forEach(paciente => {
+  //     const dados_paciente = {
+  //       id_paciente: paciente?.id,
+  //       id_convenio: paciente?.convenio?.id,
+  //       numero_carteirinha: paciente?.convenio?.numCarteira
+  //     };
+
+  //     const data_paciente = Object.fromEntries(
+  //       Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
+  //     );
+
+  //     sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
+  //   });
+
+  // } catch (error) {
+  //   const dados_paciente = {
+  //     id_paciente: null,
+  //     id_convenio: null,
+  //     numero_carteirinha: null
+  //   };
+  //   sessionStorage.setItem('paciente', JSON.stringify(dados_paciente));
+  // }
+
+  // Bloco 4 - Agenda Config===================================================
   let id_agenda_config = "";
   let profissional_id = "";
   let profissionaisAgendaConfig = [];
@@ -214,147 +303,3 @@ async function limparIndexedDB() {
 
 
 
-
-
-
-
-// // Limpa sessionStorage ao carregar a página de login
-// sessionStorage.clear();
-
-// const loader = document.getElementById('loader');
-
-// async function realizarLogin() {
-//   const identificador = document.getElementById('emailCpf').value.trim();
-//   const senha = document.getElementById('password').value;
-
-//   loader.style.display = 'flex'; // mostra o loader
-
-//   try {
-//     const response = await fetch('api/login.php', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ identificador, senha })
-//     });
-
-//     const data = await response.json();
-
-//     if (response.ok) {  
-
-//       //Seta sessionStorage com os dados do usuário
-//       sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
-//       sessionStorage.setItem('sessao', JSON.stringify(data.sessao));
-//       const id_usuario = data.usuario.id_usuario;
-//       const cpf = data.usuario.cpf;
-
-//       const parametrosToken = {
-//         identificador: identificador,
-//         id_usuario: id_usuario       
-//       };
-      
-//       //Resgata o token===============
-//       fn_gera_token(parametrosToken)
-//         .then(data => {
-
-//           const id_organizacao = data.id_organizacao;
-//           const chave = data.chave;
-//           const duracao = data.duracao;          
-
-//           //Grava o token no sessionStorage
-//           sessionStorage.setItem('token', JSON.stringify({
-//               id_organizacao: id_organizacao,
-//               chave: chave,
-//               duracao: duracao
-//           }));   
-
-//           const parametros = {
-//             id_usuario: id_usuario,
-//             token: chave,
-//             cpf: cpf
-//           };
-
-//           //Pega dados do paciente
-//           fn_lista_pacientes(parametros)
-//             .then(data => {
-//               const listaPacientes = data.value;
-
-//               listaPacientes.forEach(paciente => {
-                  
-//                   const dados_paciente = {
-//                     id_paciente: paciente?.id,
-//                     id_convenio: paciente?.convenio?.id,
-//                     numero_carteirinha: paciente?.convenio?.numCarteira
-//                   };
-
-//                   // Verifica se o paciente tem dados válidos
-//                   const data_paciente = Object.fromEntries(
-//                     Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
-//                   );
-
-//                   //Grava o paciente no sessionStorage
-//                   sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
-
-//               });               
-
-//               //Redireciona para a página home
-//               window.location.href = 'home.html';   
-//             })
-//             .catch(error => {
-
-//               const dados_paciente = {
-//                     id_paciente: null,
-//                     id_convenio: null,
-//                     numero_carteirinha: null
-//                   };
-
-//               // Verifica se o paciente tem dados válidos
-//               const data_paciente = Object.fromEntries(
-//                 Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
-//               );
-
-//               //Grava o paciente no sessionStorage
-//               sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
-
-//               //Redireciona para a página home
-//               window.location.href = 'home.html';
-
-//             });
-               
-
-//         })
-//         .catch(error => {
-//           loader.style.display = 'none'; // esconde o loader
-//           Swal.fire({
-//             icon: 'error',
-//             title: 'Erro',
-//             text: 'Erro inesperado. Tente novamente mais tarde.'
-//           });
-//         });     
-    
-//     } else {
-//       loader.style.display = 'none'; // esconde o loader
-//       Swal.fire({
-//         icon: 'error',
-//         title: 'Erro',
-//         html: data?.erro
-//       });
-//     }
-//   } catch (error) {
-//     loader.style.display = 'none'; // esconde o loader
-//     Swal.fire({
-//       icon: 'error',
-//       title: 'Erro',
-//       text: 'Erro inesperado. Tente novamente mais tarde.'
-//     });
-//   }
-// }
-
-// // Clique no botão
-// document.getElementById('btnLogin').addEventListener('click', realizarLogin);
-
-// // Pressionar Enter no formulário
-// document.getElementById('loginForm').addEventListener('keydown', function(e) {
-//   if (e.key === 'Enter') {
-//     e.preventDefault();
-//     realizarLogin();
-//   }
-// });

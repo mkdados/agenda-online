@@ -16,16 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Lê entrada JSON
 $input = json_decode(file_get_contents('php://input'), true);
-$id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
+$id_organizacao = isset($input['id_organizacao']) ? intval($input['id_organizacao']) : null;
 $token = isset($input['token']) ? $input['token'] : null;
-$cpf   = isset($input['cpf']) ? $input['cpf'] : null;
-
-// Valida usuário
-if (!$id_usuario) {
-    http_response_code(400);
-    echo json_encode(['erro' => 'id_usuario inválido ou não enviado']);
-    exit;
-}
+$dados_paciente = $input['data'] ?? null;
 
 // Valida token
 if (!$token) {
@@ -34,8 +27,14 @@ if (!$token) {
     exit;
 }
 
+if (!$dados_paciente || !is_array($dados_paciente)) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'Dados de agendamento inválidos ou não enviados']);
+    exit;
+}
+
 // Busca dados da integração
-$nome_endpoint = 'LISTAR_PACIENTES';
+$nome_endpoint = 'CADASTRAR_PACIENTE';
 
 $query = "
     SELECT c.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
@@ -52,7 +51,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
     http_response_code(404);
-    echo json_encode(["erro" => "Integração 'AUTENTICACAO' não encontrada"]);
+    echo json_encode(["mensagem" => "Integração 'AUTENTICACAO' não encontrada"]);
     exit;
 }
 
@@ -62,19 +61,7 @@ $id_integracao_endpoint = $row["id_integracao_endpoint"];
 $url_integracao         = $row["url"].$row["rota"];
 $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
-$request_body           = json_encode([]);
-$params = [
-    '$select' => 'organizacaoId, id, documento/cpf',
-    '$filter' => "documento/cpf eq '$cpf'",
-    '$expand' => 'convenio',
-    '$top'    => '1'
-];
-
-// Constrói a query string com URL encoding apropriado
-$queryString = http_build_query($params);
-
-// Concatena URL com query string
-$url_integracao  = $url_integracao . '?' . $queryString;
+$request_body           = json_encode($dados_paciente, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 // Inicializa cURL
 $curl_result = fn_curl_request([
@@ -107,7 +94,7 @@ fn_log_integracao([
     'id_cliente' => $id_cliente,
     'id_integracao' => $id_integracao,
     'id_integracao_endpoint' => $id_integracao_endpoint,
-    'id_usuario' => $id_usuario,
+    //'id_usuario' => $id_usuario,
     'url_integracao' => $url_integracao,
     'metodo_http' => $metodo_http,
     'request_body' => $request_body,

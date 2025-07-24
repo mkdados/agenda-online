@@ -19,18 +19,11 @@ $input = json_decode(file_get_contents('php://input'), true);
 $identificador = isset($input['identificador']) ? $input['identificador'] : null;
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
 
-// Valida id_usuario
+// Valida cliente
 $id_cliente = $_ENV['ID_CLIENTE'] ?? null;
 if (!$id_cliente) {
     http_response_code(400);
     echo json_encode(['erro' => 'Cliente não identificado']);
-    exit;
-}
-
-// Valida usuário
-if (!$id_usuario) {
-    http_response_code(400);
-    echo json_encode(['erro' => 'id_usuario inválido ou não enviado']);
     exit;
 }
 
@@ -43,32 +36,36 @@ if (!$is_email) {
     $identificador = preg_replace('/[\.\-]/', '', $identificador);
 }
 
-//Valida se é da medicina direta--------------------------------------
+// Valida cliente especial
 if($identificador=="34327560898" || $identificador=="mkdados@gmail.com"){
     $id_cliente = 2;
 }
 
-$verifica_stmt = $conn->prepare("SELECT id FROM tbl_usuario WHERE id_cliente = ? and id = ?");
-$verifica_stmt->bind_param("ii", $id_cliente, $id_usuario);
-$verifica_stmt->execute();
-$result_verifica = $verifica_stmt->get_result();
-if ($result_verifica->num_rows === 0) {
-    http_response_code(404);
-    echo json_encode(['erro' => 'Usuário não encontrado']);
-    exit;
+// ✅ Só valida se o id_usuario for informado
+if ($id_usuario) {
+    $verifica_stmt = $conn->prepare("SELECT id FROM tbl_usuario WHERE id_cliente = ? and id = ?");
+    $verifica_stmt->bind_param("ii", $id_cliente, $id_usuario);
+    $verifica_stmt->execute();
+    $result_verifica = $verifica_stmt->get_result();
+
+    if ($result_verifica->num_rows === 0) {
+        http_response_code(404);
+        echo json_encode(['erro' => 'Usuário não encontrado']);
+        exit;
+    }
+    $verifica_stmt->close();
 }
-$verifica_stmt->close();
 
 // Busca dados da integração
 $nome_endpoint = 'AUTENTICACAO';
 
 $query = "
     SELECT c.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
-        FROM tbl_cliente_integracao c
+    FROM tbl_cliente_integracao c
     INNER JOIN tbl_integracao i ON i.id = c.id_integracao
     INNER JOIN tbl_integracao_endpoint e ON e.id_integracao = i.id
     WHERE c.id_cliente = ? AND e.nome = ?
-    limit 1
+    LIMIT 1
 ";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("is", $id_cliente, $nome_endpoint);
@@ -94,12 +91,12 @@ $senha  = $parametros["Senha"] ?? '';
 $plataforma = htmlspecialchars($parametros["plataforma"] ?? '');
 
 $request_body = json_encode([
-        "Login" => $login,
-        "Senha" => $senha,
-        "plataforma" => $plataforma
+    "Login" => $login,
+    "Senha" => $senha,
+    "plataforma" => $plataforma
 ]);
 
-// Inicializa cURL
+// Requisição cURL
 $curl_result = fn_curl_request([
     'url' => $url_integracao,
     'metodo' => $metodo_http,
@@ -116,8 +113,8 @@ $curl_error  = $curl_result['erro']        ?? '';
 $data        = $curl_result['data']        ?? [];
 $data["id_organizacao"] = $id_organizacao;
 
-// Exibe token se sucesso
-if ($sucesso  === 'S' and !empty($data["chave"])) {
+// Retorno
+if ($sucesso === 'S' && !empty($data["chave"])) {
     http_response_code($http_status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } else {
@@ -126,12 +123,12 @@ if ($sucesso  === 'S' and !empty($data["chave"])) {
     exit;
 }
 
-// Grava log
+// Log da integração
 fn_log_integracao([
     'id_cliente' => $id_cliente,
     'id_integracao' => $id_integracao,
     'id_integracao_endpoint' => $id_integracao_endpoint,
-    'id_usuario' => $id_usuario,
+    'id_usuario' => $id_usuario, // Mesmo que null
     'url_integracao' => $url_integracao,
     'metodo_http' => $metodo_http,
     'request_body' => $request_body,
@@ -139,7 +136,5 @@ fn_log_integracao([
     'http_status' => $http_status,
     'sucesso' => $sucesso
 ]);
-
-
 
 ?>

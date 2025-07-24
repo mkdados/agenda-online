@@ -35,7 +35,7 @@ if (!$is_email) {
 }
 
 // Busca o usuário
-$stmt = $conn->prepare("SELECT id, nome, cpf, email, senha FROM tbl_usuario WHERE $campo = ? AND ativo = 'S'");
+$stmt = $conn->prepare("SELECT id, nome, cpf, data_nascimento, celular, email, senha FROM tbl_usuario WHERE $campo = ? AND ativo = 'S'");
 $stmt->bind_param("s", $identificador);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -66,7 +66,9 @@ echo json_encode([
         'id_usuario' => $usuario['id'],
         'nome' => $usuario['nome'],
         'cpf' => $usuario['cpf'],
-        'email' => $usuario['email']
+        'data_nascimento' => $usuario['data_nascimento'],
+        'celular' => $usuario['celular'],
+        'email' => $usuario['email'],
     ],
     'sessao' => [
         'expira_em' => $expiracaoSessao,
