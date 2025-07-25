@@ -156,3 +156,26 @@ function openIndexedDB() {
 }
 
 
+// Função para ver a senha=============================================================
+
+  // Ativa o toggle de exibir/ocultar senha para todos os campos com .toggle-password
+  document.querySelectorAll('.toggle-password').forEach(function (element) {
+    element.addEventListener('click', function () {
+      const inputId = this.getAttribute('data-target');
+      const input = document.getElementById(inputId);
+      const icon = this.querySelector('i');
+
+      if (!input) return;
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+  });
+

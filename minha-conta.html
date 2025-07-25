@@ -11,7 +11,7 @@
 
   <!-- Bibliotecas --> 
   <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/css/home.css?v=4.0.2" rel="stylesheet">
+  <link href="assets/css/home.css?v=4.0.3" rel="stylesheet">
   <link href="assets/fonts/font-lato.css" rel="stylesheet">
   <link href="assets/fonts/montserrat.css" rel="stylesheet"> 
   <link href="assets/font-awesome/6.7.2/css/all.css" rel="stylesheet">
@@ -172,21 +172,46 @@
           </div>
 
           <!-- Senha Atual -->
-          <div class="col-md-6">
+          <!-- <div class="col-md-6">
             <label for="senhaAtual" class="form-label fw-bold text-secondary">Senha Atual</label>
             <input type="password" class="form-control" id="senhaAtual" name="senhaAtual" placeholder="Digite sua senha atual" required>
+          </div> -->
+          <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center">
+              <label for="senhaAtual" class="form-label text-sm" style="font-weight: 800;">Senha Atual</label>              
+            </div>
+            <div class="input-group">
+              <input type="password" id="senhaAtual" name="senhaAtual" class="form-control" placeholder="Senha Atual" aria-label="Senha" autocomplete="off" required>
+              <span class="input-group-text toggle-password text-color-padrao" data-target="senhaAtual" style="cursor: pointer;">
+                <i class="fas fa-eye"></i>
+              </span>
+            </div>
           </div>
 
           <!-- Nova Senha -->
           <div class="col-md-6">
-            <label for="novaSenha" class="form-label fw-bold text-secondary">Nova Senha</label>
-            <input type="password" class="form-control" id="novaSenha" name="novaSenha" placeholder="Digite a nova senha" required>
+            <div class="d-flex justify-content-between align-items-center">
+              <label for="novaSenha" class="form-label text-sm" style="font-weight: 800;">Nova Senha</label>              
+            </div>
+            <div class="input-group">
+              <input type="password" id="novaSenha" name="novaSenha" class="form-control" placeholder="Digite a nova senha" aria-label="Senha" autocomplete="off" required>
+              <span class="input-group-text toggle-password text-color-padrao" data-target="novaSenha" style="cursor: pointer;">
+                <i class="fas fa-eye"></i>
+              </span>
+            </div>
           </div>
 
           <!-- Confirmar Nova Senha -->
           <div class="col-md-6">
-            <label for="confirmarNovaSenha" class="form-label fw-bold text-secondary">Confirmar Nova Senha</label>
-            <input type="password" class="form-control" id="confirmarNovaSenha" name="confirmarNovaSenha" placeholder="Confirme a nova senha" required>
+            <div class="d-flex justify-content-between align-items-center">
+              <label for="confirmarNovaSenha" class="form-label text-sm" style="font-weight: 800;">Confirmar Nova Senha</label>              
+            </div>
+            <div class="input-group">
+              <input type="password" id="confirmarNovaSenha" name="confirmarNovaSenha" class="form-control" placeholder="Confirme a nova senha" aria-label="Senha" autocomplete="off" required>
+              <span class="input-group-text toggle-password text-color-padrao" data-target="confirmarNovaSenha" style="cursor: pointer;">
+                <i class="fas fa-eye"></i>
+              </span>
+            </div>
           </div>
 
           <!-- Botão -->
@@ -211,16 +236,18 @@
 
 
 <!-- Scripts -->
+  <script src="assets/js/verifica-sessao.js?v=4.0.1"></script>
   <script src="assets/jquery/jquery-3.7.1.js"></script>   
   <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
   <script src="assets/jquery/jquery.inputmask.min.js"></script>
   <script src="assets/sweetalert/sweetalert2@11.js"></script> 
-  <script src="assets/js/footer.js?v=4.0.2"></script>
-  <script src="assets/js/funcoes.js?v=4.0.2"></script>
-  <script src="assets/js/menu.js?v=4.0.2"></script>
-  <script src="assets/js/lista-usuario.js?v=4.0.2"></script>
-  <script src="assets/js/atualizar-usuario.js?v=4.0.2"></script>
-  <script src="assets/js/minha-conta.js?v=4.0.2"></script>
+  <script src="assets/js/footer.js?v=4.0.3"></script>
+  <script src="assets/js/funcoes.js?v=4.0.3"></script>
+  <script src="assets/js/menu.js?v=4.0.3"></script>
+  <script src="assets/js/lista-usuario.js?v=4.0.3"></script>
+  <script src="assets/js/atualizar-usuario.js?v=4.0.3"></script>
+  <script src="assets/js/minha-conta.js?v=4.0.3"></script>
+  
 
 
 </body>
