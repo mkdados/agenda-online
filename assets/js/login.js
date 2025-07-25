@@ -1,18 +1,18 @@
-// Limpa sessionStorage ao carregar a página de login
+// Limpa sessionStorage e IndexedDB ao carregar a página de login
 sessionStorage.clear();
-limparIndexedDB(); // <--- limpa o IndexedDB ao carregar a página
+limparIndexedDB();
 
 const loader = document.getElementById('loader');
 
 async function realizarLogin() {
+  loader.style.display = 'flex';
+
   const identificador = document.getElementById('emailCpf').value.trim();
   const senha = document.getElementById('password').value;
 
-  loader.style.display = 'flex';
-
   let id_usuario, cpf, chave, id_organizacao;
 
-  // Bloco 1 - Login
+  // --- Bloco 1: Login do usuário ---
   try {
     const response = await fetch('api/login.php', {
       method: 'POST',
@@ -22,9 +22,7 @@ async function realizarLogin() {
 
     const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data?.erro || 'Falha no login.');
-    }
+    if (!response.ok) throw new Error(data?.erro || 'Falha no login.');
 
     sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
     sessionStorage.setItem('sessao', JSON.stringify(data.sessao));
@@ -41,16 +39,19 @@ async function realizarLogin() {
     });
   }
 
-  // Bloco 2 - Gerar Token
+  // --- Bloco 2: Gerar token ---
   try {
     const parametrosToken = { identificador, id_usuario };
     const tokenData = await fn_gera_token(parametrosToken);
 
     id_organizacao = tokenData.id_organizacao;
     chave = tokenData.chave;
-    const duracao = tokenData.duracao;
 
-    sessionStorage.setItem('token', JSON.stringify({ id_organizacao, chave, duracao }));
+    sessionStorage.setItem('token', JSON.stringify({
+      id_organizacao,
+      chave,
+      duracao: tokenData.duracao
+    }));
 
   } catch (error) {
     loader.style.display = 'none';
@@ -61,42 +62,104 @@ async function realizarLogin() {
     });
   }
 
-  // Bloco 3 - Listar Pacientes
+  // --- Bloco 3: Buscar e/ou cadastrar paciente ---
   try {
-    const parametros = { id_usuario, token: chave, cpf };
-    const pacientesData = await fn_lista_pacientes(parametros);
-    const listaPacientes = pacientesData.value;
+    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    const token = JSON.parse(sessionStorage.getItem('token'));
 
-    listaPacientes.forEach(paciente => {
-      const dados_paciente = {
-        id_paciente: paciente?.id,
-        id_convenio: paciente?.convenio?.id,
-        numero_carteirinha: paciente?.convenio?.numCarteira
-      };
+    id_usuario = usuario?.id_usuario;
+    chave = token?.chave;
+    id_organizacao = token?.id_organizacao;
+    cpf = usuario?.cpf;
+    const nome_usuario = usuario?.nome;
+    const dt_nascimento_usuario = usuario?.data_nascimento;
+    const email_usuario = usuario?.email;
+    const celular_usuario = usuario?.celular;
 
-      const data_paciente = Object.fromEntries(
-        Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
+    const parametrosPacientes = { id_usuario, token: chave, cpf };
+
+    // Função para normalizar CPF removendo caracteres não numéricos
+    const normalizarCPF = cpf => cpf?.replace(/\D/g, '');
+
+    // Lista pacientes
+    let pacientesData = await fn_lista_pacientes(parametrosPacientes);
+    let listaPacientes = pacientesData.value;
+
+    // Tenta encontrar paciente pelo CPF
+    let pacienteEncontrado = listaPacientes.find(
+      p => normalizarCPF(p.documento?.cpf) === normalizarCPF(cpf)
+    );
+
+    if (!pacienteEncontrado) {
+      // Se não encontrou, tenta cadastrar paciente
+      const responseCadastro = await fn_cadastrar_paciente({
+        token: chave,
+        data: {
+          organizacaoId: id_organizacao,
+          filialId: id_organizacao,
+          cpf: cpf,
+          nome: nome_usuario,
+          dataNascimento: dt_nascimento_usuario,
+          telefone: celular_usuario,
+          email: email_usuario
+        }
+      });
+
+      if (responseCadastro.erro) {
+        loader.style.display = 'none';
+        return Swal.fire({
+          icon: 'error',
+          title: 'Erro ao cadastrar paciente',
+          text: responseCadastro.erro || 'Não foi possível cadastrar o paciente.'
+        });
+      }
+
+      // Busca pacientes novamente após cadastro
+      pacientesData = await fn_lista_pacientes(parametrosPacientes);
+      listaPacientes = pacientesData.value;
+
+      pacienteEncontrado = listaPacientes.find(
+        p => normalizarCPF(p.documento?.cpf) === normalizarCPF(cpf)
       );
 
-      sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
-    });
+      if (!pacienteEncontrado) {
+        loader.style.display = 'none';
+        return Swal.fire({
+          icon: 'error',
+          title: 'Paciente não encontrado',
+          text: 'Não foi possível encontrar ou cadastrar o paciente. Login cancelado.'
+        });
+      }
+    }
+
+    // Salva dados do paciente no sessionStorage
+    const dados_paciente = {
+      id_paciente: pacienteEncontrado?.id,
+      id_convenio: pacienteEncontrado?.convenio?.id,
+      numero_carteirinha: pacienteEncontrado?.convenio?.numCarteira
+    };
+
+    const data_paciente = Object.fromEntries(
+      Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
+    );
+
+    sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
 
   } catch (error) {
-    const dados_paciente = {
-      id_paciente: null,
-      id_convenio: null,
-      numero_carteirinha: null
-    };
-    sessionStorage.setItem('paciente', JSON.stringify(dados_paciente));
+    loader.style.display = 'none';
+    return Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Serviço indisponível, tente novamente mais tarde.'
+    });
   }
 
-  // Bloco 4 - Agenda Config
+  // --- Bloco 4: Listar agenda config ---
   let id_agenda_config = "";
   let profissional_id = "";
   let profissionaisAgendaConfig = [];
 
   try {
-
     const parametrosAgendaConfig = {
       id_usuario,
       id_organizacao,
@@ -126,42 +189,40 @@ async function realizarLogin() {
 
       // Salvar no IndexedDB
       await salvarAgendaConfigIndexedDB(profissionaisAgendaConfig);
-
     }
 
   } catch (err) {
     loader.style.display = 'none';
     console.error("Erro ao listar agendamentos:", err);
   }
-  
-  // Bloco 6 - Carrega foto do profissional    
+
+  // --- Bloco 5: Carregar foto do profissional ---
   try {
-    const parametros = {
+    const parametrosFoto = {
       id_usuario,
       token: chave,
       id_profissional: profissional_id
     };
-    fn_lista_profissionais(parametros); // se necessário processar resultado, adicione lógica aqui
+    fn_lista_profissionais(parametrosFoto);
   } catch (erro) {
-    // console.warn("Erro ao carregar foto:", erro);
-  }
+    // Pode ignorar ou logar
+  }  
 
-  // Redireciona após todas as etapas
+  // Redireciona para home após sucesso
   window.location.href = 'home.html';
 }
 
-// Clique no botão
+// Eventos para botão e Enter
 document.getElementById('btnLogin').addEventListener('click', realizarLogin);
-
-// Pressionar Enter no formulário
-document.getElementById('loginForm').addEventListener('keydown', function (e) {
+document.getElementById('loginForm').addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     e.preventDefault();
     realizarLogin();
   }
 });
 
-// Função para salvar dados no IndexedDB
+// IndexedDB utils
+
 async function salvarAgendaConfigIndexedDB(profissionaisAgendaConfig) {
   try {
     const db = await openIndexedDB();
@@ -169,19 +230,14 @@ async function salvarAgendaConfigIndexedDB(profissionaisAgendaConfig) {
     const store = tx.objectStore('agendaConfig');
 
     const dados = {
-      id: 'config1', // Chave primária fixa
+      id: 'config1',
       profissionaisAgendaConfig
     };
 
     store.put(dados);
 
-    tx.oncomplete = () => {
-      db.close();
-    };
-
-    tx.onerror = () => {
-      console.error('Erro ao salvar no IndexedDB:', tx.error);
-    };
+    tx.oncomplete = () => db.close();
+    tx.onerror = () => console.error('Erro ao salvar no IndexedDB:', tx.error);
 
   } catch (error) {
     console.error('Erro ao abrir IndexedDB:', error);
@@ -192,169 +248,16 @@ async function limparIndexedDB() {
   try {
     const db = await openIndexedDB();
     const storeNames = Array.from(db.objectStoreNames);
-
     const tx = db.transaction(storeNames, 'readwrite');
+
     storeNames.forEach(storeName => {
       tx.objectStore(storeName).clear();
     });
 
-    tx.oncomplete = () => {
-      db.close();
-      // console.log('IndexedDB limpo com sucesso.');
-    };
-
-    tx.onerror = () => {
-      console.error('Erro ao limpar IndexedDB:', tx.error);
-    };
+    tx.oncomplete = () => db.close();
+    tx.onerror = () => console.error('Erro ao limpar IndexedDB:', tx.error);
 
   } catch (error) {
     console.error('Erro ao abrir IndexedDB para limpeza:', error);
   }
 }
-
-
-
-
-
-
-
-// // Limpa sessionStorage ao carregar a página de login
-// sessionStorage.clear();
-
-// const loader = document.getElementById('loader');
-
-// async function realizarLogin() {
-//   const identificador = document.getElementById('emailCpf').value.trim();
-//   const senha = document.getElementById('password').value;
-
-//   loader.style.display = 'flex'; // mostra o loader
-
-//   try {
-//     const response = await fetch('api/login.php', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ identificador, senha })
-//     });
-
-//     const data = await response.json();
-
-//     if (response.ok) {  
-
-//       //Seta sessionStorage com os dados do usuário
-//       sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
-//       sessionStorage.setItem('sessao', JSON.stringify(data.sessao));
-//       const id_usuario = data.usuario.id_usuario;
-//       const cpf = data.usuario.cpf;
-
-//       const parametrosToken = {
-//         identificador: identificador,
-//         id_usuario: id_usuario       
-//       };
-      
-//       //Resgata o token===============
-//       fn_gera_token(parametrosToken)
-//         .then(data => {
-
-//           const id_organizacao = data.id_organizacao;
-//           const chave = data.chave;
-//           const duracao = data.duracao;          
-
-//           //Grava o token no sessionStorage
-//           sessionStorage.setItem('token', JSON.stringify({
-//               id_organizacao: id_organizacao,
-//               chave: chave,
-//               duracao: duracao
-//           }));   
-
-//           const parametros = {
-//             id_usuario: id_usuario,
-//             token: chave,
-//             cpf: cpf
-//           };
-
-//           //Pega dados do paciente
-//           fn_lista_pacientes(parametros)
-//             .then(data => {
-//               const listaPacientes = data.value;
-
-//               listaPacientes.forEach(paciente => {
-                  
-//                   const dados_paciente = {
-//                     id_paciente: paciente?.id,
-//                     id_convenio: paciente?.convenio?.id,
-//                     numero_carteirinha: paciente?.convenio?.numCarteira
-//                   };
-
-//                   // Verifica se o paciente tem dados válidos
-//                   const data_paciente = Object.fromEntries(
-//                     Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
-//                   );
-
-//                   //Grava o paciente no sessionStorage
-//                   sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
-
-//               });               
-
-//               //Redireciona para a página home
-//               window.location.href = 'home.html';   
-//             })
-//             .catch(error => {
-
-//               const dados_paciente = {
-//                     id_paciente: null,
-//                     id_convenio: null,
-//                     numero_carteirinha: null
-//                   };
-
-//               // Verifica se o paciente tem dados válidos
-//               const data_paciente = Object.fromEntries(
-//                 Object.entries(dados_paciente).filter(([_, v]) => v != null && v !== '')
-//               );
-
-//               //Grava o paciente no sessionStorage
-//               sessionStorage.setItem('paciente', JSON.stringify(data_paciente));
-
-//               //Redireciona para a página home
-//               window.location.href = 'home.html';
-
-//             });
-               
-
-//         })
-//         .catch(error => {
-//           loader.style.display = 'none'; // esconde o loader
-//           Swal.fire({
-//             icon: 'error',
-//             title: 'Erro',
-//             text: 'Erro inesperado. Tente novamente mais tarde.'
-//           });
-//         });     
-    
-//     } else {
-//       loader.style.display = 'none'; // esconde o loader
-//       Swal.fire({
-//         icon: 'error',
-//         title: 'Erro',
-//         html: data?.erro
-//       });
-//     }
-//   } catch (error) {
-//     loader.style.display = 'none'; // esconde o loader
-//     Swal.fire({
-//       icon: 'error',
-//       title: 'Erro',
-//       text: 'Erro inesperado. Tente novamente mais tarde.'
-//     });
-//   }
-// }
-
-// // Clique no botão
-// document.getElementById('btnLogin').addEventListener('click', realizarLogin);
-
-// // Pressionar Enter no formulário
-// document.getElementById('loginForm').addEventListener('keydown', function(e) {
-//   if (e.key === 'Enter') {
-//     e.preventDefault();
-//     realizarLogin();
-//   }
-// });

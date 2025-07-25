@@ -11,7 +11,7 @@
 
   <!-- Bibliotecas -->
   <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/css/style.css?v=3.0.8" rel="stylesheet">
+  <link href="assets/css/style.css?v=4.0.3" rel="stylesheet">
   <link href="assets/fonts/font-lato.css" rel="stylesheet">
   <link href="assets/fonts/montserrat.css" rel="stylesheet"> 
   <link href="assets/font-awesome/6.7.2/css/all.css" rel="stylesheet">
@@ -86,20 +86,37 @@
           </div>  
 
           <!-- Senha -->
-          <div class="mb-3">
+          <!-- <div class="mb-3">
             <label for="senha" class="form-label text-sm" style="font-weight: 800;">Senha *</label>
             <div class="col-12">
               <input type="password" id="senha" name="senha" class="form-control" placeholder="*****" autocomplete="off" required>
             </div>
-          </div>
+          </div> -->
+           <!-- Campo Senha -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <label for="senha" class="form-label text-sm" style="font-weight: 800;">Senha</label>
+              </div>
+              <div class="input-group">
+                <input type="password" id="senha" name="senha" class="form-control" placeholder="*****" aria-label="Senha" autocomplete="off" required>
+                <span class="input-group-text toggle-password text-color-padrao" data-target="senha" style="cursor: pointer;">
+                  <i class="fas fa-eye"></i>
+                </span>
+              </div>
+            </div>
 
           <!-- Confirmar Senha -->
           <div class="mb-3">
-            <label for="confirmarSenha" class="form-label text-sm" style="font-weight: 800;">Confirmar Senha</label>
-            <div class="col-12">
-              <input type="password" id="confirmarSenha" name="confirmarSenha" class="form-control" placeholder="*****" autocomplete="off" required>
+              <div class="d-flex justify-content-between align-items-center">
+                <label for="confirmarSenha" class="form-label text-sm" style="font-weight: 800;">Confirmar Senha</label>
+              </div>
+              <div class="input-group">
+                <input type="password" id="confirmarSenha" name="confirmarSenha" class="form-control" placeholder="*****" aria-label="Senha" autocomplete="off" required>
+                <span class="input-group-text toggle-password text-color-padrao" data-target="confirmarSenha" style="cursor: pointer;">
+                  <i class="fas fa-eye"></i>
+                </span>
+              </div>
             </div>
-          </div>
 
           <!-- Botões -->
           <button type="button" class="btn btn-padrao w-100 mb-3" id="btnCadastrar">Cadastrar</button>
@@ -123,7 +140,7 @@
     </div>
     <div class="carousel-inner">
       <div class="carousel-item h-100 active">
-        <img src="assets/images/slide-01.jpg?v=3.0.4" class="d-block w-100" alt="slide-01.jpg">
+        <img src="assets/images/slide-01.jpg?v=4.0.3" class="d-block w-100" alt="slide-01.jpg">
           <!-- Container Carrosel -->
           <div class="carousel-container">
             <!-- Container Fundo -->
@@ -149,7 +166,7 @@
           </div>
       </div>
       <div class="carousel-item h-100 position-relative">
-        <img src="assets/images/slide-02.jpg?v=3.0.4" class="d-block w-100" alt="slide-02.jpg">
+        <img src="assets/images/slide-02.jpg?v=4.0.3" class="d-block w-100" alt="slide-02.jpg">
         <div class="carousel-container-footer position-absolute bottom-0 start-0 w-100 text-white text-center p-3">
           <div class="container">
             <small>
@@ -159,7 +176,7 @@
         </div>
       </div>
       <div class="carousel-item h-100 position-relative">
-        <img src="assets/images/slide-03.jpg?v=3.0.4" class="d-block w-100" alt="slide-03.jpg">
+        <img src="assets/images/slide-03.jpg?v=4.0.3" class="d-block w-100" alt="slide-03.jpg">
         <div class="carousel-container-footer position-absolute bottom-0 start-0 w-100 text-white text-center  p-3">
           <div class="container">
             <small>
@@ -186,8 +203,8 @@
   <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
   <script src="assets/jquery/jquery.inputmask.min.js"></script>
   <script src="assets/sweetalert/sweetalert2@11.js"></script> 
-  <script src="assets/js/funcoes.js?v=3.0.4"></script>
-  <script src="assets/js/primeiro-acesso.js?v=3.0.4"></script>
+  <script src="assets/js/funcoes.js?v=4.0.3"></script>
+  <script src="assets/js/primeiro-acesso.js?v=4.0.3"></script>
 
 </body>
 </html>

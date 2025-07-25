@@ -680,7 +680,7 @@ async function fn_selecionar_datas(evento,data_inicio){
 
       try {
         const dados = await lerAgendaConfig();
-        console.log(dados);
+        //console.log(dados);
 
         if (dados) {
           // Filtra os profissionais da filial selecionada dinamicamente

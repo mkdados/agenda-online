@@ -1,0 +1,84 @@
+body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      font-size: .875rem;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      background-color: #fff;
+      border: 0.5px solid #cccccc;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      max-width: 450px;
+      width: 100%;
+      margin: 20px;
+      padding: 30px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .login-box img.logo {
+      max-width: 180px;
+      height: auto;
+      margin-bottom: 25px;
+    }
+
+    .bem-vindo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #d47d48;
+      margin-bottom: 10px;
+    }
+
+    .mensagem {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    .btn-padrao {
+      background-color: #d47d48;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-padrao:hover {
+      background-color: #b8683d;
+      color: #fff;
+    }
+
+    @media (max-width: 576px) {
+      .login-box {
+        padding: 20px;
+        margin: 20px;
+      }
+
+      .bem-vindo {
+        font-size: 1.25rem;
+      }
+
+      .mensagem {
+        font-size: 0.9rem;
+      }
+
+      .btn-padrao {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+
+      .login-box img.logo {
+        max-width: 140px;
+      }
+    }
