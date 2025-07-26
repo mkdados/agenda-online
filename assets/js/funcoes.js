@@ -203,7 +203,7 @@ function openIndexedDB() {
 
  const btnVoltarTopo = document?.getElementById('btnVoltarTopo');
   document.body.addEventListener('scroll', function () {
-    if (document.body.scrollTop > 100) {
+    if (document.body.scrollTop > 200) {
       btnVoltarTopo.style.display = 'block';
     } else {
       btnVoltarTopo.style.display = 'none';
