@@ -244,10 +244,16 @@ function openIndexedDB() {
 
     // Quando clicar no horário (adicione seu seletor exato aqui)
     document.getElementById('agendasMedicos').addEventListener('click', function (e) {
-      verificarPosicao();
+
+      const btn = e.target.closest('.horario-btn');
+      if (btn) {
+
+        verificarPosicao();
       
-      // Reavalie ao rolar
-      document.body.addEventListener('scroll', verificarPosicao);
+        // Reavalie ao rolar
+        document.body.addEventListener('scroll', verificarPosicao);     
+      }
+      
     });
     
   });

@@ -463,7 +463,8 @@ footer a:hover {
 
     .gridHorario{
         grid-template-columns: repeat(3, 1fr);
-    } 
+    }     
+    
 }
 
 @media (max-width: 992px) {
@@ -542,6 +543,11 @@ footer a:hover {
 
     #datasAgendamento > button{
         min-width: 74px !important;
+    }
+
+    /*proxima etapa===============================*/
+    .etapa-proxima.fixed {
+        left: 0px;
     }
     
 }
