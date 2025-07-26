@@ -789,6 +789,10 @@ async function fn_selecionar_datas(evento,data_inicio){
    document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('btnGoToStep3').addEventListener('click', function () {
 
+      //Scrollar para o topo
+      document.body.scrollTop = 0; // Para Safari
+      document.documentElement.scrollTop = 0; // Para Chrome, Firefox, IE
+
       // Seleciona o botão selecionado
       const botaoSelecionado = document.querySelector('.horario-btn.selected');
       const unidadeSelect = document.getElementById('unidadeSelect');
