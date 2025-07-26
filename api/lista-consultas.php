@@ -53,7 +53,7 @@ if (!$token) {
 $nome_endpoint = 'LISTA_CONSULTAS';
 
 $query = "
-    SELECT c.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
+    SELECT i.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
         FROM tbl_cliente_integracao c
     INNER JOIN tbl_integracao i ON i.id = c.id_integracao
     INNER JOIN tbl_integracao_endpoint e ON e.id_integracao = i.id

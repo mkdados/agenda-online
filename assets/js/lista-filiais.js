@@ -1,23 +1,23 @@
-function fn_lista_filiais(parametros) {
+async function fn_lista_filiais(parametros) {
   const url = 'api/lista-filiais.php';
   const body = parametros;
-
+  
   const options = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(body) // <-- Aqui o JSON é enviado no corpo
+    body: JSON.stringify(body)
   };
 
-  return fetch(url, options)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro na requisição: ' + response.status);
-      }
-      return response.json(); // retorna o JSON da resposta
-    })
-    .catch(error => {
-      return { erro: error.message };
-    });
+  // Validar o token ======================================================
+  await fn_valida_token();
+  
+  // Enviar a requisição ======================================================
+  try {
+    const response = await fetch(url, options);
+    return await response.json();
+  } catch (error) {
+    return { erro: error.message };
+  }
 }

@@ -51,3 +51,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);
   };
 });
+
+
+/*###########################################################################################
+     Logout
+############################################################################################*/ 
+function logout() {
+  // Limpa sessionStorage
+  sessionStorage.clear();
+
+  // Limpa localStorage se usar
+  localStorage.clear();
+
+  // Limpa IndexedDB (se usar)
+  limparIndexedDB().then(() => {
+    // Redireciona para login
+    window.location.href = 'index.html';
+  });
+}

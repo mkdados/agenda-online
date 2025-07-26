@@ -5,6 +5,6 @@
 
   // Se qualquer item essencial da sessão não existir, redireciona
   if (!usuario || !sessao || !token) {
-    window.location.href = 'sessao-encerrada.html'; // Altere conforme seu arquivo
+    window.location.href = 'sessao-encerrada.html'; 
   }
 })();

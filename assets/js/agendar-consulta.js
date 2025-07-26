@@ -239,8 +239,8 @@ function selecionaTipoAtendimento() {
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
     const token = JSON.parse(sessionStorage.getItem('token'));
     const paciente = JSON.parse(sessionStorage.getItem('paciente'));
-    const id_usuario = usuario.id_usuario;
-    const chave = token.chave;
+    const id_usuario = usuario?.id_usuario;
+    const chave = token?.chave;
     //const numero_carteirinha = paciente.numero_carteirinha || '';
     const idConvenioSelecionado = paciente ? paciente.id_convenio : 0;    
 
@@ -330,13 +330,13 @@ function selecionaTipoAtendimento() {
             text: 'Selecione o convênio'
           });
       }
-      else{
+      else{ 
 
         // Dados do storage
         const usuario = JSON.parse(sessionStorage.getItem('usuario'));
         const token = JSON.parse(sessionStorage.getItem('token'));
-        const id_usuario = usuario.id_usuario;
-        const chave = token.chave; 
+        const id_usuario = usuario?.id_usuario;
+        const chave = token?.chave; 
         const selectFilial = document.getElementById('unidadeSelect'); 
 
         if (!selectFilial.value) {
@@ -391,7 +391,7 @@ function selecionaTipoAtendimento() {
 
                   loader.style.display = 'none'; // esconde o loader
                 } else {
-                  console.warn('Formato de resposta inesperado:', data);
+                  //console.warn('Formato de resposta inesperado:', data);
                   loader.style.display = 'none'; // esconde o loader
                 }
 
@@ -399,7 +399,7 @@ function selecionaTipoAtendimento() {
                 goToStep(2);
             })
             .catch(error => {
-              console.error('Erro ao carregar filiais:', error.message);
+              //console.error('Erro ao carregar filiais:', error.message);
               loader.style.display = 'none';
             });
 
@@ -439,127 +439,7 @@ $('#unidadeSelect').on('select2:select', async function () {
   if(idFilialSelecionada){
 
     //Selecionar datas
-    fn_selecionar_datas("selectUnidade",""); 
-
-      //  //Carrega loader=============
-      // loader.style.display = 'flex'; 
-
-      // //Agenda config================================================
-      // const usuario = JSON.parse(sessionStorage.getItem('usuario'));
-      // const token = JSON.parse(sessionStorage.getItem('token'));
-      // const id_usuario = usuario.id_usuario;
-      // const id_organizacao = token?.id_organizacao;
-      // const chave = token.chave;
-
-      // const parametrosAgendaConfig = {
-      //   id_usuario: id_usuario,
-      //   id_organizacao: id_organizacao,
-      //   id_filial: idFilialSelecionada,
-      //   token: chave    
-      // };
-
-      // let id_agenda_config = ""; 
-      // let profissional_id = ""; 
-      // let profissionaisAgendaConfig = []; // Lista de { id, nome }
-
-      // try {
-      //   const dataAgendaConfig = await fn_lista_agenda_config(parametrosAgendaConfig);
-
-      //   if (dataAgendaConfig?.value?.length > 0) {
-      //     // Extrai os IDs e junta por vírgula
-      //     id_agenda_config = dataAgendaConfig.value.map(item => item.id).join(",");
-      //     profissional_id = dataAgendaConfig.value.map(item => item.profissionalId).join(",");
-
-      //     // Pega o ID do profissional e o nome
-      //     dataAgendaConfig.value.forEach(item => {
-      //       const profissional = item.profissional;
-      //       if (profissional?.id && profissional?.nome) {
-      //         const jaExiste = profissionaisAgendaConfig.some(p => p.id === profissional.id);
-      //         if (!jaExiste) {
-      //           profissionaisAgendaConfig.push({
-      //             id: profissional.id,
-      //             nome: profissional.nome
-      //           });
-
-      //         }
-      //       }
-      //     });
-
-      //     //Carrega foto do profissional
-      //     const parametros = {
-      //       id_usuario: id_usuario,
-      //       token: chave,
-      //       id_profissional: profissional_id
-      //     };
-
-      //     try {
-      //       const data = fn_lista_profissionais(parametros);
-      //     } catch (erro) {
-      //       //console.warn("Erro ao carregar foto:", erro);
-      //     }
-
-
-      //     //Salvar dados no banco IndexedDB
-      //     await salvarAgendaConfigIndexedDB(id_agenda_config, profissional_id, profissionaisAgendaConfig);  
-          
-      //     //Selecionar datas
-      //     fn_selecionar_datas("selectUnidade",""); 
-
-      //   } else {
-      //     //console.warn("Nenhuma agenda config encontrada");
-      //     //Carrega loader=============
-      //     loader.style.display = 'none'; 
-
-      //     Swal.fire({
-      //       toast: true,
-      //       icon: 'info',
-      //       title: 'Sem datas disponíveis para agendamento',
-      //       position: 'bottom-end',
-      //       showConfirmButton: false,
-      //       timer: 3000,
-      //       timerProgressBar: true,
-      //       didOpen: (toast) => {
-      //         toast.addEventListener('mouseenter', Swal.stopTimer)
-      //         toast.addEventListener('mouseleave', Swal.resumeTimer)
-      //       }
-      //     });
-          
-      //   }
-      // } catch (err) {
-      //   //console.error("Erro ao listar agendamentos:", err);
-      //    //Carrega loader=============
-      //    loader.style.display = 'none'; 
-      // }     
-      
-
-      //   // Função para salvar os dados
-      //   async function salvarAgendaConfigIndexedDB(id_agenda_config, profissional_id, profissionaisAgendaConfig) {
-      //     try {
-      //       const db = await openIndexedDB();
-      //       const tx = db.transaction('agendaConfig', 'readwrite');
-      //       const store = tx.objectStore('agendaConfig');
-
-      //       const dados = {
-      //         id: 'config1', // Chave primária fixa ou pode ser dinâmica
-      //         id_agenda_config,
-      //         profissional_id,
-      //         profissionaisAgendaConfig
-      //       };
-
-      //       store.put(dados);
-
-      //       tx.oncomplete = () => {
-      //         //console.log('Dados salvos com sucesso no IndexedDB.');
-      //         db.close();
-      //       };
-
-      //       tx.onerror = () => {
-      //         console.error('Erro ao salvar no IndexedDB:', tx.error);
-      //       };
-      //     } catch (error) {
-      //       console.error('Erro ao abrir IndexedDB:', error);
-      //     }
-      //   }
+    fn_selecionar_datas("selectUnidade","");      
        
   } 
 });
@@ -626,9 +506,9 @@ async function fn_selecionar_datas(evento,data_inicio){
 
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
     const token = JSON.parse(sessionStorage.getItem('token'));
-    const id_usuario = usuario.id_usuario;
+    const id_usuario = usuario?.id_usuario;
     const id_organizacao = token?.id_organizacao;
-    const chave = token.chave;
+    const chave = token?.chave;
     const idFilialSelecionada = document.getElementById('unidadeSelect').value;
     const idProfissionalSelecionado = document.getElementById('medicoSelect').value; 
     const lista_datas = [];

@@ -1,4 +1,4 @@
-function fn_lista_convenio(parametros) {
+async function fn_lista_convenio(parametros) {
   const url = 'api/lista-convenios.php';
   const body = parametros;
 
@@ -9,15 +9,14 @@ function fn_lista_convenio(parametros) {
     },
     body: JSON.stringify(body) // <-- Aqui o JSON é enviado no corpo
   };
+
+  // Validar o token ======================================================
+  await fn_valida_token();
   
-  return fetch(url, options)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro na requisição: ' + response.status);
-      }
-      return response.json(); // retorna o JSON da resposta
-    })
-    .catch(error => {
-      return { erro: error.message };
-    });
+  try {
+    const response = await fetch(url, options);
+    return await response.json();
+  } catch (error) {
+    return { erro: error.message };
+  }
 }

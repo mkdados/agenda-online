@@ -244,20 +244,3 @@ async function salvarAgendaConfigIndexedDB(profissionaisAgendaConfig) {
   }
 }
 
-async function limparIndexedDB() {
-  try {
-    const db = await openIndexedDB();
-    const storeNames = Array.from(db.objectStoreNames);
-    const tx = db.transaction(storeNames, 'readwrite');
-
-    storeNames.forEach(storeName => {
-      tx.objectStore(storeName).clear();
-    });
-
-    tx.oncomplete = () => db.close();
-    tx.onerror = () => console.error('Erro ao limpar IndexedDB:', tx.error);
-
-  } catch (error) {
-    console.error('Erro ao abrir IndexedDB para limpeza:', error);
-  }
-}

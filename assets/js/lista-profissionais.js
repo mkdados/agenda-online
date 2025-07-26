@@ -12,9 +12,6 @@ function fn_lista_profissionais(parametros) {
 
   return fetch(url, options)
     .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro na requisição: ' + response.status);
-      }
       return response.json(); // retorna o JSON da resposta
     })
     .catch(error => {

@@ -178,7 +178,7 @@ function gravarLogIntegracao($conn, $id_cliente, $id_usuario, $request, $respons
         $nome_endpoint = 'CADASTRA_ACESSO';
 
         $query = "
-            SELECT c.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota
+            SELECT i.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota
             FROM tbl_cliente_integracao c
             INNER JOIN tbl_integracao i ON i.id = c.id_integracao
             INNER JOIN tbl_integracao_endpoint e ON e.id_integracao = i.id

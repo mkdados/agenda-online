@@ -60,7 +60,7 @@ if ($id_usuario) {
 $nome_endpoint = 'AUTENTICACAO';
 
 $query = "
-    SELECT c.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
+    SELECT i.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
     FROM tbl_cliente_integracao c
     INNER JOIN tbl_integracao i ON i.id = c.id_integracao
     INNER JOIN tbl_integracao_endpoint e ON e.id_integracao = i.id
@@ -81,20 +81,23 @@ if ($result->num_rows === 0) {
 $row = $result->fetch_assoc();
 $id_integracao          = $row["id_integracao"];
 $id_integracao_endpoint = $row["id_integracao_endpoint"];
-$url_integracao         = $row["url"].$row["rota"];
+$url_integracao         = $row["url"] . $row["rota"];
 $metodo_http            = $row["metodo_http"];
 $parametros             = json_decode($row["parametros"], true) ?? [];
 
 $id_organizacao = $parametros["id_organizacao"];
-$login  = htmlspecialchars($parametros["Login"] ?? '');
-$senha  = $parametros["Senha"] ?? '';
+$login      = htmlspecialchars($parametros["Login"] ?? '');
+$senha      = $parametros["Senha"] ?? '';
 $plataforma = htmlspecialchars($parametros["plataforma"] ?? '');
 
-$request_body = json_encode([
+// Monta corpo da requisição
+$request_array = [
     "Login" => $login,
     "Senha" => $senha,
     "plataforma" => $plataforma
-]);
+];
+
+$request_body = json_encode($request_array);
 
 // Requisição cURL
 $curl_result = fn_curl_request([
@@ -123,6 +126,11 @@ if ($sucesso === 'S' && !empty($data["chave"])) {
     exit;
 }
 
+// Remove a senha antes de gravar no log
+$request_log_array = $request_array;
+unset($request_log_array["Senha"]);
+$request_body_log = json_encode($request_log_array);
+
 // Log da integração
 fn_log_integracao([
     'id_cliente' => $id_cliente,
@@ -131,7 +139,7 @@ fn_log_integracao([
     'id_usuario' => $id_usuario, // Mesmo que null
     'url_integracao' => $url_integracao,
     'metodo_http' => $metodo_http,
-    'request_body' => $request_body,
+    'request_body' => $request_body_log, // Sem a senha
     'response' => $response,
     'http_status' => $http_status,
     'sucesso' => $sucesso

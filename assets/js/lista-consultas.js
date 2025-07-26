@@ -1,4 +1,4 @@
-function fn_lista_consultas(parametros) {
+async function fn_lista_consultas(parametros) {
   const url = 'api/lista-consultas.php';
   const body = parametros;
 
@@ -10,11 +10,14 @@ function fn_lista_consultas(parametros) {
     body: JSON.stringify(body) // <-- Aqui o JSON é enviado no corpo
   };
 
-  return fetch(url, options)
-    .then(response => {
-      return response.json(); // retorna o JSON da resposta
-    })
-    .catch(error => {
-      return { erro: error.message };
-    });
+  // Validar o token ======================================================
+  await fn_valida_token();
+  
+  // Enviar a requisição ======================================================
+  try {
+    const response = await fetch(url, options);
+    return await response.json();
+  } catch (error) {
+    return { erro: error.message };
+  }
 }

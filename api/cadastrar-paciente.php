@@ -37,7 +37,7 @@ if (!$dados_paciente || !is_array($dados_paciente)) {
 $nome_endpoint = 'CADASTRAR_PACIENTE';
 
 $query = "
-    SELECT c.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
+    SELECT i.id AS id_integracao, e.id AS id_integracao_endpoint, i.url as url, e.rota as rota, e.metodo_http, c.parametros
         FROM tbl_cliente_integracao c
     INNER JOIN tbl_integracao i ON i.id = c.id_integracao
     INNER JOIN tbl_integracao_endpoint e ON e.id_integracao = i.id
@@ -94,7 +94,7 @@ fn_log_integracao([
     'id_cliente' => $id_cliente,
     'id_integracao' => $id_integracao,
     'id_integracao_endpoint' => $id_integracao_endpoint,
-    //'id_usuario' => $id_usuario,
+    'id_usuario' => $id_usuario,
     'url_integracao' => $url_integracao,
     'metodo_http' => $metodo_http,
     'request_body' => $request_body,
