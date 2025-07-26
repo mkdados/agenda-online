@@ -199,8 +199,9 @@ function openIndexedDB() {
   });
 
 
-// Função para voltar para o topo=============================================================
-
+/*============================================================================================
+  Função para voltar para o topo
+/*============================================================================================*/
  const btnVoltarTopo = document?.getElementById('btnVoltarTopo');
   document.body.addEventListener('scroll', function () {
     if (document.body.scrollTop > 300) {
@@ -213,5 +214,41 @@ function openIndexedDB() {
   btnVoltarTopo.addEventListener('click', function () {
     document.body.scrollTop = 0; // Para Safari
     document.documentElement.scrollTop = 0; // Para Chrome, Firefox, IE
+  });
+
+
+/*============================================================================================
+  Função para fixar a etapa
+/*============================================================================================*/
+   document.addEventListener("DOMContentLoaded", function () {
+
+    const etapaProxima = document.querySelector('.etapa-proxima');
+    const footer = document.querySelector('#footer-placeholder');
+
+    let etapaFixa = false;
+
+    function verificarPosicao() {     
+      const etapaRect = etapaProxima.getBoundingClientRect();
+      const footerRect = footer.getBoundingClientRect();
+
+      // Se o topo do footer estiver visível na viewport, remove posição fixa
+      if (footerRect.top < window.innerHeight) {
+        etapaProxima.classList.remove('fixed');
+        etapaFixa = false;
+      } else {
+        if (etapaFixa) return;
+        etapaProxima.classList.add('fixed');
+        etapaFixa = true;
+      }
+    }
+
+    // Quando clicar no horário (adicione seu seletor exato aqui)
+    document.getElementById('agendasMedicos').addEventListener('click', function (e) {
+      verificarPosicao();
+      
+      // Reavalie ao rolar
+      document.body.addEventListener('scroll', verificarPosicao);
+    });
+    
   });
 

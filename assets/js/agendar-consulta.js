@@ -56,6 +56,10 @@ function fn_carrega_agendamentos(btn) {
   document.querySelectorAll('.data-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
 
+  //Remover etapa fixa============================
+  const etapaProxima = document?.querySelector('.etapa-proxima');
+  etapaProxima?.classList?.remove('fixed');
+
   // Coletar dados da sessão e inputs
   const usuario = JSON.parse(sessionStorage.getItem('usuario'));
   const token = JSON.parse(sessionStorage.getItem('token'));
@@ -217,6 +221,7 @@ document.getElementById('agendasMedicos').addEventListener('click', function (e)
   }
   //Habilita o botao
   document.getElementById("btnGoToStep3").disabled = false;
+
 });
 
 
