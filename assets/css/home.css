@@ -370,7 +370,33 @@ footer a:hover {
       right: 0;
     }
     
-  
+ /*Voltar para o topo==================================*/
+
+#btnVoltarTopo {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+    background-color: #d47d48;
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: none; /* oculto até rolar */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    font-family: 'Montserrat', sans-serif;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+
+  #btnVoltarTopo:hover {
+    background-color: #b8683d;
+    transform: translateY(-3px);
+  } 
+
+
 
 @media (max-width: 767.98px) {
     #sidebar {

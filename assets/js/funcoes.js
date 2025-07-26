@@ -199,3 +199,19 @@ function openIndexedDB() {
   });
 
 
+// Função para voltar para o topo=============================================================
+
+ const btnVoltarTopo = document?.getElementById('btnVoltarTopo');
+  document.body.addEventListener('scroll', function () {
+    if (document.body.scrollTop > 100) {
+      btnVoltarTopo.style.display = 'block';
+    } else {
+      btnVoltarTopo.style.display = 'none';
+    }
+  });
+
+  btnVoltarTopo.addEventListener('click', function () {
+    document.body.scrollTop = 0; // Para Safari
+    document.documentElement.scrollTop = 0; // Para Chrome, Firefox, IE
+  });
+

@@ -1,0 +1,47 @@
+ /* Estilo do SweetAlert2 ======================================================*/
+.swal2-popup {
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 1rem;
+  font-size: 1rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.swal2-title {
+  /*color: #d47d48;*/
+  font-weight: bold;
+}
+
+.swal2-html-container {
+  color: #333;
+}
+
+/* Botões */
+.swal2-confirm, .swal2-cancel {
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 1rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+}
+
+/* Botão confirmar */
+.swal2-confirm {
+  background-color: #d47d48 !important;
+  color: white !important;
+  border: none;
+}
+
+.swal2-confirm:hover {
+  background-color: #b8683d !important;
+  color: #fff !important;
+}
+
+/* Botão cancelar */
+.swal2-cancel {
+  background-color: #f1f1f1 !important;
+  color: #444 !important;
+  border: none;
+}
+
+.swal2-cancel:hover {
+  background-color: #e0e0e0 !important;
+}
