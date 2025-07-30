@@ -171,9 +171,9 @@ if(isset($input['data_inicio']) and $input['data_inicio']==$data_atual){
 
 
 //Fixar agenda LUIZ GUILHERME MARTINS CASTRO
-if($id_organizacao==2911){
-    $filtro .= "and (profissionalId eq 24014 or profissionalId eq 20857 or profissionalId eq 20856)";
-}
+// if($id_organizacao==2911){
+//     $filtro .= "and (profissionalId eq 24014 or profissionalId eq 20857 or profissionalId eq 20856)";
+// }
 
 $params['$filter'] .= $filtro;
 

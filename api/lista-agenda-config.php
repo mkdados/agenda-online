@@ -81,9 +81,9 @@ if($id_profissional>0){
 } 
 
 //Fixar agenda LUIZ GUILHERME MARTINS CASTRO
-if($id_organizacao==2911){
-    $params['$filter'] .= "and (profissionalId eq 24014 or profissionalId eq 20857 or profissionalId eq 20856)";
-}
+// if($id_organizacao==2911){
+//     $params['$filter'] .= "and (profissionalId eq 24014 or profissionalId eq 20857 or profissionalId eq 20856)";
+// }
 
 
 // Constrói a query string com URL encoding apropriado

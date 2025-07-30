@@ -211,11 +211,14 @@ function openIndexedDB() {
     }
   });
 
-  btnVoltarTopo.addEventListener('click', function () {
-    document.body.scrollTop = 0; // Para Safari
-    document.documentElement.scrollTop = 0; // Para Chrome, Firefox, IE
-  });
+  if(btnVoltarTopo){
+     btnVoltarTopo.addEventListener('click', function () {
+      document.body.scrollTop = 0; // Para Safari
+      document.documentElement.scrollTop = 0; // Para Chrome, Firefox, IE
+    });
 
+  }
+ 
 
 /*============================================================================================
   Função para fixar a etapa
@@ -243,7 +246,7 @@ function openIndexedDB() {
     }
 
     // Quando clicar no horário (adicione seu seletor exato aqui)
-    document.getElementById('agendasMedicos').addEventListener('click', function (e) {
+    document?.getElementById('agendasMedicos')?.addEventListener('click', function (e) {
 
       const btn = e.target.closest('.horario-btn');
       if (btn) {
