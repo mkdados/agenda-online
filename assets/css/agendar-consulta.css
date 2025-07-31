@@ -91,7 +91,6 @@ main {
     grid-template-columns: repeat(5, 1fr);
 } 
 
-
 /* Menu lateral */
 #sidebar {
     width: 250px;

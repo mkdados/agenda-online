@@ -41,42 +41,32 @@ if($evento=="carrega_datas"){
     if ($dia_semana==5) { //Sexta
         $data_inicio = date("Y-m-d", strtotime($data_inicio . " +3 days"));
         $data_fim  = date("Y-m-d", strtotime($data_fim . " +3 days"));
-        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +3 days"));
+        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +3 days"));        
     }
     elseif ($dia_semana==6) { //Sábado
-        $data_inicio = date("Y-m-d", strtotime($data_inicio . " +3 days"));
-        $data_fim  = date("Y-m-d", strtotime($data_fim . " +3 days"));
-        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +3 days"));
-    }
-    elseif ($dia_semana==0) { //Domingo
         $data_inicio = date("Y-m-d", strtotime($data_inicio . " +2 days"));
         $data_fim  = date("Y-m-d", strtotime($data_fim . " +2 days"));
         $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +2 days"));
     }
-    else{
+    elseif ($dia_semana==0) { //Domingo
         $data_inicio = date("Y-m-d", strtotime($data_inicio . " +1 days"));
         $data_fim  = date("Y-m-d", strtotime($data_fim . " +1 days"));
         $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +1 days"));
     }
+    else{
+        $data_inicio = date("Y-m-d", strtotime($data_inicio . " +2 days"));
+        $data_fim  = date("Y-m-d", strtotime($data_fim . " +2 days"));
+        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +2 days"));
+    }
+}
+
+//Trata turno
+if ($dia_semana==6 || $dia_semana==0) { //Sábado ou Domingo
+    $turno = "tarde";
 }
 
 //Trata datas selecionadas======================================================
-if($evento=="menosDatas"){
-
-    $data_inicio_anterior = date("Y-m-d", strtotime($data_inicio . " -$qtd_dias days"));
-
-    //Decrementa a data de início se for maior que a data atual limite
-    if ($data_inicio_anterior >= $data_atual) {
-        $qtd_dias += 1;
-        $data_inicio = date("Y-m-d", strtotime($data_inicio . " -$qtd_dias days"));
-        $qtd_dias -= 1;
-        $data_fim    = date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
-    }else{
-        $data_inicio = $data_inicio;
-        $data_fim    = date("Y-m-d", strtotime($data_inicio . " +$qtd_dias days"));
-    }
-}
-elseif($evento=="maisDatas"){        
+if($evento=="maisDatas"){        
     $data_inicio = date("Y-m-d", strtotime($data_inicio . " +1 days"));
     $data_fim = date("Y-m-d", strtotime($data_fim . " +1 days"));
 }
