@@ -1,0 +1,54 @@
+[30-Jul-2025 02:39:12 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'utssa6jrucnkp'@'localhost' (using password: YES) in /home/customer/www/dermaclinica.com.br/config/config.php:23
+Stack trace:
+#0 /home/customer/www/dermaclinica.com.br/config/config.php(23): mysqli->__construct('localhost', 'utssa6jrucnkp', Object(SensitiveParameterValue), 'dbiyvbfjgecqmp')
+#1 /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/login.php(4): include_once('/home/customer/...')
+#2 {main}
+  thrown in /home/customer/www/dermaclinica.com.br/config/config.php on line 23
+[30-Jul-2025 22:47:52 America/Sao_Paulo] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SELECT id_usuario 
+    FROM tbl_recuperacao_senha 
+    WHERE id_cliente = ? 
+   ' at line 2 in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php:34
+Stack trace:
+#0 /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php(34): mysqli->prepare('\n    SET time_z...')
+#1 {main}
+  thrown in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php on line 34
+[30-Jul-2025 22:48:44 America/Sao_Paulo] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SELECT id_usuario 
+    FROM tbl_recuperacao_senha 
+    WHERE token = ? 
+      AN' at line 2 in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php:34
+Stack trace:
+#0 /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php(34): mysqli->prepare('\n    SET time_z...')
+#1 {main}
+  thrown in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php on line 34
+[30-Jul-2025 22:53:09 America/Sao_Paulo] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SELECT id_usuario 
+    FROM tbl_recuperacao_senha 
+    WHERE id_cliente = ? 
+   ' at line 2 in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php:37
+Stack trace:
+#0 /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php(37): mysqli->prepare('\n    SET time_z...')
+#1 {main}
+  thrown in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php on line 37
+[30-Jul-2025 22:54:39 America/Sao_Paulo] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SELECT id_usuario 
+    FROM tbl_recuperacao_senha 
+    WHERE token = ? 
+      AN' at line 2 in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php:37
+Stack trace:
+#0 /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php(37): mysqli->prepare('\n    SET time_z...')
+#1 {main}
+  thrown in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php on line 37
+[30-Jul-2025 22:54:41 America/Sao_Paulo] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SELECT id_usuario 
+    FROM tbl_recuperacao_senha 
+    WHERE token = ? 
+      AN' at line 2 in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php:37
+Stack trace:
+#0 /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php(37): mysqli->prepare('\n    SET time_z...')
+#1 {main}
+  thrown in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php on line 37
+[30-Jul-2025 22:55:11 America/Sao_Paulo] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SELECT id_usuario 
+    FROM tbl_recuperacao_senha 
+    WHERE token = ? 
+      AN' at line 2 in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php:37
+Stack trace:
+#0 /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php(37): mysqli->prepare('\n    SET time_z...')
+#1 {main}
+  thrown in /home/customer/www/dermaclinica.com.br/public_html/agendaonline/api/redefinir-senha.php on line 37
