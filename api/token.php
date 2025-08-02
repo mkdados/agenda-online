@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 $identificador = isset($input['identificador']) ? $input['identificador'] : null;
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
-$id_cliente = isset($input['id_cliente']) ? intval($input['id_cliente']) : null;
+$id_cliente = isset($input['id_cliente']) ? intval($input['id_cliente']) : $_ENV['ID_CLIENTE'];
 
 // Valida cliente
 if (!$id_cliente) {
