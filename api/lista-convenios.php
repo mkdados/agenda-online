@@ -65,13 +65,18 @@ $parametros             = json_decode($row["parametros"], true) ?? [];
 $request_body           = json_encode([]);
 $params                 = [
     '$select'  => "id, nomeFantasia",
-    '$filter'   => "ativado eq 'S' and not (id eq 10563 or id eq 9283)", //Exceto Sao cristovao e Notredame linha smart
+    '$filter'   => "ativado eq 'S'",
     '$orderby' => "nomeFantasia"
 ];
 
 if($id_convenio>0){
     $params['$apply'] = "filter(id eq $id_convenio)";
 }
+
+//Remover convenios do filtro======================
+ //10563 - Sao cristovao, 9283 - Notredame linha smart, 10033 - Blue Company
+$params['$filter'] .= " and not (id eq 10563 or id eq 9283 or id eq 10033)";
+
 
 // Constrói a query string com URL encoding apropriado
 $queryString = http_build_query($params);

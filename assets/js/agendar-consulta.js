@@ -250,8 +250,7 @@ function selecionaTipoAtendimento() {
     // Listar convênios
     const parametrosConvenios = {
       id_usuario: id_usuario,
-      token: chave,
-      id_convenio: idConvenioSelecionado
+      token: chave
     };
     fn_lista_convenio(parametrosConvenios)
       .then(data => {

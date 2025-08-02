@@ -18,9 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 $identificador = isset($input['identificador']) ? $input['identificador'] : null;
 $id_usuario = isset($input['id_usuario']) ? intval($input['id_usuario']) : null;
+$id_cliente = isset($input['id_cliente']) ? intval($input['id_cliente']) : null;
 
 // Valida cliente
-$id_cliente = $_ENV['ID_CLIENTE'] ?? null;
 if (!$id_cliente) {
     http_response_code(400);
     echo json_encode(['erro' => 'Cliente não identificado']);
@@ -34,11 +34,6 @@ $campo = $is_email ? 'email' : 'cpf';
 // Se for CPF, remove pontos e traços
 if (!$is_email) {
     $identificador = preg_replace('/[\.\-]/', '', $identificador);
-}
-
-// Valida cliente especial
-if($identificador=="34327560898" || $identificador=="mkdados@gmail.com"){
-    $id_cliente = 2;
 }
 
 // ✅ Só valida se o id_usuario for informado

@@ -10,7 +10,7 @@ async function realizarLogin() {
   const identificador = document.getElementById('emailCpf').value.trim();
   const senha = document.getElementById('password').value;
 
-  let id_usuario, cpf, chave, id_organizacao;
+  let id_usuario, id_cliente, cpf, chave, id_organizacao;
 
   // --- Bloco 1: Login do usuário ---
   try {
@@ -28,6 +28,7 @@ async function realizarLogin() {
     sessionStorage.setItem('sessao', JSON.stringify(data.sessao));
 
     id_usuario = data.usuario.id_usuario;
+    id_cliente = data.usuario.id_cliente,
     cpf = data.usuario.cpf;
 
   } catch (error) {
@@ -41,7 +42,7 @@ async function realizarLogin() {
 
   // --- Bloco 2: Gerar token ---
   try {
-    const parametrosToken = { identificador, id_usuario };
+    const parametrosToken = { identificador, id_usuario, id_cliente };
     const tokenData = await fn_gera_token(parametrosToken);
 
     id_organizacao = tokenData.id_organizacao;

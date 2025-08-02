@@ -28,13 +28,6 @@ if (!is_array($input) || empty($input['token']) || empty($input['nova_senha'])) 
 $token = trim($input['token']);
 $novaSenha = $input['nova_senha'];
 
-// $id_cliente = $_ENV['ID_CLIENTE'] ?? null;
-// if (!$id_cliente) {
-//     http_response_code(400);
-//     echo json_encode(['erro' => 'Cliente não identificado']);
-//     exit;
-// }
-
 // Define o fuso horário da sessão MySQL para UTC-3
 $conn->query("SET time_zone = '-03:00'");
 
@@ -47,7 +40,6 @@ $stmt = $conn->prepare("
       AND data_expiracao > NOW()
     LIMIT 1
 ");
-//$stmt->bind_param("is", $id_cliente, $token);
 $stmt->bind_param("s", $token);
 $stmt->execute();
 $result = $stmt->get_result();

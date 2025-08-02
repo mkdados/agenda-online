@@ -20,13 +20,6 @@ if (!is_array($input)) {
     exit;
 }
 
-$id_cliente = $_ENV['ID_CLIENTE'] ?? null;
-if (!$id_cliente) {
-    http_response_code(400);
-    echo json_encode(['erro' => 'Cliente não identificado']);
-    exit;
-}
-
 // Identifica por e-mail ou CPF
 $identificador = null;
 $tipo_busca = null;
@@ -43,19 +36,14 @@ if (!empty($input['email'])) {
     exit;
 }
 
-//Valida se é da medicina direta--------------------------------------
-if($identificador=="34327560898" || $identificador=="mkdados@gmail.com"){
-    $id_cliente = 2;
-}
-
 // Busca usuário
 if ($tipo_busca === 'email') {
-    $stmt = $conn->prepare("SELECT id, nome, email FROM tbl_usuario WHERE id_cliente = ? AND email = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT id, id_cliente, nome, email FROM tbl_usuario WHERE email = ? LIMIT 1");
 } else {
-    $stmt = $conn->prepare("SELECT id, nome, email FROM tbl_usuario WHERE id_cliente = ? AND cpf = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT id, id_cliente, nome, email FROM tbl_usuario WHERE cpf = ? LIMIT 1");
 }
 
-$stmt->bind_param("is", $id_cliente, $identificador);
+$stmt->bind_param("s", $identificador);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -67,9 +55,17 @@ if ($result->num_rows === 0) {
 
 $usuario = $result->fetch_assoc();
 $id_usuario = $usuario['id'];
+$id_cliente = $usuario['id_cliente'];
 $nome_usuario = $usuario['nome'];
 $email_usuario = $usuario['email'];
 $stmt->close();
+
+
+if (!$id_cliente) {
+    http_response_code(400);
+    echo json_encode(['erro' => 'Cliente não identificado']);
+    exit;
+}
 
 // Gera token e insere na tabela de recuperação
 $token = bin2hex(random_bytes(32));
