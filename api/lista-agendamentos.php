@@ -54,9 +54,12 @@ if($evento=="carrega_datas"){
         $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +1 days"));
     }
     else{
-        $data_inicio = date("Y-m-d", strtotime($data_inicio . " +2 days"));
-        $data_fim  = date("Y-m-d", strtotime($data_fim . " +2 days"));
-        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +2 days"));
+        // $data_inicio = date("Y-m-d", strtotime($data_inicio . " +1 days"));
+        // $data_fim  = date("Y-m-d", strtotime($data_fim . " +1 days"));
+        // $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +1 days"));
+        $data_inicio = date("Y-m-d", strtotime($data_inicio . " +24 hours"));
+        $data_fim = date("Y-m-d", strtotime($data_fim . " +24 hours"));
+        $data_atual_limite = date("Y-m-d", strtotime($data_atual . " +24 hours"));
     }
 }
 
@@ -155,10 +158,31 @@ if($turno!=""){
         $filtro .= "and horaInicio ge duration'PT13H'";
     }    
 }
-if(isset($input['data_inicio']) and $input['data_inicio']==$data_atual){
-    $filtro .= "and (horaInicio gt duration'PT{$hora_atual}H{$minuto_atual}M')";
-}
 
+//24 horas 
+if($evento=="carrega_datas"){   
+    $data_iso = $data_inicio . "T00:00:00Z";
+    $filtro .= " and (dataInicio gt {$data_iso} or (dataInicio eq {$data_iso} and horaInicio ge duration'PT{$hora_atual}H{$minuto_atual}M'))";
+}else{ 
+
+    if ($dia_semana==5) { //Sexta
+        $data_atual_selecionada = date("Y-m-d", strtotime($data_atual . " +3 days"));       
+    }
+    elseif ($dia_semana==6) { //Sábado
+        $data_atual_selecionada = date("Y-m-d", strtotime($data_atual . " +2 days"));
+    }
+    elseif ($dia_semana==0) { //Domingo
+        $data_atual_selecionada = date("Y-m-d", strtotime($data_atual . " +1 days"));
+    }
+    else{
+        $data_atual_selecionada = date("Y-m-d", strtotime($data_atual . " +24 hours"));
+    }
+
+   if($data_atual_selecionada==$data_inicio){
+        $filtro .= "and horaInicio ge duration'PT{$hora_atual}H{$minuto_atual}M'";  
+   }
+   
+}
 
 //Fixar agenda LUIZ GUILHERME MARTINS CASTRO
 // if($id_organizacao==2911){
