@@ -63,11 +63,6 @@ if($evento=="carrega_datas"){
     }
 }
 
-//Trata turno
-if ($dia_semana==6 || $dia_semana==0) { //Sábado ou Domingo
-    $turno = "tarde";
-}
-
 //Trata datas selecionadas======================================================
 if($evento=="maisDatas"){        
     $data_inicio = date("Y-m-d", strtotime($data_inicio . " +1 days"));
@@ -150,6 +145,10 @@ if($id_agenda_config!=""){
 if($id_profissional!=""){
     $filtro .= "and profissionalId in ($id_profissional)";
 } 
+//Trata turno
+// if ($dia_semana==6 || $dia_semana==0) { //Sábado ou Domingo
+//     $turno = "tarde";
+// }
 if($turno!=""){
     if($turno=="manha"){
         $filtro .= "and horaInicio lt duration'PT13H'";
@@ -160,29 +159,23 @@ if($turno!=""){
 }
 
 //24 horas 
-if($evento=="carrega_datas"){   
-    $data_iso = $data_inicio . "T00:00:00Z";
-    $filtro .= " and (dataInicio gt {$data_iso} or (dataInicio eq {$data_iso} and horaInicio ge duration'PT{$hora_atual}H{$minuto_atual}M'))";
-}else{ 
+//Se não for Sexta / Sabado e Domingo
+if ($dia_semana!=5 and $dia_semana!=6 and $dia_semana!=0) { 
 
-    if ($dia_semana==5) { //Sexta
-        $data_atual_selecionada = date("Y-m-d", strtotime($data_atual . " +3 days"));       
-    }
-    elseif ($dia_semana==6) { //Sábado
-        $data_atual_selecionada = date("Y-m-d", strtotime($data_atual . " +2 days"));
-    }
-    elseif ($dia_semana==0) { //Domingo
-        $data_atual_selecionada = date("Y-m-d", strtotime($data_atual . " +1 days"));
-    }
-    else{
+    if($evento=="carrega_datas"){   
+        $data_iso = $data_inicio . "T00:00:00Z";
+        $filtro .= " and (dataInicio gt {$data_iso} or (dataInicio eq {$data_iso} and horaInicio ge duration'PT{$hora_atual}H{$minuto_atual}M'))";
+    }else{ 
+
         $data_atual_selecionada = date("Y-m-d", strtotime($data_atual . " +24 hours"));
-    }
 
-   if($data_atual_selecionada==$data_inicio){
-        $filtro .= "and horaInicio ge duration'PT{$hora_atual}H{$minuto_atual}M'";  
-   }
-   
+        if($data_atual_selecionada==$data_inicio){
+                $filtro .= "and horaInicio ge duration'PT{$hora_atual}H{$minuto_atual}M'";  
+        }
+    
+    }
 }
+
 
 //Fixar agenda LUIZ GUILHERME MARTINS CASTRO
 // if($id_organizacao==2911){
