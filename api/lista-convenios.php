@@ -74,8 +74,8 @@ if($id_convenio>0){
 }
 
 //Remover convenios do filtro======================
- //10563 - Sao cristovao, 9283 - Notredame linha smart, 10033 - Blue Company
-$params['$filter'] .= " and not (id eq 10563 or id eq 9283 or id eq 10033)";
+ //10563 - Sao cristovao, 9283 - Notredame linha smart, 10033 - Blue Company, 9279 - GAMA SAUDE
+$params['$filter'] .= " and not (id eq 10563 or id eq 9283 or id eq 10033 or id eq 9279)";
 
 
 // Constrói a query string com URL encoding apropriado
