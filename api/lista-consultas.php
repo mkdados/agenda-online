@@ -25,7 +25,7 @@ $hora_atual  = date('H');
 $minuto_atual  = date('i');
 $id_agenda_status = isset($input['id_agenda_status']) ? $input['id_agenda_status'] : null;
 $condicional_data = isset($input['condicional_data']) ? $input['condicional_data'] : null;
-$expand      = isset($input['expand']) ? $input['expand'] : 'profissional($select=id,nome), clinica($select=id,nomeCompleto)';
+$expand      = isset($input['expand']) ? $input['expand'] : 'profissional($select=id,nome), filial($select=id,nomeCompleto,endereco($select=logradouro,numero,complemento,bairro,municipio,uf,cep))';
 $orderby     = isset($input['orderby']) ? $input['orderby'] : "dataInicio";
 
 // Valida paciente

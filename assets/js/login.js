@@ -170,27 +170,66 @@ async function realizarLogin() {
     const dataAgendaConfig = await fn_lista_agenda_config(parametrosAgendaConfig);
 
     if (dataAgendaConfig?.value?.length > 0) {
-      id_agenda_config = dataAgendaConfig.value.map(item => item.id).join(",");
-      profissional_id = dataAgendaConfig.value.map(item => item.profissionalId).join(",");
+        const filiaisComProfissionais = [];
 
-      dataAgendaConfig.value.forEach(item => {
-        const profissional = item.profissional;
-        if (profissional?.id && profissional?.nome) {
-          const jaExiste = profissionaisAgendaConfig.some(p => p.id === profissional.id);
-          if (!jaExiste) {
-            profissionaisAgendaConfig.push({
-              id: profissional.id,
-              id_filial: item.filialId,
-              nome: profissional.nome,
-              id_agenda_config: id_agenda_config
-            });
+        dataAgendaConfig.value.forEach(item => {
+          const filialId = item.filialId;
+          const profissional = item.profissional;
+          const idAgendaConfig = item.id;
+
+          if (!profissional?.id || !profissional?.nome) return;
+
+          let filialObj = filiaisComProfissionais.find(f => f.filial_id === filialId);
+          if (!filialObj) {
+            filialObj = { filial_id: filialId, profissionais: [] };
+            filiaisComProfissionais.push(filialObj);
           }
-        }
-      });
 
-      // Salvar no IndexedDB
-      await salvarAgendaConfigIndexedDB(profissionaisAgendaConfig);
-    }
+          let profObj = filialObj.profissionais.find(p => p.id === profissional.id);
+          if (!profObj) {
+            filialObj.profissionais.push({
+              id: profissional.id,
+              nome: profissional.nome,
+              id_agenda_config: [idAgendaConfig] // armazena como array
+            });
+          } else {
+            // evita duplicatas
+            if (!profObj.id_agenda_config.includes(idAgendaConfig)) {
+              profObj.id_agenda_config.push(idAgendaConfig);
+            }
+          }
+        });       
+
+        await salvarAgendaConfigIndexedDB(filiaisComProfissionais);
+      }
+
+
+    // if (dataAgendaConfig?.value?.length > 0) {
+
+    //   filial_id = dataAgendaConfig.value.map(item => item.filialId).join(",");
+    //   id_agenda_config = dataAgendaConfig.value.map(item => item.id).join(",");
+    //   profissional_id = dataAgendaConfig.value.map(item => item.profissionalId).join(",");
+
+    //   console.log("Filial ID:", filial_id);
+
+    //   dataAgendaConfig.value.forEach(item => {
+    //     const profissional = item.profissional;
+    //     if (profissional?.id && profissional?.nome) {
+    //       const jaExiste = profissionaisAgendaConfig.some(p => p.id === profissional.id);
+    //       if (!jaExiste) {
+    //         profissionaisAgendaConfig.push({
+    //           id: profissional.id,
+    //           id_filial: item.filialId,
+    //           nome: profissional.nome,
+    //           id_agenda_config: id_agenda_config
+    //         });
+    //       }
+    //     }
+    //   });
+
+    //   // Salvar no IndexedDB
+    //   await salvarAgendaConfigIndexedDB(profissionaisAgendaConfig);
+    // }
 
   } catch (err) {
     loader.style.display = 'none';

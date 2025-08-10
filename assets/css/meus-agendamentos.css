@@ -336,6 +336,14 @@ footer a:hover {
     transform: translateY(-3px);
   }
 
+.foto-redonda {
+  border-radius: 50%;
+  object-fit: cover;
+  width: 60px;
+  height: 60px;
+  border: 4px solid #cccccc !important;
+}
+
 
 
 /* Media=============================================== */

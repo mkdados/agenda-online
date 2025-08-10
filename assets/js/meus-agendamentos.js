@@ -20,16 +20,46 @@
 
         const proximas_consultas = data.value;
 
-        proximas_consultas.forEach(consultas => {  
+        // Remove duplicados pelo id
+        const consultasUnicas = proximas_consultas.filter(
+          (consulta, index, self) =>
+            index === self.findIndex(c => c.id === consulta.id)
+        );
+
+        consultasUnicas.forEach(consultas => {  
           
           const id_agenda_md = consultas?.id;
-          const profissional = consultas?.profissional?.nome;
+          const profissionalId = consultas?.profissional?.id;
+          const profissional = consultas?.profissional?.nome ? consultas?.profissional?.nome : "";
           const iniciais = pegarIniciais(profissional);
           const data = formatarDataISO(consultas?.dataInicio);      
           const hora = formatarHorarioISO(consultas?.horaInicio);
-          const unidade = consultas?.clinica.nomeCompleto;
+          const unidade = consultas?.filial.nomeCompleto;
           var status = consultas?.agendaStatus?.descricao;
           var btnCancelar = "";
+
+          //Endereço------------------------
+          let endereco = "";
+          let endereco_logradouro = (consultas.filial.endereco) ? consultas.filial?.endereco?.logradouro : "";
+          let endereco_numero =  (consultas.filial.endereco) ? consultas.filial?.endereco?.numero : "";
+          let endereco_complemento =  (consultas.filial.endereco) ? consultas.filial?.endereco?.complemento : "";
+          let endereco_bairro =  (consultas.filial.endereco) ? consultas.filial?.endereco?.bairro : "";
+          let endereco_municipio =  (consultas.filial.endereco) ? consultas.filial?.endereco?.municipio : "";
+          let endereco_uf =  (consultas.filial.endereco) ? consultas.filial?.endereco?.uf : "";
+          let endereco_maps = "";
+          let endereco_link = "";
+
+          endereco += (endereco_logradouro) ? endereco_logradouro : "";
+          endereco += (endereco_numero) ? ", "+endereco_numero : "";
+          endereco += (endereco_complemento) ? ", "+endereco_complemento : "";
+          endereco += (endereco_bairro) ? ", "+endereco_bairro : "";
+          //endereco += (endereco_municipio) ? ", "+endereco_municipio : "";
+          //endereco += (endereco_uf) ? " - "+endereco_uf : "";
+
+          if(endereco){
+            endereco_maps = `https://www.google.com/maps/search/?api=1&query=${endereco_logradouro},+${endereco_numero},+${endereco_municipio},+${endereco_uf}`;
+            endereco_link = `<a href="${endereco_maps}" target="_blank" rel="noopener" style="color:#000000;">${endereco}</a>`;
+          }
 
           // Verifica o status
           if(status == "ATENDIDO"){
@@ -43,30 +73,54 @@
                                   </div>`;
           }
 
-            html_consultas += `<div class="col-12 col-md-6">
-                                <div class="card card-top-border proximas-consultas shadow-sm">
-                                  <div class="card-body">
-                                    <div class="doctor-info mb-2">
-                                      <div class="circle-initials d-none d-md-flex">${iniciais}</div>
-                                      <div>
-                                        <h5 class="doctor-name mb-0">${profissional}</h5>
-                                        <p class="card-text card-text-muted mb-1">Dermatologista</p>
-                                      </div>
-                                    </div>
-                                    <p class="card-text card-text-muted mb-1">
-                                      <i class="fa-solid fa-location-dot icon-orange me-2"></i>${unidade}
-                                    </p>
-                                    <p class="card-text card-text-muted mb-1">
-                                      <i class="fas fa-calendar-alt icon-orange me-2"></i>${data}
-                                    </p>
-                                    <p class="card-text card-text-muted">
-                                      <i class="fas fa-clock icon-orange me-2"></i>${hora}
-                                    </p>
-                                    ${btnCancelar}
-                                  </div>                                  
-                                </div>
-                              </div>
-                              <div class="col-md-6 col-0"></div>`;
+
+          html_consultas += `<div class="col-12 col-md-6">
+            <div class="card card-top-border proximas-consultas shadow-sm">
+              <div class="card-body">
+                
+                <!-- Foto + nome -->
+                <div class="d-flex align-items-start gap-4 px-3 flex-wrap flex-md-nowrap doctor-info">
+                  <img 
+                    data-profissional-id="${profissionalId}"
+                    src="assets/images/medicos/${profissionalId}.png?v=${new Date().getTime()}" 
+                    onerror="this.onerror=null;this.src='assets/images/medicos/foto-medico.png';"
+                    class="foto-redonda img-fluid border lazy-foto mx-auto mx-md-0 d-block" 
+                    alt="Foto do médico">
+
+                  <div class="flex-grow-1">
+                    <h5 class="doctor-name mb-0">${profissional}</h5>
+                    <p class="card-text card-text-muted mb-1">Dermatologista</p>
+                  </div>
+                </div>
+
+                <!-- Unidade + Endereço -->
+                <div class="mt-3">
+                  <p class="card-text fw-bold mb-1">
+                    <i class="fa-solid fa-location-dot icon-orange me-2"></i>${unidade}
+                  </p>
+                  <p class="card-text card-text-muted small">
+                    ${endereco_link}
+                  </p>
+                </div>
+
+                <!-- Data -->
+                <p class="card-text card-text-muted mb-1 mt-2">
+                  <i class="fas fa-calendar-alt icon-orange me-2"></i>${data}
+                </p>
+
+                <!-- Hora -->
+                <p class="card-text card-text-muted">
+                  <i class="fas fa-clock icon-orange me-2"></i>${hora}
+                </p>
+
+                ${btnCancelar}
+
+              </div>                                  
+            </div>
+          </div>
+          <div class="col-md-6 col-0"></div>
+          `;
+
         });       
         
     })
@@ -116,16 +170,47 @@
 
               const proximas_consultas = data.value;
 
-              proximas_consultas.forEach(consultas => {   
+              // Remove duplicados pelo id
+              const consultasUnicas = proximas_consultas.filter(
+                (consulta, index, self) =>
+                  index === self.findIndex(c => c.id === consulta.id)
+              );
+
+              consultasUnicas.forEach(consultas => {   
                 
                 const id_agenda_md = consultas?.id;
-                const profissional = consultas?.profissional?.nome;
+                const profissionalId = consultas?.profissional?.id;
+                const profissional = consultas?.profissional?.nome ? consultas?.profissional?.nome : "";
                 const iniciais = pegarIniciais(profissional);
                 const data = formatarDataISO(consultas?.dataInicio);      
                 const hora = formatarHorarioISO(consultas?.horaInicio);
-                const unidade = consultas?.clinica.nomeCompleto;
+                const unidade = consultas?.filial.nomeCompleto;
                 var status = consultas?.agendaStatus?.descricao;
                 var classeStatus = "";
+
+                 //Endereço------------------------
+                  let endereco = "";
+                  let endereco_logradouro = (consultas.filial.endereco) ? consultas.filial?.endereco?.logradouro : "";
+                  let endereco_numero =  (consultas.filial.endereco) ? consultas.filial?.endereco?.numero : "";
+                  let endereco_complemento =  (consultas.filial.endereco) ? consultas.filial?.endereco?.complemento : "";
+                  let endereco_bairro =  (consultas.filial.endereco) ? consultas.filial?.endereco?.bairro : "";
+                  let endereco_municipio =  (consultas.filial.endereco) ? consultas.filial?.endereco?.municipio : "";
+                  let endereco_uf =  (consultas.filial.endereco) ? consultas.filial?.endereco?.uf : "";
+                  let endereco_maps = "";
+                  let endereco_link = "";
+
+                  endereco += (endereco_logradouro) ? endereco_logradouro : "";
+                  endereco += (endereco_numero) ? ", "+endereco_numero : "";
+                  endereco += (endereco_complemento) ? ", "+endereco_complemento : "";
+                  endereco += (endereco_bairro) ? ", "+endereco_bairro : "";
+                  //endereco += (endereco_municipio) ? ", "+endereco_municipio : "";
+                  //endereco += (endereco_uf) ? " - "+endereco_uf : "";
+
+                  if(endereco){
+                    endereco_maps = `https://www.google.com/maps/search/?api=1&query=${endereco_logradouro},+${endereco_numero},+${endereco_municipio},+${endereco_uf}`;
+                    endereco_link = `<a href="${endereco_maps}" target="_blank" rel="noopener" style="color:#000000;">${endereco}</a>`;
+                  } 
+
 
                 // Verifica o status da consulta e define a classe CSS
                 if(status == "DESMARCADO" || status == "CANCELADO"){
@@ -140,32 +225,56 @@
                     classeStatus = "bg-primary";
                 }
                 
-                  html_consultas += `<div class="col-12 col-md-6">
-                                      <div class="card card-top-border historico-consultas shadow-sm">
-                                        <div class="card-body">
-                                          <div class="doctor-info mb-2">
-                                            <div class="circle-initials d-none d-md-flex">${iniciais}</div>
-                                            <div>
-                                              <h5 class="doctor-name mb-0">${profissional}</h5>
-                                              <p class="card-text card-text-muted mb-1">Dermatologista</p>
-                                            </div>
-                                          </div>
-                                          <p class="card-text card-text-muted mb-1">
-                                            <i class="fa-solid fa-location-dot icon-gray me-2"></i>${unidade}
-                                          </p>
-                                          <p class="card-text card-text-muted mb-1">
-                                            <i class="fas fa-calendar-alt icon-gray me-2"></i>${data}
-                                          </p>
-                                          <p class="card-text card-text-muted">
-                                            <i class="fas fa-clock icon-gray me-2"></i>${hora}
-                                          </p>
-                                          <p class="card-text card-text-muted mt-2">
-                                           <span class="badge ${classeStatus}">${status}</span>
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div class="col-md-6 col-0"></div>`;
+                html_consultas += `<div class="col-12 col-md-6">
+                  <div class="card card-top-border historico-consultas shadow-sm">
+                    <div class="card-body">
+                      
+                      <!-- Foto + nome -->
+                      <div class="d-flex align-items-start gap-4 px-3 flex-wrap flex-md-nowrap doctor-info">
+                        <img 
+                          data-profissional-id="${profissionalId}"
+                          src="assets/images/medicos/${profissionalId}.png?v=${new Date().getTime()}" 
+                          onerror="this.onerror=null;this.src='assets/images/medicos/foto-medico.png';"
+                          class="foto-redonda img-fluid border lazy-foto mx-auto mx-md-0 d-block" 
+                          alt="Foto do médico">
+
+                        <div class="flex-grow-1">
+                          <h5 class="doctor-name mb-0">${profissional}</h5>
+                          <p class="card-text card-text-muted mb-1">Dermatologista</p>
+                        </div>
+                      </div>
+
+                      <!-- Unidade + Endereço -->
+                      <div class="mt-3">
+                        <p class="card-text fw-bold mb-1">
+                          <i class="fa-solid fa-location-dot icon-gray me-2"></i>${unidade}
+                        </p>
+                        <p class="card-text card-text-muted small">
+                          ${endereco_link}
+                        </p>
+                      </div>
+
+                      <!-- Data -->
+                      <p class="card-text card-text-muted mb-1 mt-2">
+                        <i class="fas fa-calendar-alt icon-gray me-2"></i>${data}
+                      </p>
+
+                      <!-- Hora -->
+                      <p class="card-text card-text-muted">
+                        <i class="fas fa-clock icon-gray me-2"></i>${hora}
+                      </p>
+
+                      <!-- Status -->
+                      <p class="card-text card-text-muted mt-2">
+                        <span class="badge ${classeStatus}">${status}</span>
+                      </p>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 col-0"></div>
+                `;
+
               });       
               
           })

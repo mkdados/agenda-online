@@ -541,44 +541,34 @@ async function fn_selecionar_datas(evento,data_inicio){
       let profissional_id = "";
       let profissionaisAgendaConfig = []; // Lista de { id, nome }
 
-      
-      // try {
-      //   const dados = await lerAgendaConfig();
-      //   console.log(dados);
-      //   if (dados) {
-      //     id_agenda_config = dados.id_agenda_config || "";
-      //     profissional_id = dados.profissional_id || "";
-      //     profissionaisAgendaConfig = dados.profissionaisAgendaConfig || [];
-      //   } else {
-      //     // Se não tiver dados salvos, mantém os valores padrão
-      //     console.log('Nenhuma configuração de agenda encontrada no IndexedDB.');
-      //   }
-
-      // } catch (error) {
-      //   console.error('Erro ao carregar dados da agenda:', error);
-      // }
-
       try {
         const dados = await lerAgendaConfig();
-        //console.log(dados);
 
-        if (dados) {
-          // Filtra os profissionais da filial selecionada dinamicamente
-          const profissionaisFilialSelecionada = (dados.profissionaisAgendaConfig || []).filter(
-            p => p.id_filial == idFilialSelecionada
-          );
+        // Extrai o array real, seja salvo como array puro ou dentro de um objeto
+        const listaFiliais = Array.isArray(dados)
+          ? dados
+          : Array.isArray(dados?.profissionaisAgendaConfig)
+            ? dados.profissionaisAgendaConfig
+            : [];
 
-          profissionaisAgendaConfig = profissionaisFilialSelecionada;
+        if (listaFiliais.length > 0) {
+          const filialSelecionadaObj = listaFiliais.find(f => f.filial_id == idFilialSelecionada);
 
-          // Junta os IDs e os agenda_config correspondentes
-          profissional_id = profissionaisFilialSelecionada.map(p => p.id).join(',');
+          if (filialSelecionadaObj && filialSelecionadaObj.profissionais) {
+            profissionaisAgendaConfig = filialSelecionadaObj.profissionais;
 
-          id_agenda_config = [...new Set(
-            profissionaisFilialSelecionada
-              .flatMap(p => (p.id_agenda_config || '').split(','))
-              .filter(id => id !== '')
-          )].join(',');
+            profissional_id = filialSelecionadaObj.profissionais
+              .map(p => p.id)
+              .join(',');
 
+            id_agenda_config = [...new Set(
+              filialSelecionadaObj.profissionais
+                .flatMap(p => p.id_agenda_config) // já é array
+                .filter(id => id && id !== '')
+            )].join(',');
+          } else {
+            console.log(`Nenhum profissional encontrado para a filial ${idFilialSelecionada}.`);
+          }
         } else {
           console.log('Nenhuma configuração de agenda encontrada no IndexedDB.');
         }
@@ -586,6 +576,36 @@ async function fn_selecionar_datas(evento,data_inicio){
       } catch (error) {
         console.error('Erro ao carregar dados da agenda:', error);
       }
+
+
+      // try {
+      //   const dados = await lerAgendaConfig();
+      //   //console.log(dados);
+
+      //   if (dados) {
+      //     // Filtra os profissionais da filial selecionada dinamicamente
+      //     const profissionaisFilialSelecionada = (dados.profissionaisAgendaConfig || []).filter(
+      //       p => p.id_filial == idFilialSelecionada
+      //     );
+
+      //     profissionaisAgendaConfig = profissionaisFilialSelecionada;
+
+      //     // Junta os IDs e os agenda_config correspondentes
+      //     profissional_id = profissionaisFilialSelecionada.map(p => p.id).join(',');
+
+      //     id_agenda_config = [...new Set(
+      //       profissionaisFilialSelecionada
+      //         .flatMap(p => (p.id_agenda_config || '').split(','))
+      //         .filter(id => id !== '')
+      //     )].join(',');
+
+      //   } else {
+      //     console.log('Nenhuma configuração de agenda encontrada no IndexedDB.');
+      //   }
+
+      // } catch (error) {
+      //   console.error('Erro ao carregar dados da agenda:', error);
+      // }
 
 
 
