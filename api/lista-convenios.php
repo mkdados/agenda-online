@@ -78,7 +78,7 @@ if($id_convenio>0){
  9283 - Notredame linha smart 
  10033 - Blue Company 
  9279 - GAMA SAUDE
- 8973 - Sul
+ 8973 - Sulamerica
  */
 $params['$filter'] .= " and not (id eq 10563 or id eq 9283 or id eq 10033 or id eq 9279 or id eq 8973)";
 
