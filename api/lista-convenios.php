@@ -80,7 +80,8 @@ if($id_convenio>0){
  9279 - GAMA SAUDE
  8973 - Sulamerica
  */
-$params['$filter'] .= " and not (id eq 10563 or id eq 9283 or id eq 10033 or id eq 9279 or id eq 8973)";
+//$params['$filter'] .= " and not (id eq 10563 or id eq 9283 or id eq 10033 or id eq 9279 or id eq 8973)";
+$params['$filter'] .= " and not (id eq 10563 or id eq 9283 or id eq 10033 or id eq 9279)";
 
 
 // Constrói a query string com URL encoding apropriado

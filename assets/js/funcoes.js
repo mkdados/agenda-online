@@ -261,3 +261,16 @@ function openIndexedDB() {
     
   });
 
+
+
+ /*###########################################################################################
+    Modal
+############################################################################################*/
+ function fnCarregaModal(evento) {
+  console.log("foi");
+  if(evento==true){
+    document.getElementById('modalConvenio').style.display = 'flex';
+  }else{
+    document.getElementById('modalConvenio').style.display = 'none';
+  }    
+}

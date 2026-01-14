@@ -11,7 +11,7 @@
 
   <!-- Bibliotecas -->
   <link href="assets/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/css/agendar-consulta.css?v=4.1.0" rel="stylesheet">
+  <link href="assets/css/agendar-consulta.css?v=5.1.0" rel="stylesheet">
   <link href="assets/css/sweetalert2.css?v=4.0.9" rel="stylesheet"> 
   <link href="assets/fonts/montserrat/montserrat.css?v=4.0.9" rel="stylesheet">  
   <link href="assets/font-awesome/6.7.2/css/all.css" rel="stylesheet">
@@ -22,6 +22,35 @@
 
  <!-- Loader --> 
 <div id="loader"><div class="spinner"></div></div> 
+
+<!-- Overlay -->
+<div id="modalConvenio" class="modal-overlay">
+  <div class="modal-box">
+    <h2>Aviso Importante</h2>
+
+    <p>
+      Informamos que, no momento, <strong>não estamos mais credenciados ao plano SulAmérica</strong>,
+      por decisão exclusiva da operadora.
+    </p>
+
+    <p>
+      Estamos trabalhando ativamente para viabilizar o atendimento por <strong>reembolso</strong> e,
+      enquanto isso, seguimos oferecendo <strong>melhores oportunidades de agendamento</strong>,
+      com mais disponibilidade e cuidado no atendimento.
+    </p>
+
+    <p>
+      Nossa equipe permanece à disposição para esclarecer dúvidas e ajudar no que for necessário.
+    </p>
+
+    <p class="highlight">
+      Estamos aqui por você!
+    </p>
+
+    <button onclick="fnCarregaModal(false)">Entendi</button>
+  </div>
+</div>
+
 
 <!-- Overlay de fundo escurecido -->
 <div id="overlay"></div>
@@ -281,10 +310,10 @@
   <script src="assets/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
   <script src="assets/jquery/jquery.inputmask.min.js"></script>
   <script src="assets/sweetalert/sweetalert2@11.js"></script> 
-  <script src="assets/js/funcoes.js?v=4.1.0"></script>
+  <script src="assets/js/funcoes.js?v=5.2.0"></script>
   <script src="assets/js/menu.js?v=4.0.9"></script>
   <script src="assets/js/token.js?v=4.0.9"></script>
-  <script src="assets/js/agendar-consulta.js?v=6.0.0"></script>
+  <script src="assets/js/agendar-consulta.js?v=7.0.0"></script>
   <script src="assets/js/lista-convenios.js?v=4.0.9"></script>
   <script src="assets/js/lista-filiais.js?v=4.0.9"></script>
   <script src="assets/js/lista-agenda-config.js?v=4.0.9"></script>

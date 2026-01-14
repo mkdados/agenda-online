@@ -268,6 +268,12 @@ function selecionaTipoAtendimento() {
             // Seleciona o convênio do paciente, se existir
             if (convenio.id > 0 && convenio.id === idConvenioSelecionado) {
               option.selected = true;
+              
+              //Validar Convenio - Sulamérica
+              if (convenio.id == 8973) {
+                fnCarregaModal(true);
+                document.getElementById("btnGoToStep2").disabled = true;
+              }
             }
 
             //Seta numero da carteirinha
@@ -1052,4 +1058,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+
+/*###########################################################################################
+    Valida Convenio - Sulamérica
+############################################################################################*/
+
+document.getElementById('convenioSelect').onchange = function () {
+  var convenio = this.value;
+  if (convenio == 8973) {
+    fnCarregaModal(true);
+    document.getElementById("btnGoToStep2").disabled = true;
+  }else{
+    document.getElementById("btnGoToStep2").disabled = false;
+  }
+};
 
